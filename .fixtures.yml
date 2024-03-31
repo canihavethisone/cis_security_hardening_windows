@@ -6,7 +6,6 @@ fixtures:
     # this module dependencies
     stdlib:                     "puppetlabs-stdlib"
     auditpol:                   "fervid-auditpol"
-    firewall:                   "puppetlabs-firewall"
     inifile:                    "puppetlabs-inifile"
     local_security_policy:      "ayohrling-local_security_policy"
     powershell:                 "puppetlabs-powershell"
