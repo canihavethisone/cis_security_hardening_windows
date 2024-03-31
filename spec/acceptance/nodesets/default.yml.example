@@ -1,0 +1,112 @@
+# Refs:
+# https://github.com/puppetlabs/beaker/blob/master/docs/concepts/argument_processing_and_precedence.md
+# https://net-ssh.github.io/net-ssh/classes/Net/SSH.html#method-c-start
+HOSTS:
+  win10-agent:
+    roles:
+      - agent_windows_10
+      - agent
+    platform: windows-10ent-64
+    image: beaker_windows_10_22h2_puppet_7
+    version: 10
+    flavor: windows
+    hypervisor: openstack
+    communicator: bitvise
+    is_cygwin: false
+    ssh:
+      user: root
+      password: Password123
+      auth_methods:
+        - password
+      number_of_password_prompts: 0
+      keepalive: true
+      keepalive_interval: 5
+      timeout: 360
+    user_data: |
+      #ps1_sysnative
+      set timezone -Name 'AUS Eastern Standard Time'
+
+  win11-agent:
+    roles:
+      - agent_windows_11
+      - agent
+    platform: windows-11ent-64
+    image: beaker_windows_11_22h2_puppet_7
+    version: 11
+    flavor: windows
+    hypervisor: openstack
+    communicator: bitvise
+    is_cygwin: false
+    ssh:
+      user: root
+      password: Password123
+      auth_methods:
+        - password
+      number_of_password_prompts: 0
+      keepalive: true
+      keepalive_interval: 5
+      timeout: 360
+    user_data: |
+      #ps1_sysnative
+      set timezone -Name 'AUS Eastern Standard Time'
+
+  # The master is created last to give Windows agent maximum time to startup
+  rocky-9-stream-master:
+    roles:
+      - master
+      - dashboard
+      - database
+    platform: el-9-x86_64
+    image: 	nightly_build_rocky_9.efi
+    version: 9
+    flavor: linux.server
+    hypervisor: openstack
+    ssh:
+      user: root
+      password: Password123
+      auth_methods:
+        - password
+      number_of_password_prompts: 0
+      timeout: 360
+    user_data: |
+      #cloud-config
+      output: {all: '| tee -a /var/log/cloud-init-output.log'}
+      disable_root: False
+      ssh_pwauth: True
+      chpasswd:
+        list: |
+           root:Password123
+           centos:Password123
+        expire: False
+      runcmd:
+        - echo -e "\nThis is the acceptance test MASTER on $(hostname)" >> /etc/issue
+        - timedatectl set-timezone Australia/Sydney
+        - sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config
+        - sed -i "s/#PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+        - systemctl restart sshd
+        - yum update puppet* -y
+        - echo -e "minrate=5\ntimeout=500" >> /etc/yum.conf
+        - ln -s /etc/puppetlabs/code/environments/production /root/production
+        - systemctl disable cloud-init --now
+        - systemctl disable cloud-init-local --now
+        - systemctl disable cloud-config --now
+        - yum remove cloud* -y
+
+CONFIG:
+  type: foss
+  timesync: true
+  ntp_server: < ip >
+  log_level: info
+  trace_limit: 100
+  openstack_username: < svc-name >
+  openstack_api_key: < svc-passwd >
+  openstack_project_name: < project >
+  openstack_auth_url: < url >
+  openstack_network: < network >
+  openstack_keyname: < keyname >
+  openstack_floating_ip: false
+  openstack_volume_support: false
+  security_group: ['default']
+  run_in_parallel: ['configure', 'install']
+  create_in_parallel: true
+  disable_updates: true

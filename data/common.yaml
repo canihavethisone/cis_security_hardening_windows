@@ -1,0 +1,7 @@
+# Allow hashes to merge, but not arrays or strings
+lookup_options:
+  "^cis_security_hardening_windows::(.*)$":
+    merge:
+      strategy: deep
+      merge_hash_arrays: true
+

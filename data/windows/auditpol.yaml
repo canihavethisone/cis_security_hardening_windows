@@ -1,0 +1,168 @@
+---
+cis_security_hardening_windows::cis_auditpol:
+
+  "(L1) Ensure 'Audit Credential Validation' is set to 'Success and Failure'":
+    'Credential Validation':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Application Group Management' is set to 'Success and Failure'":
+    'Application Group Management':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Security Group Management' is set to include 'Success'":
+    'Security Group Management':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit User Account Management' is set to 'Success and Failure'":
+    'User Account Management':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit PNP Activity' is set to include 'Success'":
+    'Plug and Play Events':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit Process Creation' is set to include 'Success'":
+    'Process Creation':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit Account Lockout' is set to include 'Failure'":
+    'Account Lockout':
+      success: 'disable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Group Membership' is set to include 'Success'":
+    'Group Membership':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit Logoff' is set to include 'Success'":
+    'Logoff':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit Logon' is set to 'Success and Failure'":
+    'Logon':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'":
+    'Other Logon/Logoff Events':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Special Logon' is set to include 'Success'":
+    'Special Logon':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit Detailed File Share' is set to include 'Failure'":
+    'Detailed File Share':
+      success: 'disable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit File Share' is set to 'Success and Failure'":
+    'File Share':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Other Object Access Events' is set to 'Success and Failure'":
+    'Other Object Access Events':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Removable Storage' is set to 'Success and Failure'":
+    'Removable Storage':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Audit Policy Change' is set to include 'Success'":
+    'Audit Policy Change':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit Authentication Policy Change' is set to include 'Success'":
+    'Authentication Policy Change':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit Authorization Policy Change' is set to include 'Success'":
+    'Authorization Policy Change':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit MPSSVC Rule-Level Policy Change' is set to 'Success and Failure'":
+    'MPSSVC Rule-Level Policy Change':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Other Policy Change Events' is set to include 'Failure'":
+    'Other Policy Change Events':
+      success: 'disable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Sensitive Privilege Use' is set to 'Success and Failure'":
+    'Sensitive Privilege Use':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit IPsec Driver' is set to 'Success and Failure'":
+    'IPsec Driver':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Other System Events' is set to 'Success and Failure'":
+    'Other System Events':
+      success: 'enable'
+      failure: 'enable'
+
+  "(L1) Ensure 'Audit Security State Change' is set to include 'Success'":
+    'Security State Change':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit Security System Extension' is set to include 'Success'":
+    'Security System Extension':
+      success: 'enable'
+      failure: 'disable'
+
+  "(L1) Ensure 'Audit System Integrity' is set to 'Success and Failure'":
+    'System Integrity':
+      success: 'enable'
+      failure: 'enable'
+
+#cis_security_hardening_windows::windows::harden::auditpol: |
+#    Machine Name,Policy Target,Subcategory,Subcategory GUID,Inclusion Setting,Exclusion Setting,Setting Value
+#    ,System,Audit Credential Validation,{0cce923f-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Application Group Management,{0cce9239-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Computer Account Management,{0cce9236-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Security Group Management,{0cce9237-69ae-11d9-bed3-505054503030},Success,,3
+#    ,System,Audit User Account Management,{0cce9235-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit PNP Activity,{0cce9248-69ae-11d9-bed3-505054503030},Success,,1
+#    ,System,Audit Process Creation,{0cce922b-69ae-11d9-bed3-505054503030},Success,,1
+#    ,System,Audit Account Lockout,{0cce9217-69ae-11d9-bed3-505054503030},Failure,,3
+#    ,System,Audit Group Membership,{0cce9249-69ae-11d9-bed3-505054503030},Success,,1
+#    ,System,Audit Logoff,{0cce9216-69ae-11d9-bed3-505054503030},Success,,1
+#    ,System,Audit Logon,{0cce9215-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Other Logon/Logoff Events,{0cce921c-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Special Logon,{0cce921b-69ae-11d9-bed3-505054503030},Success,,1
+#    ,System,Audit Detailed File Share,{0cce9244-69ae-11d9-bed3-505054503030},Failure,,2
+#    ,System,Audit File Share,{0cce9224-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Other Object Access Events,{0cce9227-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Removable Storage,{0cce9245-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Audit Policy Change,{0cce922f-69ae-11d9-bed3-505054503030},Success,,3
+#    ,System,Audit Authentication Policy Change,{0cce9230-69ae-11d9-bed3-505054503030},Success,,1
+#    ,System,Audit Authorization Policy Change,{0cce9231-69ae-11d9-bed3-505054503030},Success,,1
+#    ,System,Audit MPSSVC Rule-Level Policy Change,{0cce9232-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Other Policy Change Events,{0cce9234-69ae-11d9-bed3-505054503030},Failure,,2
+#    ,System,Audit Sensitive Privilege Use,{0cce9228-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit IPsec Driver,{0cce9213-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Other System Events,{0cce9214-69ae-11d9-bed3-505054503030},Success and Failure,,3
+#    ,System,Audit Security State Change,{0cce9210-69ae-11d9-bed3-505054503030},Success,,1
+#    ,System,Audit Security System Extension,{0cce9211-69ae-11d9-bed3-505054503030},Success,,1
+#    ,System,Audit System Integrity,{0cce9212-69ae-11d9-bed3-505054503030},Success and Failure,,3

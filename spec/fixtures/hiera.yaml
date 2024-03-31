@@ -1,0 +1,21 @@
+---
+version: 5
+defaults:
+  datadir: ../../data
+  data_hash: yaml_data
+
+hierarchy:
+
+  - name: "testing hiera"
+    path: "minimum.yaml"
+
+  - name: "Windows globbing"
+    glob: "windows/*.yaml"
+
+  - name: "Windows custom facts release globbing"
+    glob: "windows/%{facts.windows.release}/*.yaml"
+
+  # merge strategy is defined in common.yaml
+  - name: "Other YAML hierarchy levels"
+    paths:
+      - "common.yaml"

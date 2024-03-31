@@ -1,0 +1,385 @@
+---
+# SID reference: https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
+
+cis_security_hardening_windows::cis_secpol_level_1:
+
+  "(L1) Configure 'Accounts: Rename administrator account'":
+    'Accounts: Rename administrator account':
+      policy_value: '"%{lookup("cis_security_hardening_windows::disabled_administrator_newname")}"'
+
+  "(L1) Configure 'Accounts: Rename guest account'":
+    'Accounts: Rename guest account':
+      policy_value: '"%{lookup("cis_security_hardening_windows::disabled_guest_newname")}"'
+
+## This was removed in CIS 22H2 v2.0.0, however leaving in place as it can be overridden
+  "(L1) Ensure 'Accounts: Administrator account status' is set to 'Disabled'":
+    'Accounts: Administrator account status':
+      policy_value: '0'
+
+  "(L1) Ensure 'Accounts: Guest account status' is set to 'Disabled'":
+    'Accounts: Guest account status':
+      policy_value: '0'
+
+  "(L1) Ensure 'Enforce password history' is set to '24 or more password(s)'":
+    'Enforce password history':
+      policy_value: '24'
+
+  "(L1) Ensure 'Minimum password age' is set to '1 or more day(s)'":
+    'Minimum password age':
+      policy_value: '1'
+
+  "(L1) Ensure 'Maximum password age' is set to '365 or fewer days, but not 0'":
+  # v1.11.0 21H1
+    'Maximum password age':
+#      policy_value: '-1'
+      policy_value: '30'
+
+  "(L1) Ensure 'Minimum password length' is set to '14 or more character(s)'":
+    'Minimum password length':
+      policy_value: '14'
+
+  "(L1) Ensure 'Password must meet complexity requirements' is set to 'Enabled'":
+    'Password must meet complexity requirements':
+      policy_value: '1'
+
+  "(L1) Ensure 'Store passwords using reversible encryption' is set to 'Disabled'":
+    'Store passwords using reversible encryption':
+      policy_value: '0'
+
+  "(L1) Ensure 'Account lockout duration' is set to '15 or more minute(s)'":
+    'Account lockout duration':
+      policy_value: '15'
+
+  "(L1) Ensure 'Account lockout threshold' is set to '5 or fewer invalid logon attempt(s), but not 0'":
+  # v1.11.0 21H1
+    'Account lockout threshold':
+      policy_value: '3'
+
+  "(L1) Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)'":
+    'Reset account lockout counter after':
+      policy_value: '15'
+
+## Need to confirm if this is required anymore ?
+#  'Accounts: Require Login to Change Password':
+#    policy_value: '1'
+
+  "(L1) Ensure 'Access Credential Manager as a trusted caller' is set to 'No One'":
+    'Access Credential Manager as a trusted caller':
+#    policy_value: '*S-1-0-0'
+      ensure: 'absent'
+
+  "(L1) Ensure 'Access this computer from the network' is set to 'Administrators, Remote Desktop Users'":
+    'Access this computer from the network':
+      policy_value: 'Administrators,Remote Desktop Users'
+#    policy_value: '*S-1-5-32-544,*S-1-5-32-555'
+
+  "(L1) Ensure 'Act as part of the operating system' is set to 'No One'":
+    'Act as part of the operating system':
+#    policy_value: '*S-1-0-0'
+      ensure: 'absent'
+
+  "(L1) Ensure 'Adjust memory quotas for a process' is set to 'Administrators, LOCAL Service, NETWORK Service'":
+    'Adjust memory quotas for a process':
+      policy_value: 'Administrators,LocalService,Network Service'
+#    policy_value: '*S-1-5-32-544,*S-1-5-19,*S-1-5-20'
+
+  "(L1) Ensure 'Allow log on locally' is set to 'Administrators, Users'":
+    'Allow log on locally':
+      policy_value: 'Administrators,Users'
+#    policy_value: '*S-1-5-32-544,*S-1-5-32-545'
+
+  "(L1) Ensure 'Allow log on through Remote Desktop Services' is set to 'Administrators, Remote Desktop Users'":
+    'Allow log on through Remote Desktop Services':
+      policy_value: 'Administrators,Remote Desktop Users'
+#    policy_value: '*S-1-5-32-544,*S-1-5-32-555'
+
+  "(L1) Ensure 'Allow log on through Remote Desktop Services' is set to 'Administrators, Remote Desktop Users'":
+    'Back up files and directories':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+## Need to confirm if this is required anymore ?
+#    'Bypass traverse checking':
+#      policy_value: 'Administrators,AUTHENTICATED_USERS,LocalService,Network Service,*S-1-5-90-0'
+#      policy_value: '*S-1-5-32-544,*S-1-5-11,*S-1-5-19,*S-1-5-20,*S-1-5-90-0'
+
+  "(L1) Ensure 'Change the system time' is set to 'Administrators, LOCAL Service'":
+    'Change the system time':
+      policy_value: 'Administrators,LocalService'
+#    policy_value: '*S-1-5-32-544,*S-1-5-19'
+
+  "(L1) Ensure 'Change the time zone' is set to 'Administrators, LOCAL Service, Users'":
+    'Change the time zone':
+      policy_value: 'Administrators,LocalService,Users'
+#    policy_value: '*S-1-5-32-544,*S-1-5-19,*S-1-5-32-545'
+
+  "(L1) Ensure 'Create a pagefile' is set to 'Administrators'":
+    'Create a pagefile':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+  "(L1) Ensure 'Create a token object' is set to 'No One'":
+    'Create a token object':
+#    policy_value: '*S-1-0-0'
+      ensure: 'absent'
+
+  "(L1) Ensure 'Create global objects' is set to 'Administrators, LOCAL Service, NETWORK Service, Service'":
+    'Create global objects':
+      policy_value: 'Administrators,LocalService,Network Service,Service'
+#      policy_value: '*S-1-5-32-544,*S-1-5-19,*S-1-5-20,*S-1-5-6'
+
+  "(L1) Ensure 'Create permanent shared objects' is set to 'No One'":
+    'Create permanent shared objects':
+#    policy_value: '*S-1-0-0'
+      ensure: 'absent'
+
+  "(L1) Configure 'Create symbolic links'":
+    'Create symbolic links':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+# add virtual machines group '*S-1-5-83-0' to above if Hyper-V is installed
+
+  "(L1) Ensure 'Debug programs' is set to 'Administrators'":
+    'Debug programs':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+  "(L1) Ensure 'Deny access to this computer from the network' to include 'Guests, Local account'":
+    'Deny access to this computer from the network':
+      policy_value: 'Guests,Local account'
+#    policy_value: '*S-1-5-32-546,*S-1-5-113'
+# Configuring a standalone (non-domain-joined) workstation as described by CIS (with *S-1-5-113) above may result in an inability to remotely administer the workstation
+# Previous issue stopping Puppet from testing user passwords (thereby changing them every time) when Local account denied appear to be fixed with Puppet 6 as at 04/22
+
+  "(L1) Ensure 'Deny log on as a batch job' to include 'Guests'":
+    'Deny log on as a batch job':
+      policy_value: 'Guests'
+#    policy_value: '*S-1-5-32-546'
+
+  "(L1) Ensure 'Deny log on as a service' to include 'Guests'":
+    'Deny log on as a service':
+      policy_value: 'Guests'
+#    policy_value: '*S-1-5-32-546'
+
+  "(L1) Ensure 'Deny log on locally' to include 'Guests'":
+    'Deny log on locally':
+      policy_value: 'Guests'
+#    policy_value: '*S-1-5-32-546'
+
+  "(L1) Ensure 'Deny log on through Remote Desktop Services' to include 'Guests, Local account'":
+    'Deny log on through Remote Desktop Services':
+      policy_value: 'Guests,Local account'
+#    policy_value: '*S-1-5-32-546,*S-1-5-113'
+# Configuring a standalone (non-domain-joined) workstation as described (with *S-1-5-113) above may result in an inability to remotely administer the workstation
+
+  "(L1) Ensure 'Enable computer and user accounts to be trusted for delegation' is set to 'No One'":
+    'Enable computer and user accounts to be trusted for delegation':
+#    policy_value: '*S-1-0-0'
+      ensure: 'absent'
+
+  "(L1) Ensure 'Force shutdown from a remote system' is set to 'Administrators'":
+    'Force shutdown from a remote system':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+  "(L1) Ensure 'Generate security audits' is set to 'LOCAL Service, NETWORK Service'":
+    'Generate security audits':
+      policy_value: 'LocalService,Network Service'
+#    policy_value: '*S-1-5-19,*S-1-5-20'
+
+  "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL Service, NETWORK Service, Service'":
+    'Impersonate a client after authentication':
+      policy_value: 'Administrators,LocalService,Network Service,Service'
+#     policy_value: '*S-1-5-32-544,*S-1-5-19,*S-1-5-20,*S-1-5-6'
+
+  "(L1) Ensure 'Increase scheduling priority' is set to 'Administrators, Window Manager\\Window Manager Group'":
+    'Increase scheduling priority':
+      policy_value: 'Administrators,*S-1-5-90-0'
+#    policy_value: '*S-1-5-32-544,*S-1-5-90-0'
+
+## Need to confirm if this is required anymore ?
+#  'Increase a process working set':
+#    policy_value: 'Administrators,LocalService'
+#    policy_value: '*S-1-5-32-544,*S-1-5-19'
+
+  "(L1) Ensure 'Load and unload device drivers' is set to 'Administrators'":
+    'Load and unload device drivers':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+  "(L1) Ensure 'Lock pages in memory' is set to 'No One'":
+    'Lock pages in memory':
+#    policy_value: '*S-1-0-0'
+      ensure: 'absent'
+
+  "(L1) Ensure 'Manage auditing and security log' is set to 'Administrators'":
+    'Manage auditing and security log':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+  "(L1) Ensure 'Modify an object label' is set to 'No One'":
+    'Modify an object label':
+#    policy_value: '*S-1-0-0'
+      ensure: 'absent'
+
+  "(L1) Ensure 'Modify firmware environment values' is set to 'Administrators'":
+    'Modify firmware environment values':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+  "(L1) Ensure 'Perform volume maintenance tasks' is set to 'Administrators'":
+    'Perform volume maintenance tasks':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+  "(L1) Ensure 'Profile single process' is set to 'Administrators'":
+    'Profile single process':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+  "(L1) Ensure 'Profile system performance' is set to 'Administrators, NT Service\\WdiServiceHost'":
+    'Profile system performance':
+      policy_value: 'Administrators,*S-1-5-80-3139157870-2983391045-3678747466-658725712-1809340420'
+#    policy_value: '*S-1-5-32-544,*S-1-5-80-3139157870-2983391045-3678747466-658725712-1809340420'
+
+  "(L1) Ensure 'Replace a process level token' is set to 'LOCAL Service, NETWORK Service'":
+    'Replace a process level token':
+      policy_value: 'LocalService,Network Service'
+#    policy_value: '*S-1-5-19,*S-1-5-20'
+
+  "(L1) Ensure 'Restore files and directories' is set to 'Administrators'":
+    'Restore files and directories':
+      policy_value: 'Administrators'
+#      policy_value: '*S-1-5-32-544'
+
+  "(L1) Ensure 'Shut down the system' is set to 'Administrators, Users'":
+    'Shut down the system':
+      policy_value: 'Administrators,Users'
+#      policy_value: '*S-1-5-32-544,*S-1-5-32-545'
+
+## Need to confirm if this is required anymore ?
+#  'Shutdown: Allow system to be shut down without having to log on':
+#    policy_value: '0'
+
+## Need to confirm if this is required anymore ?
+#    'Shutdown: Clear virtual memory pagefile'
+#      policy_value: '1'
+
+  "(L1) Ensure 'Take ownership of files or other objects' is set to 'Administrators'":
+    'Take ownership of files or other objects':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+  "(L1) Ensure 'Accounts: Block Microsoft accounts' is set to 'Users can't add or log on with Microsoft accounts'":
+    'Accounts: Block Microsoft accounts':
+      policy_value: '3'
+
+  "(L1) Ensure 'Accounts: Limit local account use of blank passwords to console logon only' is set to 'Enabled'":
+    'Accounts: Limit local account use of blank passwords to console logon only':
+      policy_value: '1'
+
+  "(L1) Ensure 'Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings' is set to 'Enabled'":
+    'Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings':
+      policy_value: '1'
+
+## Need to confirm if this is required anymore ?
+#  'Devices: Allow undock without having to log on':
+#    policy_value: '0'
+
+
+## Need to confirm if this is required anymore ?
+#  'Devices: Restrict CD-ROM access to locally logged-on user only':
+#    policy_value: '"1"'
+
+## Need to confirm if this is required anymore ?
+#  'Devices: Restrict floppy access to locally logged-on user only':
+#    policy_value: '"1"'
+
+  "(L1) Configure 'Interactive logon: Message text for users attempting to log on'":
+    'Interactive logon: Message title for users attempting to log on':
+#    policy_value: '"notice and consent banner"'
+      policy_value: '"%{lookup("cis_security_hardening_windows::logon_banner")}"'
+
+  "(L1) Configure 'Interactive logon: Message title for users attempting to log on'":
+    'Interactive logon: Message text for users attempting to log on':
+#    policy_value: 'all activities performed on this system will be monitored.'
+      policy_value: "%{lookup('cis_security_hardening_windows::logon_message')}"
+
+## Need to confirm if this is required anymore ?
+#  'Interactive logon: Require Domain Controller authentication to unlock workstation':
+#    policy_value: '1'
+
+#  (L1) Ensure 'Network access: Allow anonymous SID/Name translation' is set to 'Disabled' 
+    'Network access: Allow anonymous SID/name translation':
+      policy_value: '0'
+
+  "(L1) Ensure 'Network security: Force logoff when logon hours expire' is set to 'Enabled'":
+    'Network security: Force logoff when logon hours expire':
+      policy_value: '1'
+
+## Need to confirm if this is required anymore ?
+#  'Remove computer from docking station':
+#    policy_value: 'Administrators'
+#      policy_value: '*S-1-5-32-544'
+
+## Need to confirm if this is required anymore ?
+#  'System settings: Optional subsystems':
+#    ensure: 'absent'
+
+## Need to confirm if this is required anymore ?
+#  'System settings: Use Certificate Rules on Windows Executables for Software Restriction Policies':
+#    policy_value: '1'
+
+## Need to confirm if this is required anymore ?
+#  'Synchronize directory service data':
+#    ensure: 'absent'
+
+## Need to confirm if this is required anymore ?
+#  'System cryptography: Use FIPS compliant algorithms for encryption, hashing, and signing':
+#    policy_value: '1'
+
+## removed in v1.6.0 1809
+#  'User Account Control: Allow UIAccess applications to prompt for elevation without using the secure desktop':
+#    policy_value: '0'
+
+## Need to confirm if this is required anymore ?
+#  'User Account Control: Only elevate executables that are signed and validated':
+#    policy_value: '1'
+
+## Need to confirm if this is required anymore ?
+# new settings from kpn-local_security_policy.  Suspect that almost any setting can now be used (tbc)
+#  'Add workstations to domain':
+#    policy_value: 'Administrators'
+#      policy_value: '*S-1-5-32-544'
+
+# Removed in v1.1.0
+#  'Recovery console: Allow automatic administrative logon':
+#    policy_value: '0'
+
+# Removed in v1.1.0
+#  'Recovery console: Allow floppy copy and access to all drives and all folders':
+#    policy_value: '0'
+
+
+## ----------- updates from CIS 22H2 v2.0.0 ----------- ##
+
+# not yet available in ayohrling/local_security_policy
+# (L1) Ensure 'Allow Administrator account lockout' is set to 'Enabled'
+# Ensure 'Allow Administrator account lockout' is set to 'Enabled'
+#  'Allow Administrator account lockout':
+#    policy_value: '1'
+
+
+
+cis_security_hardening_windows::cis_secpol_level_2:
+
+  "(L2) Ensure 'Log on as a batch job' is set to 'Administrators'":
+    'Log on as a batch job':
+      policy_value: 'Administrators'
+#    policy_value: '*S-1-5-32-544'
+
+  "(L2) Configure 'Log on as a service'":
+    'Log on as a service':
+      policy_value: 'WDAGUtilityAccount'
+#    policy_value: '*S-1-0-0'
+#      ensure: 'absent'

@@ -1,0 +1,28 @@
+# Use default_module_facts.yml for module specific facts.
+#
+# Facts specified here will override the values provided by rspec-puppet-facts.
+---
+ipaddress: "172.16.254.254"
+ipaddress6: "FE80:0000:0000:0000:AAAA:AAAA:AAAA"
+macaddress: "c0:ff:ee:c0:ff:ee"
+is_pe: false
+networking:
+  fqdn: "test.host"
+  hostname: "test"
+  ip: "1.2.3.4"
+  domain: 'host.local'
+  interfaces:
+    eth0:
+      mac: c0:ff:ee:c0:ff:ee
+      ip: "1.2.3.4"
+  dhcp: "192.168.0.1"
+profile_state_fact: on
+in_policy_fact: "BlockInbound"
+out_policy_fact: "BlockOutbound"
+
+# Values for custom facts
+networking_dns:
+  nameserver: ['1.1.1.1','2.2.2.2']
+windows:
+  release: '10'
+#  display_version: "22H2"

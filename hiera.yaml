@@ -1,0 +1,14 @@
+---
+version: 5
+
+hierarchy:
+  - name: "Windows globbing"
+    glob: "windows/*.yaml"
+
+  - name: "Windows custom facts release globbing"
+    glob: "windows/%{facts.windows.release}/*.yaml"
+
+  # merge strategy is defined in common.yaml
+  - name: "Other YAML hierarchy levels"
+    paths:
+      - "common.yaml"

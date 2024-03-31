@@ -1,0 +1,6 @@
+--relative
+--no-140chars-check
+--no-documentation-check
+#--no-parameter_types-check
+#--no-parameter_documentation-check
+#--no-lookup_in_parameter-check

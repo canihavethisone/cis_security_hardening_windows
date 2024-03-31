@@ -1,0 +1,26 @@
+---
+cis_security_hardening_windows::users:
+# comments are only required for matching builtin accounts
+# passwords should be unique and not defaulted
+# groups should be individaully managed and not defaulted
+# name is not required as the key defines it unless desired otherwise
+# some built-in accounts, including guest, cannot have passwords
+# Administrator and Guest accounts are disabled by Secpol.  Renaming for obfuscation is done here
+# Win10 requires DefaultAccount and WDAGUtilityAccount to be defined to avoid purging
+
+  'Administrator':
+    name:        "%{lookup('cis_security_hardening_windows::disabled_administrator_newname')}"
+    groups:      ['Administrators']
+    password:    "%{lookup('cis_security_hardening_windows::disabled_administrator_newpassword')}"
+    comment:     'Built-in account for administering the computer/domain'
+
+  'Guest':
+    name:        "%{lookup('cis_security_hardening_windows::disabled_guest_newname')}"
+    groups:      ['Guests']
+    comment:     'Built-in account for guest access to the computer/domain'
+
+  'DefaultAccount':
+    comment:     'A user account managed by the system.'
+
+  'WDAGUtilityAccount':
+    comment:     'A user account managed and used by the system for Windows Defender Application Guard scenarios.' 

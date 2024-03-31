@@ -1,0 +1,402 @@
+---
+cis_security_hardening_windows::cis_bitlocker:
+
+## ----------- CIS hardening Windows 10.1709 v1.4.0 ----------- ##
+
+  "(BL) Ensure 'Interactive logon: Machine account lockout threshold' is set to '10 or fewer invalid logon attempts, but not 0'":
+    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\MaxDevicePasswordFailedAttempts':
+      ensure:    present
+      data:      4
+
+  "(BL) Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDs':
+      ensure:    present
+
+  "(BL) Ensure 'Prevent installation of devices that match any of these device IDs: Prevent installation of devices that match any of these device IDs' is set to 'PCI\\CC_0C0A'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDs\1':
+      ensure:    present
+      type:      'string'
+      data:      'PCI\CC_0C0A'
+
+  "(BL) Ensure 'Prevent installation of devices that match any of these device IDs: Also apply to matching devices that are already installed' is set to True (checked)'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDsRetroactive':
+      ensure:    present
+
+  "(BL) Ensure 'Prevent installation of devices using drivers that match these device setup classes' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses':
+      ensure:    present
+
+  "(BL) Ensure 'Prevent installation of devices using drivers that match these device setup classes: Prevent installation of devices using drivers for these device setup' is set to 'IEEE 1394 device setup classes'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses\1':
+      ensure:    present
+      type:      'string'
+      data:      '{d48179be-ec20-11d1-b6b8-00c04fa372a7}'
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses\2':
+      ensure:    present
+      type:      'string'
+      data:      '{7ebefbc0-3200-11d2-b4c2-00a0C9697d07}'
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses\3':
+      ensure:    present
+      type:      'string'
+      data:      '{c06ff265-ae09-48f0-812c-16753d7cba83}'
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses\4':
+      ensure:    present
+      type:      'string'
+      data:      '{6bdd1fc1-810f-11d0-bec7-08002be2092f}'
+
+  "(BL) Ensure 'Prevent installation of devices using drivers that match these device setup classes: Also apply to matching devices that are already installed' is set to 'True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClassesRetroactive':
+      ensure:    present
+
+  "(BL) Ensure 'Allow standby states (S1-S3) when sleeping (on battery)' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Power\PowerSettings\abfc2519-3608-4c2a-94ea-171b0ed546ab\DCSettingIndex':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Allow standby states (S1-S3) when sleeping (plugged in)' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Power\PowerSettings\abfc2519-3608-4c2a-94ea-171b0ed546ab\ACSettingIndex':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Allow access to BitLocker-protected fixed data drives from earlier versions of Windows' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVDiscoveryVolumeType':
+      ensure:    present
+      type:      'string'
+      data:      '<none>'
+
+  "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVRecovery':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Allow data recovery agent' is set to 'Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVManageDRA':
+      ensure:    present
+
+# Renamed in v3.0.0
+  "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Recovery Password' is set to 'Enabled: Allow 48-digit recovery password' or higher":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVRecoveryPassword':
+      ensure:    present
+      data:      2
+
+# Renamed in v3.0.0
+  "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Recovery Key' is set to 'Enabled: Allow 256-bit recovery key' or higher":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVRecoveryKey':
+      ensure:    present
+      data:      2
+
+  "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Omit recovery options from the BitLocker setup wizard' is set to 'Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVHideRecoveryPage':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Save BitLocker recovery information to AD DS for fixed data drives' is set to 'Enabled: False'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVActiveDirectoryBackup':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Configure storage of BitLocker recovery information to AD DS' is set to 'Enabled: Backup recovery passwords and key packages'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVActiveDirectoryInfoToStore':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Do not enable BitLocker until recovery information is stored to AD DS for fixed data drives' is set to 'Enabled: False'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVRequireActiveDirectoryBackup':
+      ensure:    present
+      data:      0
+
+## changed from enabled to disabled in v1.11.0 21H1
+  "(BL) Ensure 'Configure use of hardware-based encryption for fixed data drives' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVHardwareEncryption':
+      ensure:    present
+      data:      0
+
+## removed in v1.11.0 21H1
+#  "(BL) Configure use of hardware-based encryption for fixed data drives: Use BitLocker software-based encryption when hardware encryption is not available is set to Enabled: True":
+#    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVAllowSoftwareEncryptionFailover':
+#      ensure:    present
+
+## removed in v1.11.0 21H1
+#  "(BL) Configure use of hardware-based encryption for fixed data drives: Restrict encryption algorithms and cipher suites allowed for hardware-based encryption is set to Enabled: False":
+#    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVRestrictHardwareEncryptionAlgorithms':
+#      ensure:    present
+#      data:      0
+
+## removed in v1.11.0 21H1
+#  "(BL) Configure use of hardware-based encryption for fixed data drives: Restrict crypto algorithms or cipher suites to the following: is set to Enabled: 2.16.840.1.101.3.4.1.2;2.16.840.1.101.3.4.1.42":
+#    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVAllowedHardwareEncryptionAlgorithms':
+#      ensure:    present
+#      type:      'expand'
+#      data:      '2.16.840.1.101.3.4.1.2;2.16.840.1.101.3.4.1.42'
+
+  "(BL) Ensure 'Configure use of passwords for fixed data drives' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVPassphrase':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Configure use of smart cards on fixed data drives' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVAllowUserCert':
+      ensure:    present
+
+  "(BL) Ensure 'Configure use of smart cards on fixed data drives: Require use of smart cards on fixed data drives' is set to Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVEnforceUserCert':
+      ensure:    present
+
+  "(BL) Ensure 'Allow enhanced PINs for startup' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\UseEnhancedPin':
+      ensure:    present
+
+  "(BL) Ensure 'Allow Secure Boot for integrity validation' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSAllowSecureBootForIntegrity':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSRecovery':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Allow data recovery agent' is set to 'Enabled: False'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSManageDRA':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Recovery Password' is set to 'Enabled: Require 48-digit recovery password'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSRecoveryPassword':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Recovery Key' is set to 'Enabled: Do not allow 256-bit recovery key'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSRecoveryKey':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Omit recovery options from the BitLocker setup wizard' is set to 'Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSHideRecoveryPage':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Save BitLocker recovery information to AD DS for operating system drives' is set to 'Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSActiveDirectoryBackup':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Configure storage of BitLocker recovery information to AD DS' is set to 'Enabled: Store recovery passwords and key packages'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSActiveDirectoryInfoToStore':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Do not enable BitLocker until recovery information is stored to AD DS for operating system drives' is set to 'Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSRequireActiveDirectoryBackup':
+      ensure:    present
+
+## removed in v1.6.0 1809
+##  "(BL) Configure minimum PIN length for startup is set to Enabled: 7 or more characters":
+#      'HKLM\SOFTWARE\Policies\Microsoft\FVE\MinimumPIN':
+#        ensure:    present
+#        data:      7
+
+## changed from enabled to disabled in v1.11.0 21H1
+  "(BL) Ensure 'Configure use of hardware-based encryption for operating system drives' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSHardwareEncryption':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Configure use of hardware-based encryption for operating system drives: Use BitLocker software-based encryption when hardware encryption is not available' is set to 'Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSAllowSoftwareEncryptionFailover':
+      ensure:    present
+
+  "(BL) Ensure 'Configure use of hardware-based encryption for operating system drives: Restrict encryption algorithms and cipher suites allowed for hardware-based encryption' is set to 'Enabled: False'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSRestrictHardwareEncryptionAlgorithms':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Configure use of hardware-based encryption for operating system drives: Restrict crypto algorithms or cipher suites to the following' is set to 'Enabled: 2.16.840.1.101.3.4.1.2;2.16.840.1.101.3.4.1.42'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSAllowedHardwareEncryptionAlgorithms':
+      ensure:    present
+      type:      'expand'
+      data:      '2.16.840.1.101.3.4.1.2;2.16.840.1.101.3.4.1.42'
+
+  "(BL) Ensure 'Configure use of passwords for operating system drives' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSPassphrase':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Require additional authentication at startup' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\UseAdvancedStartup':
+      ensure:    present
+
+  "(BL) Ensure 'Require additional authentication at startup: Allow BitLocker without a compatible TPM' is set to 'Enabled: False'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\EnableBDEWithNoTPM':
+      ensure:    present
+      data:      0
+
+## removed in v1.6.0 1809
+#  "(BL) Require additional authentication at startup: Configure TPM startup: is set to Enabled: Do not allow TPM":
+#      'HKLM\SOFTWARE\Policies\Microsoft\FVE\UseTPM':
+#        ensure:    present
+#        data:      0
+
+## removed in v1.6.0 1809
+#  "(BL) Require additional authentication at startup: Configure TPM startup PIN: is set to Enabled: Require startup PIN with TPM":
+#      'HKLM\SOFTWARE\Policies\Microsoft\FVE\UseTPMPIN':
+#        ensure:    present
+
+## removed in v1.6.0 1809
+#  "(BL) Require additional authentication at startup: Configure TPM startup key: is set to Enabled: Do not allow startup key with TPM":
+#      'HKLM\SOFTWARE\Policies\Microsoft\FVE\UseTPMKey':
+#        ensure:    present
+#        data:      0
+
+## removed in v1.6.0 1809
+#  "(BL) Require additional authentication at startup: Configure TPM startup key and PIN: is set to Enabled: Do not allow startup key and PIN with TPM":
+#      'HKLM\SOFTWARE\Policies\Microsoft\FVE\UseTPMKeyPIN':
+#        ensure:    present
+#        data:      0
+
+  "(BL) Ensure 'Allow access to BitLocker-protected removable data drives from earlier versions of Windows' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVDiscoveryVolumeType':
+      ensure:    present
+      type:      'string'
+      data:      '<none>'
+
+  "(BL) Ensure 'Choose how BitLocker-protected removable drives can be recovered' is set to Enabled":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVRecovery':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected removable drives can be recovered: Allow data recovery agent' is set to 'Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVManageDRA':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected removable drives can be recovered: Recovery Password' is set to 'Enabled: Do not allow 48-digit recovery password'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVRecoveryPassword':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Choose how BitLocker-protected removable drives can be recovered: Recovery Key' is set to 'Enabled: Do not allow 256-bit recovery key'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVRecoveryKey':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Choose how BitLocker-protected removable drives can be recovered: Omit recovery options from the BitLocker setup wizard' is set to 'Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVHideRecoveryPage':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected removable drives can be recovered: Save BitLocker recovery information to AD DS for removable data drives' is set to 'Enabled: False'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVActiveDirectoryBackup':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Choose how BitLocker-protected removable drives can be recovered: Configure storage of BitLocker recovery information to AD DS' is set to 'Enabled: Backup recovery passwords and key packages'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVActiveDirectoryInfoToStore':
+      ensure:    present
+
+  "(BL) Ensure 'Choose how BitLocker-protected removable drives can be recovered: Do not enable BitLocker until recovery information is stored to AD DS for removable data drives' is set to 'Enabled: False'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVRequireActiveDirectoryBackup':
+      ensure:    present
+      data:      0
+
+## changed from enabled to disabled in v1.11.0 21H1
+  "(BL) Ensure 'Configure use of hardware-based encryption for removable data drives' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVHardwareEncryption':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Configure use of hardware-based encryption for removable data drives: Use BitLocker software-based encryption when hardware encryption is not available' is set to 'Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVAllowSoftwareEncryptionFailover':
+      ensure:    present
+
+  "(BL) Ensure 'Configure use of hardware-based encryption for removable data drives: Restrict encryption algorithms and cipher suites allowed for hardware-based encryption' is set to 'Enabled: False'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVRestrictHardwareEncryptionAlgorithms':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Configure use of hardware-based encryption for removable data drives: Restrict crypto algorithms or cipher suites to the following' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVAllowedHardwareEncryptionAlgorithms':
+      ensure:    present
+      type:      'expand'
+      data:      '2.16.840.1.101.3.4.1.2;2.16.840.1.101.3.4.1.42'
+
+  "(BL) Ensure 'Configure use of passwords for removable data drives' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVPassphrase':
+      ensure:    present
+      data:      0
+
+  "(BL) Ensure 'Configure use of smart cards on removable data drives' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVAllowUserCert':
+      ensure:    present
+
+  "(BL) Ensure 'Configure use of smart cards on removable data drives: Require use of smart cards on removable data drives' is set to 'Enabled: True'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVEnforceUserCert':
+      ensure:    present
+
+  "(BL) Ensure 'Deny write access to removable drives not protected by BitLocker' is set to 'Enabled'":
+    'HKLM\SYSTEM\CurrentControlSet\Policies\Microsoft\FVE\RDVDenyWriteAccess':
+      ensure:    present
+
+  "(BL) Ensure 'Deny write access to removable drives not protected by BitLocker: Do not allow write access to devices configured in another organization' is set to 'Enabled: False'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVDenyCrossOrg':
+      ensure:    present
+      data:      0
+
+## removed in 1903 v1.7.0
+#  "(BL) Choose drive encryption method and cipher strength (Windows 10 [Version 1511] and later) is set to Enabled: XTSAES 256-bit":
+#      'HKLM\SOFTWARE\Policies\Microsoft\FVE\EncryptionMethodWithXtsFdv':
+#        ensure:    present
+#        data:      7
+#      'HKLM\SOFTWARE\Policies\Microsoft\FVE\EncryptionMethodWithXtsOs':
+#        ensure:    present
+#        data:      7
+#      'HKLM\SOFTWARE\Policies\Microsoft\FVE\EncryptionMethodWithXtsRdv':
+#        ensure:    present
+#        data:      4
+
+  "(BL) Ensure 'Disable new DMA devices when this computer is locked' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\DisableExternalDMAUnderLock':
+      ensure:    present
+
+  "(BL) Bitlocker Misc (to verify if required)":
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVEnforcePassphrase':
+      ensure:    present
+      data:      0
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVNoBitLockerToGoReader':
+      ensure:    present
+      data:      0
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSPassphraseASCIIOnly':
+      ensure:    present
+      data:      0
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVEnforcePassphrase':
+      ensure:    present
+      data:      0
+    'HKLM\SOFTWARE\Policies\Microsoft\FVE\RDVNoBitLockerToGoReader':
+      ensure:    present
+      data:      0
+
+
+## ----------- updates from CIS 1803 v1.5.0 ----------- ##
+
+# none
+
+
+## ----------- updates from CIS 1809 v1.6.0 ----------- ##
+
+  "(BL) Ensure 'Enumeration policy for external devices incompatible with Kernel DMA Protection' is set to 'Enabled: Block All'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Kernel DMA Protection\DeviceEnumerationPolicy':
+      ensure:    present
+      data:      0
+
+
+## ----------- updates from CIS 1903/9 v1.7.0/v1.8.0 ----------- ##
+
+# none
+
+
+## ----------- updates from CIS 2004 v1.9.0 ----------- ##
+
+# none
+
+
+## ----------- updates from CIS 20H2 v1.10.0 ----------- ##
+
+# none
+
+
+## ----------- updates from CIS 21H1 v1.11.0 ----------- ##
+
+# none
+
+
+## ----------- updates from CIS 21H2 v1.12.0 ----------- ##
+
+# none

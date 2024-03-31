@@ -1,0 +1,27 @@
+---
+cis_security_hardening_windows::misc_registry:
+
+## custom additions
+
+# Puppet use dedicated Event Log entry
+  'HKLM\SYSTEM\CurrentControlSet\Services\EventLog\Puppet\Puppet\EventMessageFile':
+    ensure: present
+    data:   'C:\Program Files\Puppet Labs\Puppet\puppet\bin\puppetres.dll'
+    type:   'expand'
+
+# Turn on Controlled Folder Acess
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Windows Defender Exploit Guard\Controlled Folder Access\EnableControlledFolderAccess':
+#      ensure:  present
+
+# Turn on Core Isolation
+#    'HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity\Enabled':
+#      ensure:  present
+
+
+## ----------- from STIG ----------- ##
+# The Server Message Block (SMB) v1 protocol must be disabled on the SMB client
+# note the format to use an array in puppet
+  'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\DependOnService':
+    ensure:    present
+    type:      'array'
+    data:      [Bowser,MRxSmb20,NSI]

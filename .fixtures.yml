@@ -1,0 +1,16 @@
+# This file can be used to install module dependencies for unit testing
+# See https://github.com/puppetlabs/puppetlabs_spec_helper#using-fixtures for details
+---
+fixtures:
+  forge_modules:
+    # this module dependencies
+    stdlib:                     "puppetlabs-stdlib"
+    auditpol:                   "fervid-auditpol"
+    firewall:                   "puppetlabs-firewall"
+    inifile:                    "puppetlabs-inifile"
+    local_security_policy:      "ayohrling-local_security_policy"
+    powershell:                 "puppetlabs-powershell"
+    reboot:                     "puppetlabs-reboot"
+    registry:                   "puppetlabs-registry"
+    windows_firewall:           "webalex-windows_firewall"
+    pwshlib:                    "puppetlabs-pwshlib"

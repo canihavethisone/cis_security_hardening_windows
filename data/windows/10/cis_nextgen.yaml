@@ -1,0 +1,89 @@
+---
+cis_security_hardening_windows::cis_nextgen:
+
+## ----------- CIS hardening Windows 10.1709 v1.4.0 ----------- ##
+
+  "(NG) Ensure 'Allow auditing events in Microsoft Defender Application Guard is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\AppHVSI\AuditApplicationGuard':
+      ensure:    present
+
+  "(NG) Ensure 'Allow data persistence for Microsoft Defender Application Guard' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\AppHVSI\AllowPersistence':
+      ensure:    present
+      data:      0
+
+  "(NG) Ensure 'Configure Microsoft Defender Application Guard clipboard settings: Clipboard behavior setting' is set to 'Enabled: Enable clipboard operation from an isolated session to the host'":
+    'HKLM\SOFTWARE\Policies\Microsoft\AppHVSI\AppHVSIClipboardSettings':
+      ensure:    present
+    'HKLM\SOFTWARE\Policies\Microsoft\AppHVSI\AppHVSIClipboardFileType':
+      ensure:    present
+
+  "(NG) Ensure 'Turn on Microsoft Defender Application Guard in Managed Mode' is set to 'Enabled'":
+  # changed from 3 to 1 in v1.6.0 1809 so virtualisation is Edge only, not Edge & Office
+    'HKLM\SOFTWARE\Policies\Microsoft\AppHVSI\AllowAppHVSI_ProviderSet':
+      ensure:    present
+
+
+## ----------- updates from CIS 1803 v1.5.0 ----------- ##
+
+  "(NG) Allow files to download and save to the host operating system from Microsoft Defender Application Guard":
+    'HKLM\SOFTWARE\Policies\Microsoft\AppHVSI\SaveFilesToHost':
+      ensure:    present
+      data:      0
+
+
+## ----------- updates from CIS 1809 v1.6.0 ----------- ##
+
+  "(NG) Ensure 'Turn On Virtualization Based Security: Secure Launch Configuration' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\ConfigureSystemGuardLaunch':
+      ensure:    present
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\EnableVirtualizationBasedSecurity':
+      ensure:    present
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\HVCIMATRequired':
+      ensure:    present
+#      data:      0
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\HypervisorEnforcedCodeIntegrity':
+      ensure:    present
+#      data:      3
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\LsaCfgFlags':
+      ensure:    present
+#      data:      3
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\RequirePlatformSecurityFeatures':
+      ensure:    present
+      data:      3
+
+  "(NG) Ensure 'Allow camera and microphone access in Windows Defender Application Guard'":
+    'HKLM\SOFTWARE\Policies\Microsoft\AppHVSI\AllowCameraMicrophoneRedirection':
+      ensure:    present
+      data:      0
+
+
+## ----------- updates from CIS 1903/9 v1.7.0/v1.8.0 ----------- ##
+
+# none
+
+
+## ----------- updates from CIS 2004 v1.9.0 ----------- ##
+
+# none
+
+
+## ----------- updates from CIS 20H2 v1.10.0 ----------- ##
+
+# none
+
+
+## ----------- updates from CIS 21H1 v1.11.0 ----------- ##
+
+# none
+
+
+## ----------- updates from CIS 21H2 v1.12.0 ----------- ##
+
+# none
+
+## ----------- updates from CIS 22H2 v2.0.0 ----------- ##
+
+  "(NG) Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock'":
+    'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\ConfigureLsaProtectedProcess':
+      ensure:    present
