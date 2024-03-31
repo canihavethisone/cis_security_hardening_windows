@@ -119,7 +119,7 @@ See the Puppet Strings [documentation](REFERENCE.md).
 
 ## Development
 
-Github repo is not yet available for contributions
+Github repo is available for contributions at https://github.com/canihavethisone/cis_security_hardening_windows
 
 
 ## Release Notes
