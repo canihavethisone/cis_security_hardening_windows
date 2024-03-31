@@ -1,10 +1,10 @@
 {
   "name": "canihavethisone-cis_security_hardening_windows",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "author": "canihavethisone",
   "summary": "Harden Windows to CIS standards",
   "license": "Apache-2.0",
-  "source": "",
+  "source": "https://github.com/canihavethisone/cis_security_hardening_windows",
   "dependencies": [
     {
       "name": "ayohrling-local_security_policy",
