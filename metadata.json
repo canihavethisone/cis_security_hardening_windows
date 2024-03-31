@@ -2,9 +2,10 @@
   "name": "canihavethisone-cis_security_hardening_windows",
   "version": "0.1.0",
   "author": "canihavethisone",
-  "summary": "Harden Windows to CIS standards",
+  "summary": "Harden Windows 10 & 11 to CIS standards",
   "license": "Apache-2.0",
   "source": "https://github.com/canihavethisone/cis_security_hardening_windows",
+  "project_page": "https://github.com/canihavethisone/cis_security_hardening_windows",
   "dependencies": [
     {
       "name": "ayohrling-local_security_policy",
@@ -13,10 +14,6 @@
     {
       "name": "fervid-auditpol",
       "version_requirement": ">= 1.0.1 < 2.0.0"
-    },
-    {
-      "name": "puppetlabs-firewall",
-      "version_requirement": ">= 8.0.1 < 9.0.0"
     },
     {
       "name": "puppetlabs-inifile",
