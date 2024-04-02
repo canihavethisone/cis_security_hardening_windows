@@ -30,6 +30,7 @@ include cis_security_hardening_windows
 The following parameters are available in the `cis_security_hardening_windows` class:
 
 * [`users`](#-cis_security_hardening_windows--users)
+* [`purge_unmanaged_users`](#-cis_security_hardening_windows--purge_unmanaged_users)
 * [`cis_profile_type`](#-cis_security_hardening_windows--cis_profile_type)
 * [`cis_enforcement_level`](#-cis_security_hardening_windows--cis_enforcement_level)
 * [`cis_include_bitlocker`](#-cis_security_hardening_windows--cis_include_bitlocker)
@@ -37,6 +38,7 @@ The following parameters are available in the `cis_security_hardening_windows` c
 * [`cis_exclude_rules`](#-cis_security_hardening_windows--cis_exclude_rules)
 * [`cis_include_hkcu`](#-cis_security_hardening_windows--cis_include_hkcu)
 * [`misc_registry`](#-cis_security_hardening_windows--misc_registry)
+* [`enable_administrator`](#-cis_security_hardening_windows--enable_administrator)
 * [`enable_remote_desktop`](#-cis_security_hardening_windows--enable_remote_desktop)
 * [`trusted_rdp_subnets`](#-cis_security_hardening_windows--trusted_rdp_subnets)
 * [`remote_local_accounts`](#-cis_security_hardening_windows--remote_local_accounts)
@@ -52,6 +54,14 @@ Data type: `Hash`
 Any users to create
 
 Default value: `lookup( 'users',                    Hash,                         'deep', {})`
+
+##### <a name="-cis_security_hardening_windows--purge_unmanaged_users"></a>`purge_unmanaged_users`
+
+Data type: `Boolean`
+
+If unmanaged users should be purged. Requires users hash to be defined
+
+Default value: `lookup( 'purge_unmanaged_users',    Boolean,                      undef,    false )`
 
 ##### <a name="-cis_security_hardening_windows--cis_profile_type"></a>`cis_profile_type`
 
@@ -108,6 +118,14 @@ Data type: `Hash`
 Lookup of misc registry items to apply.  Currently sets Puppet logging to event viewer and disables SMB1
 
 Default value: `lookup( 'misc_registry',            Hash,                         'deep', {})`
+
+##### <a name="-cis_security_hardening_windows--enable_administrator"></a>`enable_administrator`
+
+Data type: `Boolean`
+
+If the local adminsitrator account is enabled. Note that account must be renamed if enabled or not
+
+Default value: `lookup( 'enable_administrator',     Boolean,                      undef,    true )`
 
 ##### <a name="-cis_security_hardening_windows--enable_remote_desktop"></a>`enable_remote_desktop`
 
