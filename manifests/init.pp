@@ -5,7 +5,6 @@
 # @example Declaring the class
 #   include cis_security_hardening_windows
 #
-#
 # @param [Hash]                          users                    Any users to create
 # @param [Boolean]                       purge_unmanaged_users    If unmanaged users should be purged. Requires users hash to be defined
 # @param [Enum['domain', 'standalone']]  cis_profile_type         Apply domain or standalone CIS benchmark 
