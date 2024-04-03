@@ -31,7 +31,7 @@ describe 'cis_security_hardening_windows' do
 
         describe 'With defaults' do
           # Write out catalogue
-          # it { File.write('cis_security_hardening_windows_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write('cis_security_hardening_windows_defaults_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource)) }
 
           # compile with deps & create class
           # it { pp catalogue.resources }
@@ -41,11 +41,18 @@ describe 'cis_security_hardening_windows' do
           it { is_expected.not_to contain_class('cis_security_hardening_windows::remote_desktop') }
 
           ## Users
-          users = ['Administrator', 'DefaultAccount', 'Guest', 'WDAGUtilityAccount', 'User']
+          users = ['Administrator', 'DefaultAccount', 'Guest', 'WDAGUtilityAccount']
           users.each do |name|
             it do
-              is_expected.to contain_user(name)
+              is_expected.not_to contain_user(name)
             end
+          end
+
+          # Local Security Policy
+          it do
+            is_expected.to contain_local_security_policy('Accounts: Administrator account status').with(
+              'policy_value' => '0',
+            )
           end
 
           # Resources
@@ -71,10 +78,12 @@ describe 'cis_security_hardening_windows' do
           let(:params) do
             { 'catalog_no_cache' => true,
               'performance_powerscheme' => true,
-              'clear_temp_files' => true }
+              'clear_temp_files' => true,
+              'enable_administrator' => true,
+              'purge_unmanaged_users' => true, }
           end
           # Write out catalogue
-          # it { File.write('cis_security_hardening_windows_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write('cis_security_hardening_windows_misc_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource)) }
 
           # compile with deps & create class
           # it { pp catalogue.resources }
@@ -89,6 +98,13 @@ describe 'cis_security_hardening_windows' do
             it do
               is_expected.to contain_user(name)
             end
+          end
+
+          # Local Security Policy
+          it do
+            is_expected.to contain_local_security_policy('Accounts: Administrator account status').with(
+              'policy_value' => '1',
+            )
           end
 
           ## Execs
@@ -240,7 +256,7 @@ describe 'cis_security_hardening_windows' do
             end
           end
 
-          ## Secpol
+          ## Local Security Policy
           # List of YAML files to load, dynamically using the Windows release version
           yaml_file = YAML.load_file('./data/windows/secpol.yaml')
 
@@ -274,7 +290,7 @@ describe 'cis_security_hardening_windows' do
             end
           end
 
-          ## Auditpol
+          ## Audit Policy
           # List of YAML files to load, dynamically using the Windows release version
           yaml_file = YAML.load_file('./data/windows/auditpol.yaml')
 

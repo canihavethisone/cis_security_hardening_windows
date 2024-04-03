@@ -35,7 +35,7 @@ class cis_security_hardening_windows (
   $cis_exclude_rules       = lookup( 'cis_exclude_rules',        Array,                        'deep', []),
   $cis_include_hkcu        = lookup( 'cis_include_hkcu',         Boolean,                      undef,    true  ),
   $misc_registry           = lookup( 'misc_registry',            Hash,                         'deep', {}),
-  $enable_administrator    = lookup( 'enable_administrator',     Boolean,                      undef,    true ),
+  $enable_administrator    = lookup( 'enable_administrator',     Boolean,                      undef,    false ),
   $enable_remote_desktop   = lookup( 'enable_remote_desktop',    Boolean,                      undef,    false ),
   $trusted_rdp_subnets     = lookup( 'trusted_rdp_subnets',      Array,                        undef, []),
   $remote_local_accounts   = lookup( 'remote_local_accounts',    Boolean,                      undef,    true  ),
@@ -59,8 +59,10 @@ class cis_security_hardening_windows (
     fail('You cannot purge unmanaged users without defining a users hash to manage users.')
   }
 
-  # Ensure that the local_security_policy for local Administrator is collected and set
-  Local_security_policy <| title == 'Accounts: Administrator account status' |> { policy_value => $enable_administrator ? { true  => 1, default => 0, }}
+  # Ensure that the local_security_policy for local Administrator is set
+  local_security_policy { 'Accounts: Administrator account status':
+    policy_value => $enable_administrator ? { true  => 1, default => 0, } #lint:ignore:selector_inside_resource
+  }
 
   # Configure Remote Desktop agent if true
   if $enable_remote_desktop {

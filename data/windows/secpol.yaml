@@ -11,10 +11,10 @@ cis_security_hardening_windows::cis_secpol_level_1:
     'Accounts: Rename guest account':
       policy_value: '"%{lookup("cis_security_hardening_windows::disabled_guest_newname")}"'
 
-## This was removed in CIS 22H2 v2.0.0, however leaving in place as it can be overridden
-  "(L1) Ensure 'Accounts: Administrator account status' is set to 'Disabled'":
-    'Accounts: Administrator account status':
-      policy_value: '0'
+## This was removed in CIS 22H2 v2.0.0, can now be overridden in hiera
+#  "(L1) Ensure 'Accounts: Administrator account status' is set to 'Disabled'":
+#    'Accounts: Administrator account status':
+#      policy_value: '0'
 
   "(L1) Ensure 'Accounts: Guest account status' is set to 'Disabled'":
     'Accounts: Guest account status':
