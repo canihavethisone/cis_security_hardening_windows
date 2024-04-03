@@ -103,10 +103,9 @@ class cis_security_hardening_windows (
     registry_value { $key:
       * => $value,
     }
-  }
 
-  # User setting & purge (with defaults). Puppet 'unless_system_user' detection is incomplete in windows, so system_users are defined in module hiera
   # Users need to be created after secpol has run (within CIS class) due to issue with renaming administrator (can only be done once)
+  # Puppet 'unless_system_user' detection is incomplete in windows, so system_users are defined in module hiera
   if $purge_unmanaged_users {
     $users_real = $users + lookup(cis_security_hardening_windows::system_users)
   } else {
