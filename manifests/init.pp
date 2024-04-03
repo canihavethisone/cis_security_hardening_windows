@@ -1,5 +1,4 @@
-#
-# Windows main class.  The entry point with most parameters processed here.
+## Windows main class.  The entry point with most parameters processed here.
 # It applies CIS hardening
 #
 # @example Declaring the class
