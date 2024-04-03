@@ -41,3 +41,7 @@
 /.vscode/
 /.sync.yml
 /.devcontainer/
+/*.pdk
+/pdk.yaml
+/.rubocop.yml
+/.github/
