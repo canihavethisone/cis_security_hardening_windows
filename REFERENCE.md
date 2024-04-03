@@ -125,7 +125,7 @@ Data type: `Boolean`
 
 If the local adminsitrator account is enabled. Note that account must be renamed if enabled or not
 
-Default value: `lookup( 'enable_administrator',     Boolean,                      undef,    true )`
+Default value: `lookup( 'enable_administrator',     Boolean,                      undef,    false )`
 
 ##### <a name="-cis_security_hardening_windows--enable_remote_desktop"></a>`enable_remote_desktop`
 
