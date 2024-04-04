@@ -1,5 +1,4 @@
-#
-# Windows cis class.  It is called from the cis_security_hardening_windows class.  Params are derived from in-module hiera and can be excluded.
+## Windows cis class.  It is called from the cis_security_hardening_windows class.  Params are derived from in-module hiera and can be excluded.
 #
 # @example Declaring the class
 #   include cis_security_hardening_windows

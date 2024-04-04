@@ -1,12 +1,11 @@
-#
-# Windows main class.  The entry point with most parameters processed here.
+## Windows main class.  The entry point with most parameters processed here.
 # It applies CIS hardening
 #
 # @example Declaring the class
 #   include cis_security_hardening_windows
 #
-#
 # @param [Hash]                          users                    Any users to create
+# @param [Boolean]                       purge_unmanaged_users    If unmanaged users should be purged. Requires users hash to be defined
 # @param [Enum['domain', 'standalone']]  cis_profile_type         Apply domain or standalone CIS benchmark 
 # @param [Integer[1, 2]]                 cis_enforcement_level    CIS level to apply. Level 2 includes level 1
 # @param [Boolean]                       cis_include_bitlocker    If cis bitlocker rules should be included
@@ -14,6 +13,7 @@
 # @param [Hash]                          cis_exclude_rules        Lookup of optional hash for cis_exclude_rules (to opt out of included rules)
 # @param [Boolean]                       cis_include_hkcu         If true, CIS defined local group policy objects are copied in for users as puppetlabs/registry cannot apply HKCU
 # @param [Hash]                          misc_registry            Lookup of misc registry items to apply.  Currently sets Puppet logging to event viewer and disables SMB1
+# @param [Boolean]                       enable_administrator     If the local adminsitrator account is enabled. Note that account must be renamed if enabled or not
 # @param [Boolean]                       enable_remote_desktop    If true the RDP service will be enabled and firewall rule created (false)
 # @param [Array]                         trusted_rdp_subnets      Trusted subnets for inbound rdp connections for firewall rules. Undef will be converted to 'any'
 # @param [Boolean]                       remote_local_accounts    If true and RDP is enabled, this allows local user accounts to connect remotely. Required if not domain joined (true)
@@ -26,6 +26,7 @@ class cis_security_hardening_windows (
 # Variable                         ( 'Name',                     Type,                         Merge,  Default )
 # --------------------------------------------------------------------------------------------------------------
   $users                   = lookup( 'users',                    Hash,                         'deep', {}),
+  $purge_unmanaged_users   = lookup( 'purge_unmanaged_users',    Boolean,                      undef,    false ),
   $cis_profile_type        = lookup( 'cis_profile_type',         Enum['domain', 'standalone'], undef, 'domain' ),
   $cis_enforcement_level   = lookup( 'cis_enforcement_level',    Integer[1, 2],                undef,    2     ),
   $cis_include_bitlocker   = lookup( 'cis_include_bitlocker',    Boolean,                      undef,    true  ),
@@ -33,6 +34,7 @@ class cis_security_hardening_windows (
   $cis_exclude_rules       = lookup( 'cis_exclude_rules',        Array,                        'deep', []),
   $cis_include_hkcu        = lookup( 'cis_include_hkcu',         Boolean,                      undef,    true  ),
   $misc_registry           = lookup( 'misc_registry',            Hash,                         'deep', {}),
+  $enable_administrator    = lookup( 'enable_administrator',     Boolean,                      undef,    false ),
   $enable_remote_desktop   = lookup( 'enable_remote_desktop',    Boolean,                      undef,    false ),
   $trusted_rdp_subnets     = lookup( 'trusted_rdp_subnets',      Array,                        undef, []),
   $remote_local_accounts   = lookup( 'remote_local_accounts',    Boolean,                      undef,    true  ),
@@ -46,9 +48,19 @@ class cis_security_hardening_windows (
     fail("Your windows release ${facts['windows']['release']} is not yet supported")
   }
 
-  # Fail if users not defined
-  if !$users {
+  # Fail if administrator disabled and users not defined
+  if !$enable_administrator and $users.empty {
     fail('At least 1 user must be defined as Administrator will be disabled.')
+  }
+
+  # Fail if purge_unmanaged_users enabled and users not defined
+  if $purge_unmanaged_users and $users.empty {
+    fail('You cannot purge unmanaged users without defining a users hash to manage users.')
+  }
+
+  # Ensure that the local_security_policy for local Administrator is set
+  local_security_policy { 'Accounts: Administrator account status':
+    policy_value => $enable_administrator ? { true  => 1, default => 0, } #lint:ignore:selector_inside_resource
   }
 
   # Configure Remote Desktop agent if true
@@ -92,10 +104,16 @@ class cis_security_hardening_windows (
     }
   }
 
-  # User setting & purge (with defaults). Puppet 'unless_system_user' detection is incomplete in windows, so system users are defined in module hiera
   # Users need to be created after secpol has run (within CIS class) due to issue with renaming administrator (can only be done once)
-  resources { 'user': purge => true, unless_system_user => true }
-  $users.each |String $key, $value| {
+  # Puppet 'unless_system_user' detection is incomplete in windows, so system_users are defined in module hiera
+  if $purge_unmanaged_users {
+    $users_real = $users + lookup(cis_security_hardening_windows::system_users)
+  } else {
+    $users_real = $users
+  }
+
+  resources { 'user': purge => $purge_unmanaged_users, unless_system_user => $purge_unmanaged_users }
+  $users_real.each |String $key, $value| {
     user { $key:
       *          => $value,
       membership => 'inclusive',
@@ -103,7 +121,7 @@ class cis_security_hardening_windows (
   }
 
   if $catalog_no_cache {
-    # Delete the puppet catalog if it exists. This should only occur on the first run as caching is unset by the following ini_setting
+    # Delete the puppet catalog if it exists. This should only occur until a service restart as caching is unset by the following ini_setting
     tidy { 'delete puppet catalog':
       path    => 'C:/ProgramData/PuppetLabs/puppet/cache/client_data/catalog',
       recurse => 1,

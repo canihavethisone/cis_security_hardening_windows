@@ -50,7 +50,10 @@ Other Windows 10 / 11 parameters include:
 - cis_exclude_rules
 - catalog_no_cache
 - clear_temp_files
+- enable_administrator
+- purge_unmanaged_users
 - performance_powerscheme
+- enable_remote_desktop
 
 
 ### Defence in-depth
@@ -67,12 +70,12 @@ To use this module, `include cis_security_hardening_windows` in your Node Classi
 **At minimum, the following hiera must be provided** to the module:
 
 #### Windows 10 / 11:
-- `cis_security_hardening_windows::windows::logon_banner`  (string)
-- `cis_security_hardening_windows::windows::logon_message`  (string)
-- `cis_security_hardening_windows::windows::disabled_administrator_newname`  (string)
-- `cis_security_hardening_windows::windows::disabled_administrator_newpassword`  (string)
-- `cis_security_hardening_windows::windows::disabled_guest_newname`  (string)
-- `cis_security_hardening_windows::windows::users`  (hash) is required as built-in administrator will be disabled
+- `cis_security_hardening_windows::logon_banner`  (string)
+- `cis_security_hardening_windows::logon_message`  (string)
+- `cis_security_hardening_windows::disabled_administrator_newname`  (string)
+- `cis_security_hardening_windows::disabled_administrator_newpassword`  (string)
+- `cis_security_hardening_windows::disabled_guest_newname`  (string)
+- `cis_security_hardening_windows::users`  (hash) is required as built-in administrator will be disabled
 
 
 
@@ -86,26 +89,26 @@ See example minimum hiera data [here](data/minimum.yaml)
 - Comments in module hiera identify the objective of each setting however CIS reference numbers are not shown as they are subject to change
 - Profile Type, Enforcement Level (1 or 2 (1+2)), BitLocker (BL), NextGen (NG) and HKCU policy inclusion are parameterised:
   ```yaml
- cis_security_hardening_windows::windows::cis_profile_type:      'domain'
-  cis_security_hardening_windows::windows::cis_enforcement_level: 2
-  cis_security_hardening_windows::windows::cis_include_bitlocker: true
-  cis_security_hardening_windows::windows::cis_include_nextgen:   true
-  cis_security_hardening_windows::windows::cis_include_hkcu:      true
+  cis_security_hardening_windows:cis_profile_type:      'domain'
+  cis_security_hardening_windows::cis_enforcement_level: 2
+  cis_security_hardening_windows::cis_include_bitlocker: true
+  cis_security_hardening_windows::cis_include_nextgen:   true
+  cis_security_hardening_windows::cis_include_hkcu:      true
   ```
 - A reference list of rules enforced via the system registry is in the hiera folder for each Windows version, eg [here](data/windows/11/cis_include_rules.txt). Note that some additional rules are applied by Local Security Policy and Audit Policy resources however.
 - Individual controls can be overridden by any of the following methods:
-  - creating a optional hiera **array** for `cis_security_hardening_windows::windows::cis_exclude_rules` containing rule titles to be subtracted from the default included hashes (note however that some rules are enforced by the local_security_policy or windows_firewall modules):
+  - creating a optional hiera **array** for `cis_security_hardening_windows::cis_exclude_rules` containing rule titles to be subtracted from the default included hashes (note however that some rules are enforced by the local_security_policy or windows_firewall modules):
     ```yaml
-    cis_security_hardening_windows::windows::cis_exclude_rules:
+    cis_security_hardening_windows::cis_exclude_rules:
       - "(L1) Ensure 'Allow users to enable online speech recognition services is set to 'Disabled'"
       - "(L1) Ensure 'Configure Solicited Remote Assistance' is set to 'Disabled'"
     ```
   - creating a hiera hash containing registry keys with different values at a higher precedence (eg domain or node) and titled any of:
     ```yaml
-    cis_security_hardening_windows::windows::cis_level_1    (or windows_standalone)
-    cis_security_hardening_windows::windows::cis_level_2    (or windows_standalone)
-    cis_security_hardening_windows::windows::cis_bitlocker  (or windows_standalone)
-    cis_security_hardening_windows::windows::cis_nextgen    (or windows_standalone)
+    cis_security_hardening_windows::cis_level_1    (or windows_standalone)
+    cis_security_hardening_windows::cis_level_2    (or windows_standalone)
+    cis_security_hardening_windows::cis_bitlocker  (or windows_standalone)
+    cis_security_hardening_windows::cis_nextgen    (or windows_standalone)
     ```
    - other methods such as resource collectors to override registry key values if wrapping this module into your own classes
 
