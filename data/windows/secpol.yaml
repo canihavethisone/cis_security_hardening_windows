@@ -309,7 +309,7 @@ cis_security_hardening_windows::cis_secpol_level_1:
 #  'Interactive logon: Require Domain Controller authentication to unlock workstation':
 #    policy_value: '1'
 
-#  (L1) Ensure 'Network access: Allow anonymous SID/Name translation' is set to 'Disabled' 
+  "(L1) Ensure 'Network access: Allow anonymous SID/Name translation' is set to 'Disabled'":
     'Network access: Allow anonymous SID/name translation':
       policy_value: '0'
 
