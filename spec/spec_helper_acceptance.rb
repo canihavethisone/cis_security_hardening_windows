@@ -202,7 +202,7 @@ def setup_puppet_on(_host, opts = {})
       ## Disable and force kill Windows Update service if running
       on(agent, powershell('Set-Service wuauserv -StartupType Disabled'))
       on(agent, powershell("taskkill /f /t /fi 'SERVICES eq wuauserv'"), acceptable_exit_codes: [0, 1])
-      on(agent, powershell('Stop-Service wuauserv -Force'))
+      on(agent, powershell('Stop-Service wuauserv -Force'), acceptable_exit_codes: [0, 1])
       ## Check if puppet-agent is installed, otherwise install it
       result = on(agent, powershell('if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match \'Puppet Agent\') {exit 0} else {exit 1}'))
       if result.exit_code == 1

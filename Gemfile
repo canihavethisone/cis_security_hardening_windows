@@ -19,6 +19,7 @@ gem "mocha"
 gem "parallel"
 gem "parallel_tests", '>= 4.5.1', group: [:development, :test]
 #gem "parallel_rspec"
+gem "in-parallel"
 gem "pry"
 gem "puppet", "< 8.0.0"
 gem "puppet-blacksmith"
