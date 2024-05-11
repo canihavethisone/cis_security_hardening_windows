@@ -1584,12 +1584,12 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine\EnableFileHashComputation':
       ensure: present
 
-  "(L1) Ensure 'Configure registry policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'":
+  "(L1) Ensure 'Configure security policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{827D319E-6EAC-11D2-A4EA-00C04F79F83A}\NoBackgroundPolicy':
       ensure:    present
       data:      0
 
-  "(L1) Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'":
+  "(L1) Ensure 'Configure security policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{827D319E-6EAC-11D2-A4EA-00C04F79F83A}\NoGPOListChanges':
       ensure:    present
       data:      0
