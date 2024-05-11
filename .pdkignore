@@ -1,6 +1,7 @@
 .git/
 .*.sw[op]
 .metadata
+.testing
 .yardoc
 .yardwarns
 *.iml

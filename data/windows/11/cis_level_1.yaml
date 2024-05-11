@@ -1034,10 +1034,10 @@ cis_security_hardening_windows::cis_level_1:
       data:      0
 
 ## This registry_value may not be idempotent, causing boot loops after Windows Update has occurred
-#  "(L1) Ensure 'Turn off Microsoft Defender AntiVirus' is set to 'Disabled'":
-#    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\DisableAntiSpyware':
-#      ensure:    present
-#      data:      0
+  "(L1) Ensure 'Turn off Microsoft Defender AntiVirus' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\DisableAntiSpyware':
+      ensure:    present
+      data:      0
 
   "(L1) Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive\DisableFileSyncNGSC':
@@ -1663,13 +1663,13 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine\EnableFileHashComputation':
       ensure: present
 
-  "(L1) Ensure 'Configure registry policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoBackgroundPolicy':
+  "(L1) Ensure 'Configure security policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{827D319E-6EAC-11D2-A4EA-00C04F79F83A}\NoBackgroundPolicy':
       ensure:    present
       data:      0
 
-  "(L1) Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoGPOListChanges':
+  "(L1) Ensure 'Configure security policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{827D319E-6EAC-11D2-A4EA-00C04F79F83A}\NoGPOListChanges':
       ensure:    present
       data:      0
 
@@ -1688,7 +1688,7 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
 
   "(L1) Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\PwdExpirationProtectionEnabled':
+    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\PasswordExpirationProtectionEnabled':
       ensure:    present
 
   "(L1) Ensure 'Enable password encryption' is set to 'Enabled'":
@@ -1739,6 +1739,6 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
 
   "(L1) Ensure 'Enable optional updates' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AllowOptionalContent':
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\SetAllowOptionalContent':
       ensure:    present
       data:      0
