@@ -226,9 +226,8 @@ def setup_puppetserver_on(host, _opts = {})
   ## Set the puppetserver to know it is its own master, so commands like 'puppetserver ca list' work
   on(master, 'puppet config set server `hostname`')
   ## Set class under test to console display. Requires restart of tty1 serivce to display without logon or reboot
-  agent_names = []
-  agents.each do |agent|
-    agent_names << "#{agent['roles'].first.gsub('agent_', '').ljust(20)}#{agent.node_name.ljust(30)}#{agent.ip.ljust(40)}"
+  agent_names = agents.map do |agent|
+    "#{agent['roles'].first.gsub('agent_', '').ljust(20)}#{agent.node_name.ljust(30)}#{agent.ip.ljust(40)}"
   end
   on host, "echo -e 'You are running an acceptance test of \e[1;32m#{CLASS}\e[0m\n\nfrom this MASTER\n\e[1;34m#{master['roles'].first.ljust(20)}#{MASTER_NODE_NAME.ljust(30)}#{MASTER_IP.ljust(40)}\e[0m\n\nto AGENTS\n\e[1;36m#{agent_names.join("\n")}\e[0m\n\n' | tee /etc/motd /etc/issue"
   on host, 'systemctl restart getty@tty1'
