@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 **Bugfixes**
 - Correct cis_level_1 filename in /data/windows/11
 - Correct wrong registry keys from CIS benchmark
-- Enable Defender enforcement (previously disabled due to idempotency after Windows Update)
+- Enable Defender enforcement on Windows 11 (still disabled on Windows 10 due to idempotency issue after Windows Update)
 
 
 ## Release 0.2.2
