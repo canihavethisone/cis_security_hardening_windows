@@ -89,7 +89,7 @@ See example minimum hiera data [here](data/minimum.yaml)
 - Comments in module hiera identify the objective of each setting however CIS reference numbers are not shown as they are subject to change
 - Profile Type, Enforcement Level (1 or 2 (1+2)), BitLocker (BL), NextGen (NG) and HKCU policy inclusion are parameterised:
   ```yaml
-  cis_security_hardening_windows:cis_profile_type:      'domain'
+  cis_security_hardening_windows::cis_profile_type:      'domain'
   cis_security_hardening_windows::cis_enforcement_level: 2
   cis_security_hardening_windows::cis_include_bitlocker: true
   cis_security_hardening_windows::cis_include_nextgen:   true
