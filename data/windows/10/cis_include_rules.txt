@@ -1,7 +1,7 @@
 # This file lists the title of rules applied by the registry resource
 # Note that additional rules are applied by Local Security Policy and Audit Policy resources  
 
-# Windows 10.22H2
+# Windows 10 v3.0.0
 
 #Create cis_include_rules array in notepad++
 #1. Paste in all hiera rules
