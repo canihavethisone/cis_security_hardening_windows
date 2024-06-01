@@ -13,7 +13,7 @@ Dir['./spec/acceptance/shared_examples/*.rb'].sort.each { |f| require f }
 
 describe 'cis_security_hardening_windows acceptance testing' do
   context 'Configure the master and run puppet on agents' do
-    puts "\e[0;32m \nAdding agents and class to nodeset on Master \e[0m\n"
+    print_stage('Adding agents and class to nodeset on Master')
     agents.each do |agent|
       pp = <<-SITE_PP
         node '#{agent.node_name}' {
@@ -31,7 +31,7 @@ describe 'cis_security_hardening_windows acceptance testing' do
 
     # Copy environment specific overrides for acceptance testing
     if File.file?("#{PROJECT_ROOT}/spec/acceptance/overrides.yaml")
-      puts "\e[0;32m \nCopying environment specific hiera overrides from spec/acceptance/overrides.yaml to master\e[0m\n"
+      print_stage('Copying environment specific hiera overrides from spec/acceptance/overrides.yaml to master')
       scp_to(master, "#{PROJECT_ROOT}/spec/acceptance/overrides.yaml", "/etc/puppetlabs/code/environments/#{ENVIRONMENT}/data/overrides.yaml")
     end
 
@@ -40,7 +40,7 @@ describe 'cis_security_hardening_windows acceptance testing' do
     on(master, "chmod -R g+rX,o-rwX #{env_path}")
 
     # Run puppet on agents
-    puts "\e[0;32m \nRunning Puppet on agents \e[0m\n"
+    print_stage('Running Puppet on agents')
     include_examples 'run idempotently'
   end
 

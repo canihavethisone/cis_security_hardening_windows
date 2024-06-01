@@ -93,10 +93,10 @@ class cis_security_hardening_windows (
 
   # Apply any misc registry hash values
   $misc_registry.each | String $key, Hash $value = {} | {
-    $regpath = regsubst($key, /\\[^\\]+$/,'')
-    if (!defined(Registry_key[$regpath]) and ($value['ensure'] !=absent)) {
+    $regpath = regsubst($key, /\\[^\\]+$/, '')
+    if !defined(Registry_key[$regpath]) and $value['ensure'] != 'absent' {
       registry_key { $regpath:
-        ensure => $value['ensure'],
+        ensure => 'present',
       }
     }
     registry_value { $key:
