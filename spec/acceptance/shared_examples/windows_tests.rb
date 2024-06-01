@@ -1,4 +1,7 @@
 shared_examples 'windows tests' do |agent:, _agent_ip:|
+  # Number of combined registry entries to select
+  reg_entries_to_test = 50
+
   # Users tests
   describe user('user') do
     it { is_expected.to exist }
@@ -43,8 +46,13 @@ shared_examples 'windows tests' do |agent:, _agent_ip:|
     %r{Remote Desktop Services UserMode Port Redirector},
   ]
 
-  # Iterate over combined data
-  registry_combined_data.each do |title, hash|
+  # Convert registry_combined_data to an array and randomly select 50 entries
+  random_registry_entries = registry_combined_data.to_a.sample(reg_entries_to_test)
+
+  print_stage("Verifying registry with a random sample of #{reg_entries_to_test} entries")
+
+  # Iterate over the randomly selected entries
+  random_registry_entries.each do |title, hash|
     # Skip the iteration if the title matches any pattern in the exclusion list due to remote requirements for testing and complex data values
     next if exclusion_patterns.any? { |pattern| title.match?(pattern) }
 

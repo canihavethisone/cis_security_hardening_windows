@@ -72,6 +72,7 @@ def print_stage(h)
   puts "\e[0;32m---------------------------------------------------------------------------------\e[0m"
   puts "\e[0;36m#{h}\e[0m"
   puts "\e[0;32m---------------------------------------------------------------------------------\e[0m"
+  puts "\n"
 end
 
 # As each dependency is installed from fixtures, add the latest version to an array (uses the 5th line of output so that only primary dependencies are written to metadata.json

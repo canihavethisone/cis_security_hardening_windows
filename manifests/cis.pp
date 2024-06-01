@@ -45,7 +45,7 @@ class cis_security_hardening_windows::cis (
       recurse => true,
       source  => 'puppet:///modules/cis_security_hardening_windows/user_grouppolicy/',
       replace => false,
-      notify  => [Exec['grouppolicy dir attributes']],
+      notify  => Exec['grouppolicy dir attributes'],
     }
     # Ensure that the GroupPolicy directory is hidden as per default
     exec { 'grouppolicy dir attributes':
@@ -85,17 +85,17 @@ class cis_security_hardening_windows::cis (
   }
 
   # Create final enforced_rules by removing any excluded rules using description only
-  $enforced_rules = $total_rules.filter |$rule, $value| {
+  $enforced_rules = $total_rules.filter | String $rule, Hash $value| {
     !($rule in $cis_exclude_rules_real)
   }
 
   # Remove the rule title from the hashes so the registry resource can apply them
   $enforced_rules.each | String $title, Hash $rule = {} | {
     $rule.each |String $key, Hash $value = {} | {
-      $regpath = regsubst($key, /\\[^\\]+$/,'')
-      if (!defined(Registry_key[$regpath]) and ($value['ensure'] !=absent)) {
+      $regpath = regsubst($key, /\\[^\\]+$/, '')
+      if !defined(Registry_key[$regpath]) and $value['ensure'] != 'absent' {
         registry_key { $regpath:
-          ensure => $value['ensure'],
+          ensure => 'present',
         }
       }
       registry_value {
