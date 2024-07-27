@@ -4,6 +4,7 @@
 ## https://relishapp.com/rspec/rspec-core/v/2-14/docs/example-groups/basic-structure-describe-it
 
 require 'spec_helper_acceptance'
+require 'parallel'
 
 env_path = "/etc/puppetlabs/code/environments/#{ENVIRONMENT}"
 # agent = only_host_with_role(hosts, 'agent')
@@ -48,7 +49,7 @@ describe 'cis_security_hardening_windows acceptance testing' do
     agents.each do |agent|
       # The first test after in_parallel fails, so this overcomes that
       next unless agents.count > 1
-      on(agent, 'This is an expected warning as connection is re-established after reboot', expect_connection_failure: true) # similar alternative is 'reset_connection: true'
+      on(agent, 'This is an expected warning as connection is re-established after reboot', reset_connection: true) # similar alternative is 'expect_connection_failure: true'
     end
   end
 
