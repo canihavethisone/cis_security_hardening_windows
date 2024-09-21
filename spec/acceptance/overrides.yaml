@@ -14,8 +14,8 @@ cis_security_hardening_windows::logon_banner:           'notice and consent bann
 cis_security_hardening_windows::logon_message:          'all activities performed on this system will be monitored.'
 
 # CIS recommend that the administrator and guest accounts are disabled and renamed
-cis_security_hardening_windows::disabled_administrator_newname:     'NewAdministratorName'
-cis_security_hardening_windows::disabled_administrator_newpassword: 'Compl3xP4s$word'
+cis_security_hardening_windows::administrator_newname:     'NewAdministratorName'
+cis_security_hardening_windows::administrator_newpassword: 'Compl3xP4s$word'
 cis_security_hardening_windows::disabled_guest_newname:             'NewGuestName'
 
 # A user must be specified
