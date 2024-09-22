@@ -9,8 +9,6 @@ describe 'cis_security_hardening_windows' do
         when '10'
           let(:facts) do
             facts.merge(
-              osfamily: 'Windows',
-              operatingsystem: 'windows',
               windows: {
                 release: '10'
               },
@@ -19,8 +17,6 @@ describe 'cis_security_hardening_windows' do
         when '11'
           let(:facts) do
             facts.merge(
-              osfamily: 'Windows',
-              operatingsystem: 'windows',
               windows: {
                 release: '11'
               },
@@ -332,7 +328,7 @@ describe 'cis_security_hardening_windows' do
           it { is_expected.to contain_class('cis_security_hardening_windows::cis') }
           it { is_expected.not_to contain_class('cis_security_hardening_windows::remote_desktop') }
 
-          ## Sample of opt-out rules to be absent
+          ## Sample of standalone rules expected to be absent
           absent_registry_values = [
             'HKLM\\SYSTEM\\CurrentControlSet\\Services\\Netlogon\\Parameters\\RequireSignOrSeal',
             'HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\DisableBkGndGroupPolicy',
@@ -397,13 +393,58 @@ describe 'cis_security_hardening_windows' do
             end
           end
 
-          ## Sample of opt-out rules to be absent
+          ## Sample of standalone rules expected to be absent
           absent_registry_values = [
             'HKLM\\SYSTEM\\CurrentControlSet\\Services\\Netlogon\\Parameters\\RequireSignOrSeal',
             'HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\DisableBkGndGroupPolicy',
           ]
 
           absent_registry_values.each do |key|
+            it { is_expected.not_to contain_registry_value(key) }
+          end
+        end
+
+        ### Test exclude_rules are absent
+        context 'CIS Level 2 standalone with exclude_rules' do
+          let(:params) do
+            { 'cis_profile_type' => 'standalone',
+              'cis_enforcement_level' => 2,
+              'cis_include_bitlocker' => true,
+              'cis_include_nextgen' => true,
+              'cis_exclude_rules' => [
+                "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'",
+                "(L2) Ensure 'Windows Remote Management (WS-Management) (WinRM)' is set to 'Disabled'"
+              ],
+            }
+          end
+
+          # Write out catalogue
+          # it { File.write("cis_security_hardening_windows_standalone_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource)) }
+
+          # compile with deps & create class
+          # it { pp catalogue.resources }
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to create_class('cis_security_hardening_windows') }
+          it { is_expected.to contain_class('cis_security_hardening_windows::cis') }
+          it { is_expected.not_to contain_class('cis_security_hardening_windows::remote_desktop') }
+
+          ## Sample of standalone rules expected to be absent
+          absent_registry_values = [
+            'HKLM\\SYSTEM\\CurrentControlSet\\Services\\Netlogon\\Parameters\\RequireSignOrSeal',
+            'HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\DisableBkGndGroupPolicy',
+          ]
+          ## Sample of exclude_rules expected to be absent (these keys belong to the cis_exclude_rules titles in params above)
+          excluded_registry_values = [
+            'HKLM\SOFTWARE\Policies\Microsoft\Windows\System\EnableSmartScreen',
+            'HKLM\SOFTWARE\Policies\Microsoft\Windows\System\ShellSmartScreenLevel',
+            'HKLM\SYSTEM\CurrentControlSet\Services\WinRM\Start'
+          ]
+
+          absent_registry_values.each do |key|
+            it { is_expected.not_to contain_registry_value(key) }
+          end
+
+          excluded_registry_values.each do |key|
             it { is_expected.not_to contain_registry_value(key) }
           end
         end
