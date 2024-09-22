@@ -57,6 +57,7 @@ RSpec.configure do |c|
     allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('WDAGUtilityAccount').and_return('S-1-5-21')
     allow(Puppet::Util).to receive(:which).with('wmic').and_return('c:\\tools\\wmic')
     allow(Puppet::Util).to receive(:which).with('secedit').and_return('c:\\tools\\secedit')
+    allow(Puppet::Util).to receive(:which).with("/sbin/initctl").and_return("/sbin/initctl")
   end
   c.filter_run_excluding(bolt: true) unless ENV['GEM_BOLT']
   c.after(:suite) do
