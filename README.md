@@ -47,8 +47,8 @@ Other Windows 10 / 11 parameters include:
 - cis_enforcement_level
 - cis_include_bitlocker
 - cis_include_nextgen
-- cis_exclude_rules
 - cis_include_hkcu
+- cis_exclude_rules
 - catalog_no_cache
 - clear_temp_files
 - enable_administrator
@@ -114,7 +114,7 @@ See example minimum hiera data [here](spec/fixtures/data/minimum.yaml)
     cis_security_hardening_windows::cis_secpol_level_2
     cis_security_hardening_windows::cis_auditpol
     ```
-   - other methods such as resource collectors to override registry key values if wrapping this module into your own classes
+   - other methods such as resource collectors to override registry key values if wrapping this module into your own class or control repo
 
  
 
