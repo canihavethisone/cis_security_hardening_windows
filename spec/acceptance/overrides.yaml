@@ -13,11 +13,11 @@ cis_security_hardening_windows::disabled_guest_newname:    'NewGuestName'
 # A user must be specified as Administrator is disabled.  Root is also present for acceptance test ssh connection
 cis_security_hardening_windows::users:
   'User':
-    groups:      ['Administrators']
-    password:    'Password12345!'
-#  'root':
-#    groups:   ['Administrators']
-#    password: 'Password123'
+    groups:   ['Administrators']
+    password: 'Password12345!'
+  'root':
+    groups:   ['Administrators']
+    password: 'Password123'
 
 # Add some exclude rules to test that the optout works
 cis_security_hardening_windows::cis_exclude_rules:
