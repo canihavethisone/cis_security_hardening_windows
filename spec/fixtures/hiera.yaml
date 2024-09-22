@@ -6,8 +6,8 @@ defaults:
 
 hierarchy:
 
-  - name: "testing hiera"
-    path: "minimum.yaml"
+  - name: "Minimum testing hiera"
+    path: "../spec/fixtures/data/minimum.yaml"
 
   - name: "Windows globbing"
     glob: "windows/*.yaml"

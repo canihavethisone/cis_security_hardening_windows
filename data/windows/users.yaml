@@ -9,9 +9,9 @@ cis_security_hardening_windows::system_users:
 # Win10 requires DefaultAccount and WDAGUtilityAccount to be defined to avoid purging
 
   'Administrator':
-    name:        "%{lookup('cis_security_hardening_windows::disabled_administrator_newname')}"
+    name:        "%{lookup('cis_security_hardening_windows::administrator_newname')}"
     groups:      ['Administrators']
-    password:    "%{lookup('cis_security_hardening_windows::disabled_administrator_newpassword')}"
+    password:    "%{lookup('cis_security_hardening_windows::administrator_newpassword')}"
     comment:     'Built-in account for administering the computer/domain'
 
   'Guest':

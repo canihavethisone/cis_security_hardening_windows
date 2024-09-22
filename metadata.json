@@ -1,6 +1,6 @@
 {
   "name": "canihavethisone-cis_security_hardening_windows",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "author": "canihavethisone",
   "summary": "Harden Windows 10 & 11 to CIS standards",
   "license": "Apache-2.0",
@@ -37,7 +37,7 @@
     },
     {
       "name": "webalex-windows_firewall",
-      "version_requirement": ">= 1.5.2 < 2.0.0"
+      "version_requirement": ">= 1.6.0 < 2.0.0"
     }
   ],
   "operatingsystem_support": [

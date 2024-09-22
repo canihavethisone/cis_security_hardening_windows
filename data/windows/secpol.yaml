@@ -5,7 +5,7 @@ cis_security_hardening_windows::cis_secpol_level_1:
 
   "(L1) Configure 'Accounts: Rename administrator account'":
     'Accounts: Rename administrator account':
-      policy_value: '"%{lookup("cis_security_hardening_windows::disabled_administrator_newname")}"'
+      policy_value: '"%{lookup("cis_security_hardening_windows::administrator_newname")}"'
 
   "(L1) Configure 'Accounts: Rename guest account'":
     'Accounts: Rename guest account':
