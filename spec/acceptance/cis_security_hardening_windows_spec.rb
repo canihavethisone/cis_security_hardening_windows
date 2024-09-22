@@ -34,6 +34,7 @@ describe 'cis_security_hardening_windows acceptance testing' do
     if File.file?("#{PROJECT_ROOT}/spec/acceptance/overrides.yaml")
       print_stage('Copying environment specific hiera overrides from spec/acceptance/overrides.yaml to master')
       scp_to(master, "#{PROJECT_ROOT}/spec/acceptance/overrides.yaml", "/etc/puppetlabs/code/environments/#{ENVIRONMENT}/data/overrides.yaml")
+      on(master, "echo -e \"  - name: 'Override hiera'\\n    path: 'overrides.yaml'\" >> /etc/puppetlabs/code/environments/#{ENVIRONMENT}/hiera.yaml")
     end
 
     # Chown and chmod testing environment

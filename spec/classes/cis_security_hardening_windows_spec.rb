@@ -4,9 +4,8 @@ require 'parallel_tests'
 describe 'cis_security_hardening_windows' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
-      # let(:facts) { facts.merge(testcase: 'spec', classname: 'cis_security_hardening_windows') }
-      if facts[:osfamily] == 'windows'
-        case facts[:operatingsystemrelease]
+      if facts[:os]['family'] == 'windows'
+        case facts[:os]['release']['major']
         when '10'
           let(:facts) do
             facts.merge(
@@ -160,7 +159,7 @@ describe 'cis_security_hardening_windows' do
           # Initialize an empty hash to store combined YAML data
           combined_yaml_data = {}
           # List of YAML files to load, dynamically using the Windows release version
-          yaml_files = Dir["./data/windows/#{facts[:operatingsystemrelease]}/*.yaml"]
+          yaml_files = Dir["./data/windows/#{facts[:os]['release']['major']}/*.yaml"]
 
           # Iterate over each YAML file and merge its data into the combined hash
           yaml_files.each do |file|

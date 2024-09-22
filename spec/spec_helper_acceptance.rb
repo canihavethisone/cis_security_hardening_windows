@@ -26,32 +26,17 @@ require 'beaker/module_install_helper'
 ## Set unique environment variable if static-master, otherwise use production
 CLASS = 'canihavethisone/cis_security_hardening_windows'.freeze
 MASTER_IP = master.get_ip
-MASTER_NODE_NAME = master.node_name
+MASTER_FQDN = master.node_name
+PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+TEST_FILES = File.expand_path(File.join(File.dirname(__FILE__), 'acceptance', 'files'))
+DEPENDENCY_LIST = 'fixtures'.freeze
 ENVIRONMENT = if master['hypervisor'] == 'none'
                 agents[0].hostname
               else
                 'production'
               end
 
-PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-TEST_FILES = File.expand_path(File.join(File.dirname(__FILE__), 'acceptance', 'files'))
-DEPENDENCY_LIST = 'fixtures'.freeze
-HIERA_OVERRIDES = "---
-cis_security_hardening_windows::users:
-  'root':
-    groups:   ['Administrators']
-    password: 'Password123'
-cis_security_hardening_windows::cis_secpol:
-  'Deny access to this computer from the network':
-    policy_value: 'Guests'".freeze
-
-HIERA_YAML = "---
-version: 5
-hierarchy:
-  - name: 'overrides'
-    path: 'overrides.yaml'".freeze
-
-# Configuration
+## Configuration
 CONFIG = {
   puppet_agent_version: ENV['PUPPET_AGENT_VERSION'] || '7.27.0',
   puppetserver_version: ENV['PUPPETSERVER_VERSION'] || '7.14.0',
@@ -69,19 +54,19 @@ ALL_DEPS = []
 ## Print stage headings
 def print_stage(h)
   puts "\n\n"
-  puts "\e[0;32m---------------------------------------------------------------------------------\e[0m"
+  puts "\e[0;32m-------------------------------------------------------------------------------------------\e[0m"
   puts "\e[0;36m#{h}\e[0m"
-  puts "\e[0;32m---------------------------------------------------------------------------------\e[0m"
+  puts "\e[0;32m-------------------------------------------------------------------------------------------\e[0m"
   puts "\n"
 end
 
-# As each dependency is installed from fixtures, add the latest version to an array (uses the 5th line of output so that only primary dependencies are written to metadata.json
+## As each dependency is installed from fixtures, add the latest version to an array (uses the 5th line of output so that only primary dependencies are written to metadata.json
 def compile_dependency_versions(output)
   dep_arr = output.lines[4]&.split(' ')
   ALL_DEPS.push({ dep_name: dep_arr[1], dep_ver: dep_arr[2][9..-6] }) unless dep_arr.nil?
 end
 
-# Update dependencies in metadata
+## Update dependencies in metadata
 def write_metadata_dot_json(dependencies)
   dep_set = []
   metadata = File.read(PROJECT_ROOT + '/metadata.json')
@@ -143,7 +128,7 @@ end
 def agent_opts(_host)
   {
     main: { color: 'ansi' },
-    agent: { ssldir: '$vardir/ssl', server: MASTER_NODE_NAME, environment: ENVIRONMENT },
+    agent: { ssldir: '$vardir/ssl', server: MASTER_FQDN, environment: ENVIRONMENT },
   }
 end
 
@@ -177,15 +162,16 @@ def setup_puppet_on(_host, opts = {})
   opts = { agent: true }.merge(opts)
   return unless opts[:agent]
   agents.each do |agent|
-    print_stage("Configuring agent at #{agent.get_ip} #{agent.hostname} #{agent}")
-    # on(agent, puppet('resource', 'host', MASTER_NODE_NAME, 'ensure=present', "ip=#{MASTER_IP}"))
+    agent_fqdn = agent.node_name
+    print_stage("Configuring agent at #{agent.get_ip} #{agent_fqdn}")
+    # on(agent, puppet('resource', 'host', MASTER_FQDN, 'ensure=present', "ip=#{MASTER_IP}"))
     agent['type'] = 'aio'
     puppet_opts = agent_opts(master.to_s)
     ## On el- or centos
     case agent['platform']
     when %r{el-|centos}
       ## Set class under test to console display. Requires restart of tty1 serivce to display without logon or reboot
-      on(agent, "echo -e 'You are running an acceptance test of \e[1;32m#{CLASS}\e[0m\n\non this AGENT\t\e[1;36m#{agent.node_name}\t#{agent.ip}\e[0m\nfrom MASTER\t\e[1;34m#{MASTER_NODE_NAME}\t#{MASTER_IP}\e[0m\n\n' | tee /etc/motd /etc/issue")
+      on(agent, "echo -e 'You are running an acceptance test of \e[1;32m#{CLASS}\e[0m\n\non this AGENT\t\e[1;36m#{agent_fqdn}\t#{agent.ip}\e[0m\nfrom MASTER\t\e[1;34m#{MASTER_FQDN}\t#{MASTER_IP}\e[0m\n\n' | tee /etc/motd /etc/issue")
       on(agent, 'systemctl restart getty@tty1')
       ## Check if puppet-agent is installed, otherwise install it
       result = on(agent, 'rpm -qa | grep puppet-agent', acceptable_exit_codes: [0, 1])
@@ -194,12 +180,12 @@ def setup_puppet_on(_host, opts = {})
       end
       configure_puppet_on(agent, puppet_opts)
       stop_firewall_on agent
-      print_stage("Disabling Puppet service so only manual runs occur on #{agent}")
+      print_stage("Disabling Puppet service so only manual runs occur on #{agent_fqdn}")
       on(agent, 'systemctl disable puppet --now', acceptable_exit_codes: [0])
-      on(agent, "echo '#{MASTER_IP} #{MASTER_NODE_NAME}' >> /etc/hosts")
+      on(agent, "echo '#{MASTER_IP} #{MASTER_FQDN}' >> /etc/hosts")
     ## On windows
     when %r{windows}
-      print_stage("Disabling Windows Update service to prevent updates during testing on #{agent}")
+      print_stage("Disabling Windows Update service to prevent updates during testing on #{agent_fqdn}")
       ## Disable and force kill Windows Update service if running
       on(agent, powershell('Set-Service wuauserv -StartupType Disabled'))
       on(agent, powershell("taskkill /f /t /fi 'SERVICES eq wuauserv'"), acceptable_exit_codes: [0, 1])
@@ -210,12 +196,11 @@ def setup_puppet_on(_host, opts = {})
         on(agent, powershell('Invoke-WebRequest https://downloads.puppetlabs.com/windows/puppet7/puppet-agent-x64-latest.msi -OutFile c:\\puppet-agent-x64-latest.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\puppet-agent-x64-latest.msi\' -Wait'))
       end
       # Configure_puppet_on(agent, puppet_opts)
-      on(agent, powershell("Set-Content -path c:\\ProgramData\\PuppetLabs\\puppet\\etc\\puppet.conf -Value \"[agent]`r`nserver=#{MASTER_NODE_NAME}`r`nenvironment=#{ENVIRONMENT}\""))
-      print_stage("Disabling Puppet service so only manual runs occur on #{agent}")
+      on(agent, powershell("Set-Content -path c:\\ProgramData\\PuppetLabs\\puppet\\etc\\puppet.conf -Value \"[agent]`r`nserver=#{MASTER_FQDN}`r`nenvironment=#{ENVIRONMENT}\""))
+      print_stage("Disabling Puppet service so only manual runs occur on #{agent_fqdn}")
       on(agent, powershell('Set-Service puppet -StartupType Disabled; Stop-Service puppet -Force'))
-      on(agent, powershell("Add-Content -path c:\\windows\\system32\\drivers\\etc\\hosts -Value \"#{MASTER_IP}`t#{MASTER_NODE_NAME}\""))
+      on(agent, powershell("Add-Content -path c:\\windows\\system32\\drivers\\etc\\hosts -Value \"#{MASTER_IP}`t#{MASTER_FQDN}\""))
     end
-    # on(master, "echo '#{agent.node_name}' >> /etc/puppetlabs/puppet/autosign.conf")
   end
   on(master, "echo '*' > /etc/puppetlabs/puppet/autosign.conf")
 end
@@ -223,14 +208,14 @@ end
 ## Setup Puppetserver
 def setup_puppetserver_on(host, _opts = {})
   # opts = { master => true, agent: false }.merge(opts)
-  print_stage("Configuring master at #{MASTER_IP} #{MASTER_NODE_NAME} #{host}")
+  print_stage("Configuring master at #{MASTER_IP} #{MASTER_FQDN} #{host}")
   ## Set the puppetserver to know it is its own master, so commands like 'puppetserver ca list' work
   on(master, 'puppet config set server `hostname`')
   ## Set class under test to console display. Requires restart of tty1 serivce to display without logon or reboot
   agent_names = agents.map do |agent|
     "#{agent['roles'].first.gsub('agent_', '').ljust(20)}#{agent.node_name.ljust(30)}#{agent.ip.ljust(40)}"
   end
-  on host, "echo -e 'You are running an acceptance test of \e[1;32m#{CLASS}\e[0m\n\nfrom this MASTER\n\e[1;34m#{master['roles'].first.ljust(20)}#{MASTER_NODE_NAME.ljust(30)}#{MASTER_IP.ljust(40)}\e[0m\n\nto AGENTS\n\e[1;36m#{agent_names.join("\n")}\e[0m\n\n' | tee /etc/motd /etc/issue"
+  on host, "echo -e 'You are running an acceptance test of \e[1;32m#{CLASS}\e[0m\n\nfrom this MASTER\n\e[1;34m#{master['roles'].first.ljust(20)}#{MASTER_FQDN.ljust(30)}#{MASTER_IP.ljust(40)}\e[0m\n\nto AGENTS\n\e[1;36m#{agent_names.join("\n")}\e[0m\n\n' | tee /etc/motd /etc/issue"
   on host, 'systemctl restart getty@tty1'
   ## Create folder for module and dependencies
   on(master, "install -d -o puppet -g puppet /etc/puppetlabs/code/environments/#{ENVIRONMENT}/{modules,data,manifests}")
@@ -244,9 +229,6 @@ def setup_puppetserver_on(host, _opts = {})
     install_puppetserver master
   end
   install_modules_on master
-  ## Add Windows overrides for Bitvise firewall rule and root user on master (note that root user appears to be a system user on Windows according to Puppet anyway!)
-  # on(master, "echo -e \"#{HIERA_OVERRIDES}\" > /etc/puppetlabs/code/environments/#{ENVIRONMENT}/data/overrides.yaml")
-  on(master, "echo -e \"#{HIERA_YAML}\" > /etc/puppetlabs/code/environments/#{ENVIRONMENT}/hiera.yaml")
   ## Generate puppet types on master to overcome issue with some windows types on initial runs
   on(master, "/opt/puppetlabs/puppet/bin/puppet generate types --environment #{ENVIRONMENT}")
   on master, puppet('resource', 'service', 'puppetserver', 'ensure=running')
@@ -255,12 +237,8 @@ end
 
 ## Copy test module and install dependencies on Puppetserver
 def install_modules_on(host)
-  # scp_to(host, PROJECT_ROOT, "/etc/puppetlabs/code/environments/#{ENVIRONMENT}/modules")
-  print_stage("Copying module and installing dependencies on master at #{MASTER_IP} #{MASTER_NODE_NAME}")
+  print_stage("Copying module and installing dependencies on master at #{MASTER_IP} #{MASTER_FQDN}")
   install_dependencies_from DEPENDENCY_LIST
-  ## Alternative method to install deps does not support --target-dir, host[:default_module_install_opts] hash override not working
-  # set host['default_module_install_opts'] = {"target-dir /etc/puppetlabs/code/environments/test/modules"}
-  # install_module_dependencies_on(host)
   copy_module_to(host, source: PROJECT_ROOT, target_module_path: "/etc/puppetlabs/code/environments/#{ENVIRONMENT}/modules/", protocol: 'rsync')
   on(master, "echo -e 'modulepath = /etc/puppetlabs/code/environments/#{ENVIRONMENT}/modules' > /etc/puppetlabs/code/environments/#{ENVIRONMENT}/environment.conf")
   on(master, 'puppet module list --tree')
@@ -333,10 +311,10 @@ RSpec.configure do |c|
   ## Actions after suite
   c.after :suite do
     if master['hypervisor'] == 'none'
-      print_stage("Cleaning up static-master at #{MASTER_IP} #{MASTER_NODE_NAME}")
+      print_stage("Cleaning up static-master at #{MASTER_IP} #{MASTER_FQDN}")
       ## Delete accumulating lines in sshd_conf and /etc/hosts when reusing master
       on(master, "sed -i '/PermitUserEnvironment yes/d' /etc/ssh/sshd_config")
-      on(master, "echo -e \"127.0.0.1\tlocalhost localhost.localdomain\n#{MASTER_IP}\t#{MASTER_NODE_NAME}\" > /etc/hosts")
+      on(master, "echo -e \"127.0.0.1\tlocalhost localhost.localdomain\n#{MASTER_IP}\t#{MASTER_FQDN}\" > /etc/hosts")
       unless ENV['BEAKER_destroy'] == 'no'
         ## Clean up environment and certificates when using static-master
         on(master, "find /etc/puppetlabs/code/environments/#{ENVIRONMENT} ! -name production -type d -exec rm -rf {} +")

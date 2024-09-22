@@ -18,11 +18,4 @@ networking:
   dhcp: "192.168.0.1"
 profile_state_fact: on
 in_policy_fact: "BlockInbound"
-out_policy_fact: "BlockOutbound"
-
-# Values for custom facts
-networking_dns:
-  nameserver: ['1.1.1.1','2.2.2.2']
-windows:
-  release: '10'
-#  display_version: "22H2"
+out_policy_fact: "AllowOutbound"

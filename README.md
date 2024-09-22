@@ -37,8 +37,8 @@ This module applies CIS benchmark hardening to:
 Additional resources are also defined, including:
 
 ### Windows 10 / 11
-- remote desktop
 - users
+- remote desktop
 - firewall (limited)
 
 
@@ -59,7 +59,7 @@ Other Windows 10 / 11 parameters include:
 ### Defence in-depth
 
 This module takes a defence in-depth approach, with the following built-in functions:
-- undefined users are purged (except system users)
+- undefined users can be optionally purged (except system users)
 - where CIS recommendations have more than 1 acceptable setting, the more stringent is used
 
 
@@ -79,7 +79,7 @@ To use this module, `include cis_security_hardening_windows` in your Node Classi
 
 
 
-See example minimum hiera data [here](data/minimum.yaml)
+See example minimum hiera data [here](spec/fixtures/data/minimum.yaml)
 
 
 ## CIS Enforcement Levels
