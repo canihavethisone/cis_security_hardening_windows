@@ -48,6 +48,7 @@ Other Windows 10 / 11 parameters include:
 - cis_include_bitlocker
 - cis_include_nextgen
 - cis_exclude_rules
+- cis_include_hkcu
 - catalog_no_cache
 - clear_temp_files
 - enable_administrator
