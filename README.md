@@ -31,7 +31,7 @@ This module applies CIS benchmark hardening to:
 
 **Windows** CIS controls and other resources are applied using registry, security policy, audit policy, optional local group policy (for HKCU controls), execs and dependency modules.
 
-This module uses a custom **windows** facts hash leveraging wmi, as reading the registry is unreliable for Windows 11
+This module uses a custom **windows** facts hash leveraging wmi, as reading the registry is unreliable for Windows 11 (and predicted for future versions).
 
 ## Building on CIS controls
 
