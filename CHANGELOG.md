@@ -5,14 +5,14 @@ All notable changes to this project will be documented in this file.
 ## Release 1.0.0
 
 **Breaking Changes**
-- Rename disabled_administrator references and hiera to administrator as enabling is configurable
+- Rename 'disabled_administrator' references and hiera to 'administrator' as enabling is configurable
 
 **Features**
 - Update dependency versions
 
 **Bugfixes**
 - Remove references to legacy facts that were breaking testing
-- Improve Puppet 8 compatability testing
+- Improve Puppet 8 compatibility testing
 
 
 ## Release 0.2.3
