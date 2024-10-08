@@ -6,11 +6,11 @@ All notable changes to this project will be documented in this file.
 
 **Bugfixes**
 - Add validation that the following required parameters are set by the implementer:
-  - 'logon_banner'
-  - 'logon_message'
-  - 'administrator_newname'
-  - 'administrator_newpassword'
-  - 'disabled_guest_newname'
+  - logon_banner
+  - logon_message
+  - administrator_newname
+  - administrator_newpassword
+  - disabled_guest_newname
 
 
 ## Release 1.0.0
