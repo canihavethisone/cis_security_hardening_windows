@@ -6,16 +6,16 @@ defaults:
 
 hierarchy:
 
-  - name: "Minimum testing hiera"
-    path: "../spec/fixtures/data/minimum.yaml"
-
+  - name: "Testcase hiera"
+    path: "../spec/fixtures/data/%{testcase}.yaml"
+      
   - name: "Windows globbing"
     glob: "windows/*.yaml"
 
   - name: "Windows custom facts release globbing"
     glob: "windows/%{facts.windows.release}/*.yaml"
 
-  # merge strategy is defined in common.yaml
+  # set a merge strategy as found in common.yaml
   - name: "Other YAML hierarchy levels"
     paths:
       - "common.yaml"

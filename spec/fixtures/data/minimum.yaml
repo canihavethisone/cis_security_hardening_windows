@@ -1,5 +1,5 @@
 ---
-## - This file provides minimum testing data for this module
+## This file provides minimum testing data for this module
 
 # Banners must be specified
 cis_security_hardening_windows::logon_banner:              'notice and consent banner'

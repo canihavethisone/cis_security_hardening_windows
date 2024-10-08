@@ -48,6 +48,21 @@ class cis_security_hardening_windows (
     fail("Your windows release ${facts['windows']['release']} is not yet supported")
   }
 
+  # Define required parameters
+  $required_params = {
+    'logon_banner'              => lookup('cis_security_hardening_windows::logon_banner', { 'default_value' => undef }),
+    'logon_message'             => lookup('cis_security_hardening_windows::logon_message', { 'default_value' => undef }),
+    'administrator_newname'     => lookup('cis_security_hardening_windows::administrator_newname', { 'default_value' => undef }),
+    'administrator_newpassword' => lookup('cis_security_hardening_windows::administrator_newpassword', { 'default_value' => undef }),
+    'disabled_guest_newname'    => lookup('cis_security_hardening_windows::disabled_guest_newname', { 'default_value' => undef }),
+  }
+
+  # Check for any missing required parameters
+  $missing_params = $required_params.filter |$key, $value| { $value == undef }
+  if !$missing_params.empty {
+    fail("\n\nYou must define values for the following parameters:\n${missing_params.keys.join("\n")}\n\n")
+  }
+
   # Fail if administrator disabled and users not defined
   if !$enable_administrator and $users.empty {
     fail('At least 1 user must be defined as Administrator will be disabled.')

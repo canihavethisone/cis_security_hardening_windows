@@ -24,7 +24,31 @@ describe 'cis_security_hardening_windows' do
           end
         end
 
-        describe 'With defaults' do
+        ### Test expected failure by including hiera testcase with params unset
+        context 'Without required values declared' do
+          let(:facts) do
+            super().merge(
+              testcase: 'missing_data'
+            )
+          end
+
+          # Write out catalogue
+          # it { File.write("cis_security_hardening_windows_failure_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource)) }
+
+          # fail tp compile with deps
+          # it { pp catalogue.resources }
+          it { is_expected.not_to compile.with_all_deps }
+          it { is_expected.to raise_error(%r{You must define values for the following parameters:\nlogon_banner\nlogon_message\nadministrator_newname\nadministrator_newpassword\ndisabled_guest_newname}) }
+        end
+
+        ### Test all defaults by including hiera testcase with minimum required additional data
+        context 'With defaults' do
+          let(:facts) do
+            super().merge(
+              testcase: 'minimum'
+            )
+          end
+
           # Write out catalogue
           # it { File.write('cis_security_hardening_windows_defaults_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource)) }
 
@@ -69,7 +93,13 @@ describe 'cis_security_hardening_windows' do
           end
         end
 
-        describe 'With misc options enabled' do
+        context 'With misc options enabled' do
+          let(:facts) do
+            super().merge(
+              testcase: 'minimum'
+            )
+          end
+
           let(:params) do
             { 'catalog_no_cache' => true,
               'performance_powerscheme' => true,
@@ -128,6 +158,12 @@ describe 'cis_security_hardening_windows' do
 
         ### Test all hiera when set
         context 'CIS Level 2 BitLocker & NextGen domain' do
+          let(:facts) do
+            super().merge(
+              testcase: 'minimum'
+            )
+          end
+
           let(:params) do
             { 'cis_profile_type' => 'domain',
               'cis_enforcement_level' => 2,
@@ -310,6 +346,12 @@ describe 'cis_security_hardening_windows' do
 
         ### Test standalone hiera is used when set
         context 'CIS Level 2 BitLocker and NextGen standalone' do
+          let(:facts) do
+            super().merge(
+              testcase: 'minimum'
+            )
+          end
+
           let(:params) do
             { 'cis_profile_type' => 'standalone',
               'cis_enforcement_level' => 2,
@@ -341,6 +383,12 @@ describe 'cis_security_hardening_windows' do
 
         ### Test Level 1 only hiera is used when set
         context 'CIS Level 1 standalone' do
+          let(:facts) do
+            super().merge(
+              testcase: 'minimum'
+            )
+          end
+
           let(:params) do
             { 'cis_profile_type' => 'standalone',
               'cis_enforcement_level' => 1,
@@ -406,6 +454,12 @@ describe 'cis_security_hardening_windows' do
 
         ### Test exclude_rules are absent
         context 'CIS Level 2 standalone with exclude_rules' do
+          let(:facts) do
+            super().merge(
+              testcase: 'minimum'
+            )
+          end
+
           let(:params) do
             { 'cis_profile_type' => 'standalone',
               'cis_enforcement_level' => 2,
@@ -450,7 +504,13 @@ describe 'cis_security_hardening_windows' do
         end
 
         # Test Remote Desktop with trusted_rdp_subnets defined
-        describe 'Remote Desktop with trusted_rdp_subnets defined' do
+        context 'Remote Desktop with trusted_rdp_subnets defined' do
+          let(:facts) do
+            super().merge(
+              testcase: 'minimum'
+            )
+          end
+
           let(:params) do
             { 'enable_remote_desktop' => true,
               'trusted_rdp_subnets' => ['192.168.1.0/24', '10.2.0.0/16'] }
@@ -528,7 +588,13 @@ describe 'cis_security_hardening_windows' do
         end
 
         # Test without trusted_rdp_subnets defined
-        describe 'Remote Desktop without trusted_rdp_subnets defined' do
+        context 'Remote Desktop without trusted_rdp_subnets defined' do
+          let(:facts) do
+            super().merge(
+              testcase: 'minimum'
+            )
+          end
+
           let(:params) do
             { 'enable_remote_desktop' => true,
               'trusted_rdp_subnets' => :undef }

@@ -1,0 +1,8 @@
+---
+## This file sets all required values to undef
+
+cis_security_hardening_windows::logon_banner:              ~
+cis_security_hardening_windows::logon_message:             ~
+cis_security_hardening_windows::administrator_newname:     ~
+cis_security_hardening_windows::administrator_newpassword: ~
+cis_security_hardening_windows::disabled_guest_newname:    ~
