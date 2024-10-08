@@ -28,7 +28,7 @@ describe 'cis_security_hardening_windows' do
         context 'Without required values declared' do
           let(:facts) do
             super().merge(
-              testcase: 'missing_data'
+              testcase: 'missing_data',
             )
           end
 
@@ -45,7 +45,7 @@ describe 'cis_security_hardening_windows' do
         context 'With defaults' do
           let(:facts) do
             super().merge(
-              testcase: 'minimum'
+              testcase: 'minimum',
             )
           end
 
@@ -96,7 +96,7 @@ describe 'cis_security_hardening_windows' do
         context 'With misc options enabled' do
           let(:facts) do
             super().merge(
-              testcase: 'minimum'
+              testcase: 'minimum',
             )
           end
 
@@ -160,7 +160,7 @@ describe 'cis_security_hardening_windows' do
         context 'CIS Level 2 BitLocker & NextGen domain' do
           let(:facts) do
             super().merge(
-              testcase: 'minimum'
+              testcase: 'minimum',
             )
           end
 
@@ -348,7 +348,7 @@ describe 'cis_security_hardening_windows' do
         context 'CIS Level 2 BitLocker and NextGen standalone' do
           let(:facts) do
             super().merge(
-              testcase: 'minimum'
+              testcase: 'minimum',
             )
           end
 
@@ -385,7 +385,7 @@ describe 'cis_security_hardening_windows' do
         context 'CIS Level 1 standalone' do
           let(:facts) do
             super().merge(
-              testcase: 'minimum'
+              testcase: 'minimum',
             )
           end
 
@@ -456,7 +456,7 @@ describe 'cis_security_hardening_windows' do
         context 'CIS Level 2 standalone with exclude_rules' do
           let(:facts) do
             super().merge(
-              testcase: 'minimum'
+              testcase: 'minimum',
             )
           end
 
@@ -467,9 +467,8 @@ describe 'cis_security_hardening_windows' do
               'cis_include_nextgen' => true,
               'cis_exclude_rules' => [
                 "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'",
-                "(L2) Ensure 'Windows Remote Management (WS-Management) (WinRM)' is set to 'Disabled'"
-              ],
-            }
+                "(L2) Ensure 'Windows Remote Management (WS-Management) (WinRM)' is set to 'Disabled'",
+              ], }
           end
 
           # Write out catalogue
@@ -491,15 +490,15 @@ describe 'cis_security_hardening_windows' do
           excluded_registry_values = [
             'HKLM\SOFTWARE\Policies\Microsoft\Windows\System\EnableSmartScreen',
             'HKLM\SOFTWARE\Policies\Microsoft\Windows\System\ShellSmartScreenLevel',
-            'HKLM\SYSTEM\CurrentControlSet\Services\WinRM\Start'
+            'HKLM\SYSTEM\CurrentControlSet\Services\WinRM\Start',
           ]
 
-          absent_registry_values.each do |key|
-            it { is_expected.not_to contain_registry_value(key) }
+          absent_registry_values.each do |absent_key|
+            it { is_expected.not_to contain_registry_value(absent_key) }
           end
 
-          excluded_registry_values.each do |key|
-            it { is_expected.not_to contain_registry_value(key) }
+          excluded_registry_values.each do |excluded_key|
+            it { is_expected.not_to contain_registry_value(excluded_key) }
           end
         end
 
@@ -507,7 +506,7 @@ describe 'cis_security_hardening_windows' do
         context 'Remote Desktop with trusted_rdp_subnets defined' do
           let(:facts) do
             super().merge(
-              testcase: 'minimum'
+              testcase: 'minimum',
             )
           end
 
@@ -591,7 +590,7 @@ describe 'cis_security_hardening_windows' do
         context 'Remote Desktop without trusted_rdp_subnets defined' do
           let(:facts) do
             super().merge(
-              testcase: 'minimum'
+              testcase: 'minimum',
             )
           end
 
