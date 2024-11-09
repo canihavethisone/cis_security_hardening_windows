@@ -45,7 +45,7 @@ class cis_security_hardening_windows (
 ) {
   # Check that the release is supported.  These are backed by hiera directories
   if !($facts['windows']['release'] in ['10','11']) {
-    fail("Your windows release ${facts['windows']['release']} is not yet supported")
+    fail("Your Windows release ${facts['windows']['release']} is not yet supported.")
   }
 
   # Define required parameters
@@ -60,12 +60,12 @@ class cis_security_hardening_windows (
   # Check for any missing required parameters
   $missing_params = $required_params.filter |$key, $value| { $value == undef }
   if !$missing_params.empty {
-    fail("\n\nYou must define values for the following parameters:\n${missing_params.keys.join("\n")}\n\n")
+    fail("\n\nThe following parameters must be defined:\n${missing_params.keys.join("\n")}\n\n")
   }
 
   # Fail if administrator disabled and users not defined
   if !$enable_administrator and $users.empty {
-    fail('At least 1 user must be defined as Administrator will be disabled.')
+    fail('At least one user must be defined if the administrator account is disabled.')
   }
 
   # Fail if purge_unmanaged_users enabled and users not defined

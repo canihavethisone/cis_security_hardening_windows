@@ -7,7 +7,7 @@ shared_examples 'windows tests' do |agent:, _agent_ip:|
     it { is_expected.to exist }
   end
 
-  # Load registry YAML data
+  # Load registry YAML data once at the start
   registry_yaml_data = {}
   registry_yaml_files = Dir["./data/windows/#{agent['version']}/*.yaml"]
   registry_yaml_files.each { |file| registry_yaml_data.merge!(YAML.load_file(file)) }
@@ -29,14 +29,14 @@ shared_examples 'windows tests' do |agent:, _agent_ip:|
   exclude_keys = exclude_yaml_data['cis_security_hardening_windows::cis_exclude_rules']
 
   # Remove exclude keys from registry combined data
-  exclude_keys.each { |key| registry_combined_data.delete(key) }
+  registry_combined_data.reject! { |key, _| exclude_keys.include?(key) }
 
   # Default properties
   default_properties = { 'type' => 'dword', 'data' => 1 }
   previous_title = nil
 
   # Some exclusions are required as acceptance tests require remote access to be enabled, and a few others
-  exclusion_patterns = [
+  exclusion_patterns = Set.new([
     %r{Named Pipes that can be accessed anonymously}, # Yet to manage paths within array in data
     %r{Remotely accessible registry paths and sub-paths}, # Yet to manage paths within array in data
     %r{Turn off background refresh of Group Policy is set}, # Is set to absent in hiera
@@ -44,7 +44,7 @@ shared_examples 'windows tests' do |agent:, _agent_ip:|
     %r{Remote Desktop Services \(TermService\)},
     %r{Allow users to connect remotely by using Remote Desktop Services},
     %r{Remote Desktop Services UserMode Port Redirector},
-  ]
+  ])
 
   # Convert registry_combined_data to an array and randomly select 50 entries
   random_registry_entries = registry_combined_data.to_a.sample(reg_entries_to_test)
@@ -53,32 +53,26 @@ shared_examples 'windows tests' do |agent:, _agent_ip:|
 
   # Iterate over the randomly selected entries
   random_registry_entries.each do |title, hash|
-    # Skip the iteration if the title matches any pattern in the exclusion list due to remote requirements for testing and complex data values
+    # Skip if title matches any exclusion pattern
     next if exclusion_patterns.any? { |pattern| title.match?(pattern) }
 
-    # Set title to 'as per previous' if it's empty or if it's the same as the previous title
+    # Set title to 'as per previous' if it's empty or same as previous title
     title = previous_title || 'as per previous' if title.nil? || title.empty? || title == previous_title
 
     hash.each do |regkey, properties|
-      properties = default_properties.merge(properties)
+      # Helper method to process registry data
+      processed_properties = default_properties.merge(properties)
+      if processed_properties['data'].is_a?(Array)
+        processed_properties['data'] = processed_properties['data'].map { |element| "'#{element}'" }.join(',')
+      end
+      processed_properties['data'] = processed_properties['data'].to_s
+
       extracted_key, extracted_value = regkey.match(%r{^(.*)\\([^\\]*)$})&.captures
 
-      # Check if properties['data'] is an array before processing
-      if properties['data'].is_a?(Array)
-        # Surround each component with single quotes and join with commas
-        properties['data'] = properties['data'].map { |element| "'#{element}'" }.join(',')
-      end
-
-      # Ensure that properties['data'] is a string before proceeding or calling gsub
-      properties['data'] = properties['data'].to_s unless properties['data'].is_a?(String)
-
-      # Yet to address data with paths within an array
-      # properties['data'] = properties['data'].gsub(/\\+/, '\\')
-
-      # Ensure that the registry keys are also specified, as these are created if they don't exist
+      # Ensure the registry keys are also specified, as these are created if they don't exist
       describe "Registry key: #{title}" do
         describe windows_registry_key(extracted_key) do
-          it { is_expected.to have_property_value(extracted_value, ":type_#{properties['type']}", properties['data']) }
+          it { is_expected.to have_property_value(extracted_value, ":type_#{processed_properties['type']}", processed_properties['data']) }
         end
       end
     end

@@ -38,7 +38,7 @@ describe 'cis_security_hardening_windows' do
           # fail tp compile with deps
           # it { pp catalogue.resources }
           it { is_expected.not_to compile.with_all_deps }
-          it { is_expected.to raise_error(%r{You must define values for the following parameters:\nlogon_banner\nlogon_message\nadministrator_newname\nadministrator_newpassword\ndisabled_guest_newname}) }
+          it { is_expected.to raise_error(%r{The following parameters must be defined:\nlogon_banner\nlogon_message\nadministrator_newname\nadministrator_newpassword\ndisabled_guest_newname}) }
         end
 
         ### Test all defaults by including hiera testcase with minimum required additional data

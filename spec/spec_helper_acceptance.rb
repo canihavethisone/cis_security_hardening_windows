@@ -38,8 +38,8 @@ ENVIRONMENT = if master['hypervisor'] == 'none'
 
 ## Configuration
 CONFIG = {
-  puppet_agent_version: ENV['PUPPET_AGENT_VERSION'] || '7.27.0',
-  puppetserver_version: ENV['PUPPETSERVER_VERSION'] || '7.14.0',
+  puppet_agent_version: ENV['PUPPET_AGENT_VERSION'] || '8.9.0',
+  puppetserver_version: ENV['PUPPETSERVER_VERSION'] || '8.7.0',
   puppet_collection: 'puppet7',
   puppet_agent_service: 'puppet',
 }.freeze
@@ -52,54 +52,47 @@ ALL_DEPS = []
 
 ### ---------------- Define Functions ------------------- ###
 ## Print stage headings
-def print_stage(h)
-  puts "\n\n"
-  puts "\e[0;32m-------------------------------------------------------------------------------------------\e[0m"
-  puts "\e[0;36m#{h}\e[0m"
-  puts "\e[0;32m-------------------------------------------------------------------------------------------\e[0m"
-  puts "\n"
+def print_stage(header)
+  separator = "\e[0;32m#{'-' * 100}\e[0m"
+  puts "\n\n#{separator}\n\e[0;36m#{header}\e[0m\n#{separator}\n"
 end
 
 ## As each dependency is installed from fixtures, add the latest version to an array (uses the 5th line of output so that only primary dependencies are written to metadata.json
 def compile_dependency_versions(output)
-  dep_arr = output.lines[4]&.split(' ')
-  ALL_DEPS.push({ dep_name: dep_arr[1], dep_ver: dep_arr[2][9..-6] }) unless dep_arr.nil?
+  dep_line = output.lines[4]&.split
+  return if dep_line.nil? || dep_line.size < 3
+  dep_name = dep_line[1]
+  dep_ver = dep_line[2][9..-6] if dep_line[2]&.length > 14
+  ALL_DEPS.push({ dep_name: dep_name, dep_ver: dep_ver }) if dep_name && dep_ver
 end
 
 ## Update dependencies in metadata
 def write_metadata_dot_json(dependencies)
-  dep_set = []
-  metadata = File.read(PROJECT_ROOT + '/metadata.json')
-  return unless metadata
-  metadata_json = JSON.parse(metadata)
-  metadata_json['dependencies'] = []
-  dependencies.each do |dep|
-    matches = dep_set.select do |elem|
-      elem[:dep_name] == dep[:dep_name]
-    end
-    if matches.empty?
-      dep_set.push(dep)
-    elsif dep[:dep_ver] > matches[0][:dep_ver]
-      dep_set[dep_set.index matches[0]] = dep
-    end
-  end
-  dep_set = dep_set.sort_by { |dep| dep[:dep_name] }
-  dep_set.each do |dep|
-    # Hard locked Puppet modules - specify here if version locked in fixtures
-    dep_hash = if ['puppetlabs-example1', 'puppetlabs-example2'].include?(dep[:dep_name])
-                 { "name": dep[:dep_name],
-                 "version_requirement": (dep[:dep_ver]).to_s }
-               else
-                 { "name": dep[:dep_name],
-                 # Add upper version
-                 "version_requirement": ">= #{dep[:dep_ver]} < #{dep[:dep_ver].to_i + 1}.0.0" }
-               end
-    metadata_json['dependencies'].push(dep_hash) unless dep[:dep_name].match?(%r{puppetlabs-.*_core})
-  end
-  File.open('metadata.json', 'w+') do |f|
-    f.write(JSON.pretty_generate(JSON.parse(metadata_json.to_json)))
-  end
+  metadata_path = File.join(PROJECT_ROOT, 'metadata.json')
+  return unless File.exist?(metadata_path)
+  metadata_json = JSON.parse(File.read(metadata_path))
+
+  # Group dependencies by name and select the highest version
+  unique_dependencies = dependencies.group_by { |dep| dep[:dep_name] }
+                                    .map { |name, deps| deps.max_by { |dep| dep[:dep_ver] } }
+                                    .sort_by { |dep| dep[:dep_name] }
+
+  metadata_json['dependencies'] = unique_dependencies.map do |dep|
+    next if dep[:dep_name].match?(%r{puppetlabs-.*_core})
+
+    # Construct dependency hash based on version locking requirements
+    version_req = if ['puppetlabs-example1', 'puppetlabs-example2'].include?(dep[:dep_name])
+                    dep[:dep_ver].to_s
+                  else
+                    ">= #{dep[:dep_ver]} < #{dep[:dep_ver].to_i + 1}.0.0"
+                  end
+    { "name" => dep[:dep_name], "version_requirement" => version_req }
+  end.compact
+
+  # Write the updated JSON to metadata.json
+  File.write(metadata_path, JSON.pretty_generate(metadata_json))
 end
+
 
 ## Stop firewall
 def stop_firewall_on(host)
@@ -161,49 +154,63 @@ end
 def setup_puppet_on(_host, opts = {})
   opts = { agent: true }.merge(opts)
   return unless opts[:agent]
+
   agents.each do |agent|
     agent_fqdn = agent.node_name
     print_stage("Configuring agent at #{agent.get_ip} #{agent_fqdn}")
-    # on(agent, puppet('resource', 'host', MASTER_FQDN, 'ensure=present', "ip=#{MASTER_IP}"))
+    
     agent['type'] = 'aio'
     puppet_opts = agent_opts(master.to_s)
-    ## On el- or centos
+
     case agent['platform']
     when %r{el-|centos}
-      ## Set class under test to console display. Requires restart of tty1 serivce to display without logon or reboot
-      on(agent, "echo -e 'You are running an acceptance test of \e[1;32m#{CLASS}\e[0m\n\non this AGENT\t\e[1;36m#{agent_fqdn}\t#{agent.ip}\e[0m\nfrom MASTER\t\e[1;34m#{MASTER_FQDN}\t#{MASTER_IP}\e[0m\n\n' | tee /etc/motd /etc/issue")
+      # Display welcome message on CentOS/EL agents
+      message = <<~WELCOME
+        You are running an acceptance test of \e[1;32m#{CLASS}\e[0m
+        on this AGENT\t\e[1;36m#{agent_fqdn}\t#{agent.ip}\e[0m
+        from MASTER\t\e[1;34m#{MASTER_FQDN}\t#{MASTER_IP}\e[0m
+      WELCOME
+      
+      on(agent, "echo -e '#{message}' | tee /etc/motd /etc/issue")
       on(agent, 'systemctl restart getty@tty1')
-      ## Check if puppet-agent is installed, otherwise install it
-      result = on(agent, 'rpm -qa | grep puppet-agent', acceptable_exit_codes: [0, 1])
-      if result.exit_code == 1
-        install_puppet_agent agent
+
+      # Install puppet-agent if not already installed
+      unless on(agent, 'rpm -qa | grep puppet-agent', acceptable_exit_codes: [0, 1]).exit_code.zero?
+        install_puppet_agent(agent)
       end
+
       configure_puppet_on(agent, puppet_opts)
-      stop_firewall_on agent
+      stop_firewall_on(agent)
+
       print_stage("Disabling Puppet service so only manual runs occur on #{agent_fqdn}")
       on(agent, 'systemctl disable puppet --now', acceptable_exit_codes: [0])
       on(agent, "echo '#{MASTER_IP} #{MASTER_FQDN}' >> /etc/hosts")
-    ## On windows
+
     when %r{windows}
+      # Disable Windows Update service for testing on Windows agents
       print_stage("Disabling Windows Update service to prevent updates during testing on #{agent_fqdn}")
-      ## Disable and force kill Windows Update service if running
       on(agent, powershell('Set-Service wuauserv -StartupType Disabled'))
       on(agent, powershell("taskkill /f /t /fi 'SERVICES eq wuauserv'"), acceptable_exit_codes: [0, 1])
       on(agent, powershell('Stop-Service wuauserv -Force'), acceptable_exit_codes: [0, 1])
-      ## Check if puppet-agent is installed, otherwise install it
-      result = on(agent, powershell('if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match \'Puppet Agent\') {exit 0} else {exit 1}'))
-      if result.exit_code == 1
+
+      # Install puppet-agent if not already installed
+      unless on(agent, powershell('if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match \'Puppet Agent\') {exit 0} else {exit 1}')).exit_code.zero?
         on(agent, powershell('Invoke-WebRequest https://downloads.puppetlabs.com/windows/puppet7/puppet-agent-x64-latest.msi -OutFile c:\\puppet-agent-x64-latest.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\puppet-agent-x64-latest.msi\' -Wait'))
       end
-      # Configure_puppet_on(agent, puppet_opts)
+
+      # Configure Puppet agent settings
       on(agent, powershell("Set-Content -path c:\\ProgramData\\PuppetLabs\\puppet\\etc\\puppet.conf -Value \"[agent]`r`nserver=#{MASTER_FQDN}`r`nenvironment=#{ENVIRONMENT}\""))
+
       print_stage("Disabling Puppet service so only manual runs occur on #{agent_fqdn}")
       on(agent, powershell('Set-Service puppet -StartupType Disabled; Stop-Service puppet -Force'))
       on(agent, powershell("Add-Content -path c:\\windows\\system32\\drivers\\etc\\hosts -Value \"#{MASTER_IP}`t#{MASTER_FQDN}\""))
     end
   end
+
+  # Enable autosign on the master
   on(master, "echo '*' > /etc/puppetlabs/puppet/autosign.conf")
 end
+
 
 ## Setup Puppetserver
 def setup_puppetserver_on(host, _opts = {})
@@ -212,10 +219,18 @@ def setup_puppetserver_on(host, _opts = {})
   ## Set the puppetserver to know it is its own master, so commands like 'puppetserver ca list' work
   on(master, 'puppet config set server `hostname`')
   ## Set class under test to console display. Requires restart of tty1 serivce to display without logon or reboot
-  agent_names = agents.map do |agent|
-    "#{agent['roles'].first.gsub('agent_', '').ljust(20)}#{agent.node_name.ljust(30)}#{agent.ip.ljust(40)}"
-  end
-  on host, "echo -e 'You are running an acceptance test of \e[1;32m#{CLASS}\e[0m\n\nfrom this MASTER\n\e[1;34m#{master['roles'].first.ljust(20)}#{MASTER_FQDN.ljust(30)}#{MASTER_IP.ljust(40)}\e[0m\n\nto AGENTS\n\e[1;36m#{agent_names.join("\n")}\e[0m\n\n' | tee /etc/motd /etc/issue"
+  agent_names = agents.map { |a| "#{a['roles'].first.gsub('agent_', '').ljust(20)}#{a.node_name.ljust(30)}#{a.ip.ljust(40)}" }.join("\n")
+  master_info = "#{master['roles'].first.ljust(20)}#{MASTER_FQDN.ljust(30)}#{MASTER_IP.ljust(40)}"
+  message = <<~MSG
+    You are running an acceptance test of \e[1;32m#{CLASS}\e[0m
+
+    from this MASTER
+    \e[1;34m#{master_info}\e[0m
+
+    to AGENTS
+    \e[1;36m#{agent_names}\e[0m
+  MSG
+  on(host, "echo -e '#{message}' | tee /etc/motd /etc/issue")
   on host, 'systemctl restart getty@tty1'
   ## Create folder for module and dependencies
   on(master, "install -d -o puppet -g puppet /etc/puppetlabs/code/environments/#{ENVIRONMENT}/{modules,data,manifests}")
@@ -244,56 +259,35 @@ def install_modules_on(host)
   on(master, 'puppet module list --tree')
 end
 
-## Determine and install dependencies
+## Determine and install dependencies from either .fixtures or metadata.json
 def install_dependencies_from(list)
-  puts "\e[0;36m \n#{list} selected as list to determine dependencies \e[0m\n\n"
-  if list == 'fixtures'
-    ## Determine dependencies from .fixtures
-    file = File.read(PROJECT_ROOT + '/.fixtures.yml')
-    return unless file
-    metadata = YAML.load_file(PROJECT_ROOT + '/.fixtures.yml')
-    metadata['fixtures']['forge_modules'].each do |dependency|
-      if dependency[1].instance_of? Hash
-        dep_name = dependency[1]['repo'].sub(%r{/\//}, '-')
-        dep_version = "--version #{dependency[1]['ref']}"
-      else
-        dep_name = dependency[1].sub(%r{/\//}, '-')
-      end
-      ## Install dependencies.  Environment and vardir are dynamically set to avoid modules being cleaned by concurrent tests
-      on(master, "puppet module install #{dep_name} #{dep_version} --environment #{ENVIRONMENT} --vardir /etc/puppetlabs/code/environments/#{ENVIRONMENT}/tmp/", { acceptable_exit_codes: [0] }) do |result|
-        if ENVIRONMENT == 'production'
-          compile_dependency_versions(result.stdout)
-        end
-      end
+  puts "\e[0;36m \n#{list} selected to determine dependencies \e[0m\n\n"
+  file_path = PROJECT_ROOT + (list == 'fixtures' ? '/.fixtures.yml' : '/metadata.json')
+  return unless File.exist?(file_path)
+  dependencies = if list == 'fixtures'
+                   YAML.load_file(file_path)['fixtures']['forge_modules'].map do |dep|
+                     {
+                       name: dep[1].is_a?(Hash) ? dep[1]['repo'].gsub(%r{/\//}, '-') : dep[1].gsub(%r{/\//}, '-'),
+                       version: dep[1].is_a?(Hash) ? dep[1]['ref'] : nil
+                     }
+                   end
+                 else
+                   JSON.parse(File.read(file_path))['dependencies'].map do |dep|
+                     {
+                       name: dep['name'].gsub('/', '-'),
+                       version: dep.key?('version_requirement') ? module_version_from_requirement(dep['name'], dep['version_requirement']) : nil
+                     }
+                   end
+                 end
+  dependencies.each do |dep|
+    version_flag = dep[:version] ? "--version #{dep[:version]}" : ""
+    on(master, "puppet module install #{dep[:name]} #{version_flag} --environment #{ENVIRONMENT} --vardir /etc/puppetlabs/code/environments/#{ENVIRONMENT}/tmp/", acceptable_exit_codes: [0]) do |result|
+      compile_dependency_versions(result.stdout) if ENVIRONMENT == 'production' && list == 'fixtures'
     end
-    # Update metadata.json with the latest installed dependencies unless static master in use with multiple environments
-    if ENVIRONMENT == 'production'
-      write_metadata_dot_json(ALL_DEPS)
-    end
-  elsif list == 'metadata'
-    ## Determine dependencies from metadata.json
-    file = File.read(PROJECT_ROOT + '/metadata.json')
-    return unless file
-    metadata = JSON.parse(File.read(PROJECT_ROOT + '/metadata.json'))
-    return [] unless metadata.key?('dependencies')
-    dependencies = []
-    puts "\e[0;36m \nSourcing puppet modules from #{forge_api} \e[0m\n\n"
-    metadata['dependencies'].each do |d|
-      tmp = { module_name: d['name'].sub('/', '-') }
-      if d.key?('version_requirement')
-        tmp[:version] = module_version_from_requirement(tmp[:module_name], d['version_requirement'])
-      end
-      dependencies.push(tmp)
-    end
-    dependencies.each do |dep|
-      dep_name = dep[:module_name]
-      dep_version = "--version #{dep[:version]}"
-      ## Install dependencies.  Environment and vardir are dynamically set to avoid modules being cleaned by concurrent tests
-      on(master, "puppet module install #{dep_name} #{dep_version} --environment #{ENVIRONMENT} --vardir /etc/puppetlabs/code/environments/#{ENVIRONMENT}/tmp/", { acceptable_exit_codes: [0] })
-    end
-  else
-    raise "Dependencies can only be determined from fixtures or metadata.  You selected #{list}"
   end
+  write_metadata_dot_json(ALL_DEPS) if ENVIRONMENT == 'production' && list == 'fixtures'
+rescue KeyError => e
+  raise "Dependencies can only be determined from fixtures or metadata. You selected #{list} - Error: #{e.message}"
 end
 
 ### ---------------- Call Functions ------------------- ###
