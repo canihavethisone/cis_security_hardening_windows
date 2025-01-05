@@ -40,7 +40,7 @@ ENVIRONMENT = if master['hypervisor'] == 'none'
 CONFIG = {
   puppet_agent_version: ENV['PUPPET_AGENT_VERSION'] || '8.9.0',
   puppetserver_version: ENV['PUPPETSERVER_VERSION'] || '8.7.0',
-  puppet_collection: 'puppet7',
+  puppet_collection: 'puppet8',
   puppet_agent_service: 'puppet',
 }.freeze
 
@@ -112,7 +112,7 @@ end
 def install_puppet_agent(agent)
   print_stage("Installing Puppet agent on #{agent}")
   configure_type_defaults_on(agent)
-  on(master, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
+  on(agent, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
   install_puppetlabs_release_repo(agent, CONFIG[:puppet_collection])
   install_puppet_agent_on(agent, puppet_agent_version: CONFIG[:puppet_agent_version], puppet_collection: CONFIG[:puppet_collection])
 end
