@@ -175,7 +175,7 @@ def setup_puppet_on(_host, opts = {})
       on(agent, 'systemctl restart getty@tty1')
 
       # Install puppet-agent if not already installed
-      unless on(agent, 'rpm -qa | grep puppet-agent', acceptable_exit_codes: [0, 1]).exit_code.zero?
+      unless on(agent, "rpm -qa | grep -E 'puppet-agent|openvox-agent'", acceptable_exit_codes: [0, 1]).exit_code.zero?
         install_puppet_agent(agent)
       end
 
@@ -239,7 +239,7 @@ def setup_puppetserver_on(host, _opts = {})
   master['puppetservice'] = 'puppetserver'
   master['puppetserver-confdir'] = '/etc/puppetlabs/puppetserver/conf.d'
   master['type'] = 'aio'
-  result = on(master, 'rpm -qa | grep puppetserver', acceptable_exit_codes: [0, 1])
+  result = on(master, "rpm -qa | grep -E 'puppetserver|openvox-server'", acceptable_exit_codes: [0, 1])
   if result.exit_code == 1
     install_puppetserver master
   end
