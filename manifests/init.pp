@@ -43,7 +43,7 @@ class cis_security_hardening_windows (
   $auto_restart            = lookup( 'auto_restart',             Boolean,                      undef,    true  ),
   $catalog_no_cache        = lookup( 'catalog_no_cache',         Boolean,                      undef,    false ),
 ) {
-  # Check that the release is supported.  These are backed by hiera directories
+  # Check that the release is supported. These are backed by hiera directories
   if !($facts['windows']['release'] in ['10','11']) {
     fail("Your Windows release ${facts['windows']['release']} is not yet supported.")
   }
