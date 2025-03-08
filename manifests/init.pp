@@ -75,7 +75,7 @@ class cis_security_hardening_windows (
 
   # Ensure that the local_security_policy for local Administrator is set
   local_security_policy { 'Accounts: Administrator account status':
-    policy_value => $enable_administrator ? { true  => 1, default => 0, } #lint:ignore:selector_inside_resource
+    policy_value => $enable_administrator ? { true => 1, default => 0, } #lint:ignore:selector_inside_resource
   }
 
   # Configure Remote Desktop agent if true
