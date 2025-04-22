@@ -92,7 +92,9 @@ class cis_security_hardening_windows::cis (
   # Remove the rule title from the hashes so the registry resource can apply them
   $enforced_rules.each | String $title, Hash $rule = {} | {
     $rule.each |String $key, Hash $value = {} | {
-      $regpath = regsubst($key, /\\[^\\]+$/, '')
+
+      # Ensure the registry path exists.  This will fail for duplicates with different CASE (capitalisation)!
+      $regpath = regsubst($key, '[\\\*]+[^\\\*]+$', '')
       if !defined(Registry_key[$regpath]) and $value['ensure'] != 'absent' {
         registry_key { $regpath:
           ensure => 'present',
@@ -108,24 +110,6 @@ class cis_security_hardening_windows::cis (
           ;
       }
     }
-  }
-
-  # Ensure Hardened UNC Paths set to Enabled, with "Require Mutual Authentication" & "Require Integrity" set for NETLOGON & SYSVOL shares
-  # These cannot come from hiera as the regpath regex fails on the multiple backslashes. 7 backslashes required here to get 2 in the regkey
-  registry_key { 'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths':
-    ensure => present,
-  }
-  registry_value { 'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\\\\\\\*\NETLOGON':
-    ensure  => present,
-    type    => 'string',
-    data    => 'RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1',
-    require => Registry_key['HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths'],
-  }
-  registry_value { 'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\\\\\\\*\SYSVOL':
-    ensure  => present,
-    type    => 'string',
-    data    => 'RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1',
-    require => Registry_key['HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths'],
   }
 
   # Local Security Policy settings

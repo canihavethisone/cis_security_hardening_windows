@@ -8,22 +8,19 @@ cis_security_hardening_windows::cis_bitlocker:
       ensure:    present
       data:      4
 
-## Removed in v4.0.0
-#  "(BL) Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled'":
-#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDs':
-#      ensure:    present
+  "(BL) Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDs':
+      ensure:    present
 
-## Removed in v4.0.0
-#  "(BL) Ensure 'Prevent installation of devices that match any of these device IDs: Prevent installation of devices that match any of these device IDs' is set to 'PCI\\CC_0C0A'":
-#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDs\1':
-#      ensure:    present
-#      type:      'string'
-#      data:      'PCI\CC_0C0A'
+  "(BL) Ensure 'Prevent installation of devices that match any of these device IDs: Prevent installation of devices that match any of these device IDs' is set to 'PCI\\CC_0C0A'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDs\1':
+      ensure:    present
+      type:      'string'
+      data:      'PCI\CC_0C0A'
 
-## Removed in v4.0.0
-#  "(BL) Ensure 'Prevent installation of devices that match any of these device IDs: Also apply to matching devices that are already installed' is set to True (checked)'":
-#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDsRetroactive':
-#      ensure:    present
+  "(BL) Ensure 'Prevent installation of devices that match any of these device IDs: Also apply to matching devices that are already installed' is set to True (checked)'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceIDsRetroactive':
+      ensure:    present
 
   "(BL) Ensure 'Prevent installation of devices using drivers that match these device setup classes' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceInstall\Restrictions\DenyDeviceClasses':

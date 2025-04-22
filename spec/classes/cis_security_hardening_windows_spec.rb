@@ -230,7 +230,7 @@ describe 'cis_security_hardening_windows' do
 
               # Extract path of 'value' using regex and add it to an array
               extracted_keys = []
-              extracted_key = value.gsub(%r{\\[^\\]*$}, '')
+              extracted_key = value.gsub(/[\\\*]+[^\\\*]+$/, '')
               extracted_keys << extracted_key if extracted_key
 
               # Ensure that the registry keys are also specified, as these are created if they don't exit
@@ -245,19 +245,7 @@ describe 'cis_security_hardening_windows' do
             end
           end
 
-          # Registry misc & hardcoded in class due to number of backslashes
-          it do
-            is_expected.to contain_registry_value('HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\NetworkProvider\\HardenedPaths\\\\\\\*\NETLOGON').with(
-              'type' => 'string',
-              'data' => 'RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1',
-            )
-          end
-          it do
-            is_expected.to contain_registry_value('HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\NetworkProvider\\HardenedPaths\\\\\\\*\SYSVOL').with(
-              'type' => 'string',
-              'data' => 'RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1',
-            )
-          end
+          # Registry misc
           it do
             is_expected.to contain_registry_value('HKLM\\SYSTEM\\CurrentControlSet\\Services\\EventLog\\Puppet\\Puppet\\EventMessageFile').with(
               'type' => 'expand',
@@ -269,22 +257,6 @@ describe 'cis_security_hardening_windows' do
               'type' => 'array',
               'data' => ['Bowser', 'MRxSmb20', 'NSI'],
             )
-          end
-
-          misc_registry_keys = [
-            'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths',
-            'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths',
-            'HKLM\SYSTEM\CurrentControlSet\Services\EventLog\Puppet\Puppet',
-            'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation',
-          ]
-          misc_registry_keys.each do |key|
-            # Ensure that the registry keys are also specified, as these are created if they don't exit
-            describe "Registry key: #{key}" do
-              it do
-                # Compare the heira values to those in the catalog
-                is_expected.to contain_registry_key(key)
-              end
-            end
           end
 
           ## Local Security Policy
