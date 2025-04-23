@@ -2,7 +2,7 @@
 cis_security_hardening_windows::system_users:
 # comments are only required for matching builtin accounts
 # passwords should be unique and not defaulted
-# groups should be individaully managed and not defaulted
+# groups should be individually managed and not defaulted
 # name is not required as the key defines it unless desired otherwise
 # some built-in accounts, including guest, cannot have passwords
 # Administrator and Guest accounts are disabled by Secpol.  Renaming for obfuscation is done here
