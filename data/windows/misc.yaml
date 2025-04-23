@@ -13,7 +13,7 @@ cis_security_hardening_windows::misc_registry:
 ## ----------- from STIG ----------- ##
 # The Server Message Block (SMB) v1 protocol must be disabled on the SMB client
 # note the format to use an array in puppet
-  'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\DependOnService':
-    ensure:    present
-    type:      'array'
-    data:      [Bowser,MRxSmb20,NSI]
+#  'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\DependOnService':
+#    ensure:    present
+#    type:      'array'
+#    data:      [Bowser,MRxSmb20,NSI]
