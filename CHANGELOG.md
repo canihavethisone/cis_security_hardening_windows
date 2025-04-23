@@ -5,11 +5,13 @@ All notable changes to this project will be documented in this file.
 ## Release 2.0.0
 
 **Features**
-- Update Windows 11 Enterprise benchamrk to CIS v4.0.0
--
+- Update Windows 11 Enterprise benchmark to CIS v4.0.0
+- Switched to OpenVox for acceptance testing framework and added to metadata.json
+- New values have been excluded from standalone profile as there is no standalone v4.0.0 benchmark at this time
+- Update dependencies to current
 
 **Bugfixes**
-- Improve regex deriving regkey and move 2 hardcoded values to hiera
+- Improve regex deriving regkey to allow 2 hardcoded keys with backslash values to move into hiera
 
 
 ## Release 1.0.1

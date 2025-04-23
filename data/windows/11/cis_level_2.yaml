@@ -529,8 +529,8 @@ cis_security_hardening_windows::cis_level_2:
 
 
 ## ----------- updates from CIS v4.0.0 ----------- ##
-  "(L2) Ensure 'WinHTTP Web Proxy Auto-Discovery Service (WinHttpAutoProxySvc)' is set to 'Disabled'": 
-    'HKLM\SYSTEM\CurrentControlSet\Services\WinHttpAutoProxySvc\Start': 
+  "(L2) Ensure 'WinHTTP Web Proxy Auto-Discovery Service (WinHttpAutoProxySvc)' is set to 'Disabled'":
+    'HKLM\SYSTEM\CurrentControlSet\Services\WinHttpAutoProxySvc\Start':
       ensure:    present
       data:      4
 
@@ -541,45 +541,45 @@ cis_security_hardening_windows::cis_level_2:
       data:      0
 
   "(L2) Ensure 'Turn off default IPv6 DNS Servers' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\DisableIPv6DefaultDnsServers': 
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\DisableIPv6DefaultDnsServers':
       ensure:    present
 
-  "(L2) Ensure 'Configure Windows protected print' is set to 'Enabled'": 
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP\WindowsProtectedPrintGroupPolicyState': 
+  "(L2) Ensure 'Configure Windows protected print' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP\WindowsProtectedPrintGroupPolicyState':
       ensure:    present
 
   "(L2) Ensure 'Turn off API Sampling' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppCompat\DisableAPISamping':
       ensure:    present
 
-  "(L2) Ensure 'Turn off Application Footprint' is set to 'Enabled'": 
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppCompat\DisableApplicationFootprint': 
+  "(L2) Ensure 'Turn off Application Footprint' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppCompat\DisableApplicationFootprint':
       ensure:    present
 
   "(L2) Ensure 'Turn off Install Tracing' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppCompat\DisableInstallTracing':
       ensure:    present
 
-  "(L2) Ensure 'Enable Windows Package Manager command line interfaces' is set to 'Disabled'": 
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableWindowsPackageManagerCommandLineInterfaces': 
+  "(L2) Ensure 'Enable Windows Package Manager command line interfaces' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableWindowsPackageManagerCommandLineInterfaces':
       ensure:    present
       data:      0
 
-  "(L2) Ensure 'Convert warn verdict to block' is set to 'Enabled'": 
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\NIS\EnableConvertWarnToBlock': 
+  "(L2) Ensure 'Convert warn verdict to block' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\NIS\EnableConvertWarnToBlock':
       ensure:    present
 
-  "(L2) Ensure 'Configure Brute-Force Protection aggressiveness' is set to 'Enabled: Medium' or higher": 
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Brute Force Protection\BruteForceProtectionAggressiveness': 
+  "(L2) Ensure 'Configure Brute-Force Protection aggressiveness' is set to 'Enabled: Medium' or higher":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Brute Force Protection\BruteForceProtectionAggressiveness':
       ensure:    present
       data:      2
 
   "(L2) Ensure 'Configure how aggressively Remote Encryption Protection blocks threats' is set to 'Enabled: Medium' or higher":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Remote Encryption Protection\RemoteEncryptionProtectionAggressiveness': 
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Remote Encryption Protection\RemoteEncryptionProtectionAggressiveness':
       ensure:    present
       data:      2
 
-  "(L2) Ensure 'Restrict clipboard transfer from server to client' is set to 'Enabled: Disable clipboard transfers from server to client'": 
+  "(L2) Ensure 'Restrict clipboard transfer from server to client' is set to 'Enabled: Disable clipboard transfers from server to client'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\SCClipLevel':
       ensure:    present
       data:      0
