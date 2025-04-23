@@ -6,6 +6,7 @@
   "license": "Apache-2.0",
   "source": "https://github.com/canihavethisone/cis_security_hardening_windows",
   "project_page": "https://github.com/canihavethisone/cis_security_hardening_windows",
+  "issues_url": "https://github.com/canihavethisone/cis_security_hardening_windows/issues",
   "dependencies": [
     {
       "name": "ayohrling-local_security_policy",
