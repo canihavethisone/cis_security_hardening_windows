@@ -1,6 +1,6 @@
 {
   "name": "canihavethisone-cis_security_hardening_windows",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "author": "canihavethisone",
   "summary": "Harden Windows 10 & 11 to CIS standards",
   "license": "Apache-2.0",
@@ -52,6 +52,10 @@
   "requirements": [
     {
       "name": "puppet",
+      "version_requirement": ">= 7.0.0 < 9.0.0"
+    },
+    {
+      "name": "openvox",
       "version_requirement": ">= 7.0.0 < 9.0.0"
     }
   ],

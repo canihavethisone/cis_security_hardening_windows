@@ -133,7 +133,8 @@ cis_security_hardening_windows::cis_secpol_level_1:
 #    policy_value: '*S-1-0-0'
       ensure: 'absent'
 
-  "(L1) Configure 'Create symbolic links'":
+## Renamed from "Configure 'Create symbolic links'" in v4.0.0
+  "(L1) Ensure 'Create symbolic links' is set to 'Administrators'":
     'Create symbolic links':
       policy_value: 'Administrators'
 #    policy_value: '*S-1-5-32-544'
@@ -378,8 +379,11 @@ cis_security_hardening_windows::cis_secpol_level_2:
       policy_value: 'Administrators'
 #    policy_value: '*S-1-5-32-544'
 
-  "(L2) Configure 'Log on as a service'":
+## Renamed from "Configure 'Log on as a service'" in v4.0.0
+  "(L2) Ensure 'Log on as a service' is configured":
     'Log on as a service':
       policy_value: 'WDAGUtilityAccount'
 #    policy_value: '*S-1-0-0'
 #      ensure: 'absent'
+
+

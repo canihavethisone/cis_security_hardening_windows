@@ -5,10 +5,11 @@ cis_security_hardening_windows::cis_level_1:
 
 ## ----------- CIS hardening Windows 10.1709 v1.4.0 ----------- ##
 
-  "(L1) Ensure 'Accounts: Block Microsoft accounts' is set to 'Users can't add or log on with Microsoft accounts'":
-    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\NoConnectedUser':
-      ensure:    present
-      data:      3
+## Removed in v4.0.0
+#  "(L1) Ensure 'Accounts: Block Microsoft accounts' is set to 'Users can't add or log on with Microsoft accounts'":
+#    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\NoConnectedUser':
+#      ensure:    present
+#      data:      3
 
   "(L1) Ensure 'Accounts: Limit local account use of blank passwords to console logon only' is set to 'Enabled'":
     'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\LimitBlankPasswordUse':
@@ -862,10 +863,11 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection\DoNotShowFeedbackNotifications':
       ensure:    present
 
-  "(L1) Ensure 'Toggle user control over Insider builds' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds\AllowBuildPreview':
-      ensure:    present
-      data:      0
+## Removed in v4.0.0
+#  "(L1) Ensure 'Toggle user control over Insider builds' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds\AllowBuildPreview':
+#      ensure:    present
+#      data:      0
 
 ## Various values are acceptable here, selected (100 = BITS only)
   "(L1) Ensure 'Download Mode' is NOT set to 'Enabled: Internet'":
@@ -1033,11 +1035,12 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
+## Removed in v4.0.0
 ## This registry_value may not be idempotent, causing boot loops after Windows Update has occurred
-  "(L1) Ensure 'Turn off Microsoft Defender AntiVirus' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\DisableAntiSpyware':
-      ensure:    present
-      data:      0
+#  "(L1) Ensure 'Turn off Microsoft Defender AntiVirus' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\DisableAntiSpyware':
+#      ensure:    present
+#      data:      0
 
   "(L1) Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive\DisableFileSyncNGSC':
@@ -1276,9 +1279,10 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-  "(L1) Ensure 'Only display the private store within the Microsoft Store' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\WindowsStore\RequirePrivateStoreOnly':
-      ensure:    present
+## Removed in v4.0.0
+#  "(L1) Ensure 'Only display the private store within the Microsoft Store' is set to 'Enabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\WindowsStore\RequirePrivateStoreOnly':
+#      ensure:    present
 
   "(L1) Ensure 'Require use of specific security layer for remote (RDP) connections' is set to 'Enabled: SSL'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\SecurityLayer':
@@ -1487,11 +1491,12 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint\RestrictDriverInstallationToAdministrators':
       ensure:    present
 
-  "(L1) Ensure 'Configure DNS over HTTPS (DoH) name resolution' is set to 'Enabled: Allow DoH' or higher":
-# NOTE that this is set to 'Allow DoH'.  Change the data value below to 3 for 'Require DoH', though this may break DNS in some environments
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\DoHPolicy':
-      ensure:    present
-      data:      2
+## Removed in v4.0.0
+#  "(L1) Ensure 'Configure DNS over HTTPS (DoH) name resolution' is set to 'Enabled: Allow DoH' or higher":
+## NOTE that this is set to 'Allow DoH'.  Change the data value below to 3 for 'Require DoH', though this may break DNS in some environments
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\DoHPolicy':
+#      ensure:    present
+#      data:      2
 
   "(L1) Ensure 'Turn off cloud consumer account state content' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent\DisableConsumerAccountStateContent':
@@ -1536,10 +1541,11 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-  "(L1) Ensure 'Enable App Installer' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableAppInstaller':
-      ensure:    present
-      data:      0
+## Moved to L2 in v4.0.0
+#  "(L1) Ensure 'Enable App Installer' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableAppInstaller':
+#      ensure:    present
+#      data:      0
 
   "(L1) Ensure 'Enable App Installer Experimental Features' is set to 'Disabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableExperimentalFeatures':
@@ -1611,7 +1617,8 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       type:      'string'
 
-  "(L1) Ensure 'Enable MPR notifications for the system' is set to 'Disabled'":
+## Renamed from "Ensure 'Enable MPR notifications for the system' is set to 'Disabled'" in v4.0.0
+  "(L1) Ensure 'Configure the transmission of the user's password in the content of MPR notifications sent by winlogon.' is set to 'Disabled'":
     'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableMPR':
       ensure:    present
       data:      0
@@ -1730,8 +1737,11 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
+# Updated in v4.0.0 to add 2nd key for 32bit subsystem
   "(L1) Ensure 'Enable Certificate Padding' is set to 'Enabled'":
     'HKLM\SOFTWARE\Microsoft\Cryptography\Wintrust\Config\EnableCertPaddingCheck':
+      ensure:    present
+    'HKLM\SOFTWARE\Wow6432Node\Microsoft\Cryptography\Wintrust\Config\EnableCertPaddingCheck':
       ensure:    present
 
   "(L1) Ensure 'Automatic Data Collection' is set to 'Enabled'":
@@ -1742,3 +1752,141 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\SetAllowOptionalContent':
       ensure:    present
       data:      0
+
+  "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with 'Require Mutual Authentication' and 'Require Integrity' for all NETLOGON and SYSVOL shares TO add 'Require Privacy'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\\\\*\NETLOGON':
+      ensure: present
+      type:   'string'
+      data:   'RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1'
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\\\\*\SYSVOL':
+      ensure: present
+      type:   'string'
+      data:   'RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1'
+
+
+## ----------- updates from CIS v4.0.0 ----------- ##
+  "(L1) Ensure 'Turn on Basic feed authentication over HTTP' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\AllowBasicAuthInClear':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Network security: LDAP client encryption requirements' is set to 'Negotiate sealing' or higher":
+    'HKLM\SYSTEM\CurrentControlSet\Services\LDAP\LDAPClientConfidentiality':
+      ensure:    present
+
+  "(L1) Ensure 'Configure multicast DNS (mDNS) protocol' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\EnableMDNS':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Audit client does not support encryption' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\AuditClientDoesNotSupportEncryption':
+      ensure:    present
+
+  "(L1) Ensure 'Audit client does not support signing' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\AuditClientDoesNotSupportSigning':
+      ensure:    present
+
+  "(L1) Ensure 'Audit insecure guest logon' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\AuditInsecureGuestLogon':
+      ensure:    present
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditInsecureGuestLogon':
+      ensure:    present
+
+  "(L1) Ensure 'Enable authentication rate limiter' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\EnableAuthRateLimiter':
+      ensure:    present
+
+  "(L1) Ensure 'Enable remote mailslots' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Bowser\EnableMailslots':
+      ensure:    present
+      data:      0
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\EnableMailslots':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Mandate the minimum version of SMB' is set to 'Enabled: 3.1.1'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\MinSmb2Dialect':
+      ensure:    present
+      data:      785
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\MinSmb2Dialect':
+      ensure:    present
+      data:      785
+
+  "(L1) Ensure 'Set authentication rate limiter delay (milliseconds)' is set to 'Enabled: 2000' or more":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\InvalidAuthenticationDelayTimeInMs':
+      ensure:    present
+      data:      2000
+
+  "(L1) Ensure 'Audit server does not support encryption' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditServerDoesNotSupportEncryption':
+      ensure:    present
+
+  "(L1) Ensure 'Audit server does not support signing' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditServerDoesNotSupportSigning':
+      ensure:    present
+
+  "(L1) Ensure 'Configure RPC packet level privacy setting for incoming connections' is set to 'Enabled'":
+    'HKLM\SYSTEM\CurrentControlSet\Control\Print\RpcAuthnLevelPrivacyEnabled':
+      ensure:    present
+
+  "(L1) Ensure 'Configure the behavior of the sudo command' is set to 'Enabled: Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Sudo\Enabled':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Block NetBIOS-based discovery for domain controller location' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Netlogon\Parameters\BlockNetbiosDiscovery':
+      ensure:    present
+
+  "(L1) Ensure 'Configure SAM change password RPC methods policy' is set to 'Enabled: Block all change password RPC methods'":
+    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\SAM\SamrChangeUserPasswordApiPolicy':
+      ensure:    present
+
+  "(L1) Ensure 'Not allow per-user unsigned packages to install by default (requires explicitly allow per install)' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Appx\DisablePerUserUnsignedPackagesByDefault':
+      ensure:    present
+
+  "(L1) Ensure 'Enable App Installer Local Archive Malware Scan Override' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableLocalArchiveMalwareScanOverride':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Enable App Installer Microsoft Store Source Certificate Validation Bypass' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableBypassCertificatePinningForMicrosoftStore':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Do not apply the Mark of the Web tag to files copied from insecure sources' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer\DisableMotWOnInsecurePathCopy':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Control whether exclusions are visible to local users' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\HideExclusionsFromLocalUsers':
+      ensure:    present
+
+  "(L1) Ensure 'Enable EDR in block mode' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Features\PassiveRemediation':
+      ensure:    present
+
+  "(L1) Ensure 'Configure real-time protection and Security Intelligence Updates during OOBE' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection\OobeEnableRtpAndSigUpdate':
+      ensure:    present
+
+  "(L1) Ensure 'Configure Remote Encryption Protection Mode' is set to 'Enabled: Audit' or higher":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Brute Force Protection\BruteForceProtectionConfiguredState':
+      ensure:    present
+
+  "(L1) Ensure 'Scan excluded files and directories during quick scans' is set to 'Enabled: 1'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Scan\QuickScanIncludeExclusions':
+      ensure:    present
+
+  "(L1) Ensure 'Trigger a quick scan after X days without any scans' is set to 'Enabled: 7'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Scan\DaysUntilAggressiveCatchupQuickScan':
+      ensure:    present
+      data:      7
+
+  "(L1) Ensure 'Require Encryption' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\RequireEncryption':
+      ensure:    present
