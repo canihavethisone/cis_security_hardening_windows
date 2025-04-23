@@ -16,7 +16,7 @@ on:
     - 'lib/**'
     - 'Gemfile'
   workflow_dispatch:
-      paths:
+    paths:
     - '.github/**'
     - 'hiera.yaml'
     - 'data/**'
