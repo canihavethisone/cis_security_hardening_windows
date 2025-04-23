@@ -670,18 +670,16 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\Network Connections\NC_StdDomainUserSetLocation':
       ensure:    present
 
-# Registry paths with multiple backslashes are managed in the cis manifest
-#  "(L1) Ensure Hardened UNC Paths is set to Enabled, with "Require Mutual Authentication" and "Require Integrity" set for all NETLOGON and SYSVOL shares":
-#      'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\\\*\NETLOGON':
-#        ensure:    present
-#        type:      'string'
-#        data:      'RequireMutualAuthentication=1, RequireIntegrity=1'
-
-#  "(L1) "":
-#      'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\\\*\SYSVOL':
-#        ensure:    present
-#        type:      'string'
-#        data:      'RequireMutualAuthentication=1, RequireIntegrity=1'
+## The backslashes and asterix in path are handled with regex in cis.pp for registry key creation
+  "(L1) Ensure 'Hardened UNC Paths' is set to 'Enabled, with 'Require Mutual Authentication' and 'Require Integrity' for all NETLOGON and SYSVOL shares TO add 'Require Privacy'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\\\\*\NETLOGON':
+      ensure: present
+      type:   'string'
+      data:   'RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1'
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\\\\*\SYSVOL':
+      ensure: present
+      type:   'string'
+      data:   'RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1'
 
 ## Updated in 1903/9 v1.7.0/v1.8.0 from 1 to 3
   "(L1) Ensure 'Minimize the number of simultaneous connections to the Internet or a Windows Domain' is set to 'Enabled: 3 = Prevent Wi-Fi when on Ethernet'":
