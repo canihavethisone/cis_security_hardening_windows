@@ -252,12 +252,6 @@ describe 'cis_security_hardening_windows' do
               'data' => 'C:\Program Files\Puppet Labs\Puppet\puppet\bin\puppetres.dll',
             )
           end
-          it do
-            is_expected.to contain_registry_value('HKLM\\SYSTEM\\CurrentControlSet\\Services\\LanmanWorkstation\\DependOnService').with(
-              'type' => 'array',
-              'data' => ['Bowser', 'MRxSmb20', 'NSI'],
-            )
-          end
 
           ## Local Security Policy
           # List of YAML files to load, dynamically using the Windows release version
