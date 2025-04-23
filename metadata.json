@@ -1,6 +1,6 @@
 {
   "name": "canihavethisone-cis_security_hardening_windows",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "author": "canihavethisone",
   "summary": "Harden Windows 10 & 11 to CIS standards",
   "license": "Apache-2.0",

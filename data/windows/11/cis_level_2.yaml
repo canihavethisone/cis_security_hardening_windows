@@ -590,11 +590,6 @@ cis_security_hardening_windows::cis_level_2:
       data:      4
 
   "(L2) Ensure 'Allow mapping folders into Windows Sandbox' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Sandbox:AllowWriteToMappedFolders':
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Sandbox\AllowWriteToMappedFolders':
       ensure:    present
       data:      0
-
-
-
-
-

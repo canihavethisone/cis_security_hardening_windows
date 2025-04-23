@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 2.0.0
+
+**Features**
+- Update Windows 11 Enterprise benchamrk to CIS v4.0.0
+-
+
+**Bugfixes**
+- Improve regex deriving regkey and move 2 hardcoded values to hiera
+
+
 ## Release 1.0.1
 
 **Bugfixes**

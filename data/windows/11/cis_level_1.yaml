@@ -1790,6 +1790,8 @@ cis_security_hardening_windows::cis_level_1:
   "(L1) Ensure 'Audit insecure guest logon' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\AuditInsecureGuestLogon':
       ensure:    present
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditInsecureGuestLogon':
+      ensure:    present
 
   "(L1) Ensure 'Enable authentication rate limiter' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\EnableAuthRateLimiter':
@@ -1815,10 +1817,6 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\InvalidAuthenticationDelayTimeInMs':
       ensure:    present
       data:      2000
-
-  "(L1) Ensure 'Audit insecure guest logon' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditInsecureGuestLogon':
-      ensure:    present
 
   "(L1) Ensure 'Audit server does not support encryption' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditServerDoesNotSupportEncryption':
