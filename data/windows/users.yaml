@@ -6,7 +6,7 @@ cis_security_hardening_windows::system_users:
 # name is not required as the key defines it unless desired otherwise
 # some built-in accounts, including guest, cannot have passwords
 # Administrator and Guest accounts are disabled by Secpol.  Renaming for obfuscation is done here
-# Win10 requires DefaultAccount and WDAGUtilityAccount to be defined to avoid purging
+# Windows requires DefaultAccount and WDAGUtilityAccount to be defined to avoid purging
 
   'Administrator':
     name:        "%{lookup('cis_security_hardening_windows::administrator_newname')}"
