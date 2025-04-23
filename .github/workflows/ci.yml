@@ -15,6 +15,16 @@ on:
     - 'spec/**'
     - 'lib/**'
     - 'Gemfile'
+  workflow_dispatch:
+      paths:
+    - '.github/**'
+    - 'hiera.yaml'
+    - 'data/**'
+    - 'manifests/**'
+    - 'files/**'
+    - 'spec/**'
+    - 'lib/**'
+    - 'Gemfile'
   pull_request:
     paths:
     - 'hiera.yaml'
