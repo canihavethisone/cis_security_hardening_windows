@@ -40,7 +40,7 @@ cis_security_hardening_windows::cis_include_rules:
   - "(L1) Ensure 'Network access: Do not allow storage of passwords and credentials for network authentication' is set to 'Enabled'"
   - "(L1) Ensure 'Network access: Let Everyone permissions apply to anonymous users' is set to 'Disabled'"
   - "(L1) Ensure 'Network access: Named Pipes that can be accessed anonymously' is set to 'None'"
-  - "(L1) Ensure 'Network access: Named Pipes that can be accessed anonymously' is set to 'None'"
+  - "(L1) Ensure 'Network access: Remotely accessible registry paths' is configured"
   - "(L1) Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured"
   - "(L1) Ensure 'Network access: Restrict anonymous access to Named Pipes and Shares' is set to 'Enabled'"
   - "(L1) Ensure 'Network access: Restrict clients allowed to make remote calls to SAM' is set to 'Administrators: Remote Access: Allow'"

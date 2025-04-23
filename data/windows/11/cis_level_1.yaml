@@ -154,7 +154,7 @@ cis_security_hardening_windows::cis_level_1:
       type:      'array'
       data:      []
 
-  "(L1) Ensure 'Network access: Named Pipes that can be accessed anonymously' is set to 'None'":
+  "(L1) Ensure 'Network access: Remotely accessible registry paths' is configured":
     'HKLM\SYSTEM\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedExactPaths\Machine':
       ensure:    present
       type:      'array'
@@ -1824,10 +1824,6 @@ cis_security_hardening_windows::cis_level_1:
 
   "(L1) Ensure 'Audit server does not support signing' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditServerDoesNotSupportSigning':
-      ensure:    present
-
-  "(L1) Ensure 'Configure RPC packet level privacy setting for incoming connections' is set to 'Enabled'":
-    'HKLM\SYSTEM\CurrentControlSet\Control\Print\RpcAuthnLevelPrivacyEnabled':
       ensure:    present
 
   "(L1) Ensure 'Configure the behavior of the sudo command' is set to 'Enabled: Disabled'":
