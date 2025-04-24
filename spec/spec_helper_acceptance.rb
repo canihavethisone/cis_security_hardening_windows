@@ -89,8 +89,9 @@ def write_metadata_dot_json(dependencies)
     { "name" => dep[:dep_name], "version_requirement" => version_req }
   end.compact
 
-  # Write the updated JSON to metadata.json
-  File.write(metadata_path, JSON.pretty_generate(metadata_json))
+  # Write the updated JSON to metadata.json with trailing newline
+  json_output = JSON.pretty_generate(metadata_json) + "\n"
+  File.write(metadata_path, json_output)
 end
 
 

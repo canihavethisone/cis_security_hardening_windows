@@ -37,8 +37,9 @@ shared_examples 'windows tests' do |agent:, _agent_ip:|
 
   # Some exclusions are required as acceptance tests require remote access to be enabled, and a few others
   exclusion_patterns = Set.new([
+    %r{Hardened UNC Paths}, # Multiple backslashes are not easily tested
     %r{Named Pipes that can be accessed anonymously}, # Yet to manage paths within array in data
-    %r{Remotely accessible registry paths and sub-paths}, # Yet to manage paths within array in data
+    %r{Remotely accessible registry paths}, # Yet to manage paths within array in data
     %r{Turn off background refresh of Group Policy is set}, # Is set to absent in hiera
     %r{Require user authentication for remote connections by using Network Level Authentication},
     %r{Remote Desktop Services \(TermService\)},

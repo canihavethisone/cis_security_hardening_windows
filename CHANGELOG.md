@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 
 **Bugfixes**
 - Improve regex deriving regkey to allow 2 hardcoded keys with backslash values to move into hiera
+- Remove duplicate rules
+- Fix incorrect benchmark rule titles
 
 
 ## Release 1.0.1
