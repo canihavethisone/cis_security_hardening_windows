@@ -25,8 +25,8 @@ require 'beaker/module_install_helper'
 ### ---------------- Set Variables ------------------- ###
 ## Set unique environment variable if static-master, otherwise use production
 CLASS = 'canihavethisone/cis_security_hardening_windows'.freeze
-MASTER_IP = master.get_ip
-MASTER_FQDN = master.node_name
+MASTER_IP = on(master, "hostname -i | cut -d' ' -f2").stdout.strip  # master.get_ip
+MASTER_FQDN = on(master, "hostname").stdout.strip # master.node_name
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 TEST_FILES = File.expand_path(File.join(File.dirname(__FILE__), 'acceptance', 'files'))
 DEPENDENCY_LIST = 'fixtures'.freeze
@@ -38,9 +38,12 @@ ENVIRONMENT = if master['hypervisor'] == 'none'
 
 ## Configuration
 CONFIG = {
-  puppet_agent_version: ENV['PUPPET_AGENT_VERSION'] || '8.9.0',
-  puppetserver_version: ENV['PUPPETSERVER_VERSION'] || '8.7.0',
-  puppet_collection: 'puppet8',
+  release_yum_repo_url: 'https://yum.overlookinfratech.com/openvox8-release-el-9.noarch.rpm',
+  server_package_name: 'openvox-server',
+  agent_package_name: 'openvox-agent',
+  puppet_agent_version: ENV['PUPPET_AGENT_VERSION'] || 'latest',  #'8.16.0',
+  puppetserver_version: ENV['PUPPETSERVER_VERSION'] || 'latest',  #'8.8.1',
+  puppet_collection: 'openvox8',
   puppet_agent_service: 'puppet',
 }.freeze
 
@@ -111,11 +114,13 @@ end
 
 ## Install Puppet agent
 def install_puppet_agent(agent)
-  print_stage("Installing Puppet agent on #{agent}")
-  configure_type_defaults_on(agent)
+  print_stage("Installing #{CONFIG[:agent_package_name]} on #{agent}")
   on(agent, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
-  install_puppetlabs_release_repo(agent, CONFIG[:puppet_collection])
-  install_puppet_agent_on(agent, puppet_agent_version: CONFIG[:puppet_agent_version], puppet_collection: CONFIG[:puppet_collection])
+  on(agent, "yum install -y #{CONFIG[:release_yum_repo_url]}")
+  on(agent, "yum install -y #{CONFIG[:agent_package_name]}")
+  # install_puppetlabs_release_repo(agent, CONFIG[:puppet_collection], CONFIG[release_yum_repo_url])
+  # install_puppet_agent_on(agent, puppet_agent_version: CONFIG[:puppet_agent_version], puppet_collection: CONFIG[:puppet_collection])
+  # configure_type_defaults_on(agent)
 end
 
 ## Agent options
@@ -138,17 +143,19 @@ def package_name(host)
   if host['platform'].include? 'windows'
     'Puppet Agent*'
   else
-    'puppet-agent'
+    'openvox-agent'
   end
 end
 
 ## Install Puppetserver
 def install_puppetserver(host)
-  print_stage("Installing Puppetserver on #{host}")
-  configure_type_defaults_on host
+  print_stage("Installing #{CONFIG[:server_package_name]} on #{host}")
   on(master, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
-  install_puppetlabs_release_repo(master, CONFIG[:puppet_collection])
-  install_puppetserver_on(master, version: CONFIG['puppetserver_version'], puppet_collection: CONFIG[:puppet_collection])
+  on(master, "yum install -y #{CONFIG[:release_yum_repo_url]}")
+  on(master, "yum install -y #{CONFIG[:server_package_name]}")
+  # install_puppetlabs_release_repo(master, CONFIG[:puppet_collection], CONFIG[release_yum_repo_url])
+  # install_puppetserver_on(master, version: CONFIG['puppetserver_version'], puppet_collection: CONFIG[:puppet_collection])
+  # configure_type_defaults_on host
 end
 
 ## Setup Puppet agent on el-|centos or windows
@@ -196,7 +203,7 @@ def setup_puppet_on(_host, opts = {})
 
       # Install puppet-agent if not already installed
       unless on(agent, powershell('if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match \'Puppet Agent\') {exit 0} else {exit 1}')).exit_code.zero?
-        on(agent, powershell('Invoke-WebRequest https://downloads.puppetlabs.com/windows/puppet7/puppet-agent-x64-latest.msi -OutFile c:\\puppet-agent-x64-latest.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\puppet-agent-x64-latest.msi\' -Wait'))
+        on(agent, powershell('Invoke-WebRequest https://downloads.puppetlabs.com/windows/puppet8/puppet-agent-x64-latest.msi -OutFile c:\\puppet-agent-x64-latest.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\puppet-agent-x64-latest.msi\' -Wait'))
       end
 
       # Configure Puppet agent settings
@@ -217,8 +224,6 @@ end
 def setup_puppetserver_on(host, _opts = {})
   # opts = { master => true, agent: false }.merge(opts)
   print_stage("Configuring master at #{MASTER_IP} #{MASTER_FQDN} #{host}")
-  ## Set the puppetserver to know it is its own master, so commands like 'puppetserver ca list' work
-  on(master, 'puppet config set server `hostname`')
   ## Set class under test to console display. Requires restart of tty1 serivce to display without logon or reboot
   agent_names = agents.map { |a| "#{a['roles'].first.gsub('agent_', '').ljust(20)}#{a.node_name.ljust(30)}#{a.ip.ljust(40)}" }.join("\n")
   master_info = "#{master['roles'].first.ljust(20)}#{MASTER_FQDN.ljust(30)}#{MASTER_IP.ljust(40)}"
@@ -233,17 +238,21 @@ def setup_puppetserver_on(host, _opts = {})
   MSG
   on(host, "echo -e '#{message}' | tee /etc/motd /etc/issue")
   on host, 'systemctl restart getty@tty1'
-  ## Create folder for module and dependencies
-  on(master, "install -d -o puppet -g puppet /etc/puppetlabs/code/environments/#{ENVIRONMENT}/{modules,data,manifests}")
+  # Set puppetserver options
   host['type'] = 'aio'
   options['is_puppetserver'] = true
   master['puppetservice'] = 'puppetserver'
   master['puppetserver-confdir'] = '/etc/puppetlabs/puppetserver/conf.d'
   master['type'] = 'aio'
+  # Check if puppetserver package installed, if not install it
   result = on(master, "rpm -qa | grep -E 'puppetserver|openvox-server'", acceptable_exit_codes: [0, 1])
   if result.exit_code == 1
     install_puppetserver master
   end
+  ## Set the puppetserver to know it is its own master, so commands like 'puppetserver ca list' work
+  on(master, 'puppet config set server `hostname`')
+  ## Create folder for module and install dependencies
+  on(master, "install -d -o puppet -g puppet /etc/puppetlabs/code/environments/#{ENVIRONMENT}/{modules,data,manifests}")
   install_modules_on master
   ## Generate puppet types on master to overcome issue with some windows types on initial runs
   on(master, "/opt/puppetlabs/puppet/bin/puppet generate types --environment #{ENVIRONMENT}")
