@@ -45,7 +45,7 @@ shared_examples 'windows tests' do |agent:, _agent_ip:|
     %r{Remote Desktop Services \(TermService\)},
     %r{Allow users to connect remotely by using Remote Desktop Services},
     %r{Remote Desktop Services UserMode Port Redirector},
-  ])
+                               ])
 
   # Convert registry_combined_data to an array and randomly select 50 entries
   random_registry_entries = registry_combined_data.to_a.sample(reg_entries_to_test)
