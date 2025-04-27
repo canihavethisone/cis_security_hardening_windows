@@ -261,27 +261,40 @@ def install_dependencies_from(list)
   puts "\e[0;36m \n#{list} selected to determine dependencies \e[0m\n\n"
   file_path = PROJECT_ROOT + ((list == 'fixtures') ? '/.fixtures.yml' : '/metadata.json')
   return unless File.exist?(file_path)
+
   dependencies = if list == 'fixtures'
-                   YAML.load_file(file_path)['fixtures']['forge_modules'].map do |dep|
-                     {
-                       name: dep[1].is_a?(Hash) ? dep[1]['repo'].tr('/', '-') : dep[1].tr('/', '-'),
-                       version: dep[1].is_a?(Hash) ? dep[1]['ref'] : nil
-                     }
+                   begin
+                     yaml_content = File.read(file_path)
+                     parsed_yaml = YAML.safe_load(yaml_content, permitted_classes: [Hash, Array])
+                     parsed_yaml['fixtures']['forge_modules'].map do |dep|
+                       {
+                         name: dep[1].is_a?(Hash) ? dep[1]['repo'].tr('/', '-') : dep[1].tr('/', '-'),
+                         version: dep[1].is_a?(Hash) ? dep[1]['ref'] : nil
+                       }
+                     end
+                   rescue Psych::SyntaxError => e
+                     raise "YAML parsing error in #{file_path}: #{e.message}"
                    end
                  else
-                   JSON.parse(File.read(file_path))['dependencies'].map do |dep|
-                     {
-                       name: dep['name'].tr('/', '-'),
-                       version: dep.key?('version_requirement') ? module_version_from_requirement(dep['name'], dep['version_requirement']) : nil
-                     }
+                   begin
+                     JSON.parse(File.read(file_path))['dependencies'].map do |dep|
+                       {
+                         name: dep['name'].tr('/', '-'),
+                         version: dep.key?('version_requirement') ? module_version_from_requirement(dep['name'], dep['version_requirement']) : nil
+                       }
+                     end
+                   rescue JSON::ParserError => e
+                     raise "JSON parsing error in #{file_path}: #{e.message}"
                    end
                  end
+
   dependencies.each do |dep|
     version_flag = dep[:version] ? "--version #{dep[:version]}" : ''
     on(master, "puppet module install #{dep[:name]} #{version_flag} --environment #{ENVIRONMENT} --vardir /etc/puppetlabs/code/environments/#{ENVIRONMENT}/tmp/", acceptable_exit_codes: [0]) do |result|
       compile_dependency_versions(result.stdout) if ENVIRONMENT == 'production' && list == 'fixtures'
     end
   end
+
   write_metadata_dot_json(ALL_DEPS) if ENVIRONMENT == 'production' && list == 'fixtures'
 rescue KeyError => e
   raise "Dependencies can only be determined from fixtures or metadata. You selected #{list} - Error: #{e.message}"
