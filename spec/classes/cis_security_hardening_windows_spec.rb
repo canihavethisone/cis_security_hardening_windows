@@ -230,7 +230,7 @@ describe 'cis_security_hardening_windows' do
 
               # Extract path of 'value' using regex and add it to an array
               extracted_keys = []
-              extracted_key = value.gsub(/[\\\*]+[^\\\*]+$/, '')
+              extracted_key = value.gsub(%r{[\\\*]+[^\\\*]+$}, '')
               extracted_keys << extracted_key if extracted_key
 
               # Ensure that the registry keys are also specified, as these are created if they don't exit

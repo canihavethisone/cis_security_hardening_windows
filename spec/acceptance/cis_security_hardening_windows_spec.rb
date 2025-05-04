@@ -45,7 +45,7 @@ describe 'cis_security_hardening_windows acceptance testing' do
 
     # Run puppet on agents
     print_stage('Running Puppet on agents')
-    include_examples 'run idempotently'
+    it_behaves_like 'run idempotently'
   end
 
   context 'Check if run in_parallel fix required' do
@@ -65,10 +65,10 @@ describe 'cis_security_hardening_windows acceptance testing' do
           on(agent, [
             'powershell Set-ExecutionPolicy RemoteSigned',
             'powershell Get-ExecutionPolicy',
-            'powershell Set-NetConnectionProfile -NetworkCategory private'
+            'powershell Set-NetConnectionProfile -NetworkCategory private',
           ].join('; '))
           # Include test examples
-          include_examples 'windows tests', agent: agent, _agent_ip: agent.get_ip
+          it_behaves_like 'windows tests', agent: agent, _agent_ip: agent.get_ip
         end
       end
     end
