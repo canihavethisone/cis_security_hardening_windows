@@ -69,7 +69,7 @@ cis_security_hardening_windows::cis_include_rules:
   - "(L1) Ensure 'IIS Admin Service (IISADMIN)' is set to 'Disabled' or 'Not Installed'"
   - "(L1) Ensure 'Infrared monitor service (irmon)' is set to 'Disabled'"
   - "(L1) Ensure 'Internet Connection Sharing (ICS) (SharedAccess)' is set to 'Disabled'"
-  - "(L1) Ensure 'LxssManager (LxssManager) is set to 'Disabled' or 'Not Installed'"
+  - "(L1) Ensure 'LxssManager (LxssManager)' is set to 'Disabled' or 'Not Installed'"
   - "(L1) Ensure 'Microsoft FTP Service (FTPSVC)' is set to 'Disabled' or 'Not Installed'"
   - "(L1) Ensure 'Remote Procedure Call (RPC) Locator (RpcLocator)' is set to 'Disabled'"
   - "(L1) Ensure 'Routing and Remote Access (RemoteAccess)' is set to 'Disabled'"

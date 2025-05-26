@@ -11,19 +11,14 @@ class cis_security_hardening_windows::remote_desktop (
   $trusted_rdp_subnets,
   $remote_local_accounts,
 ) {
-  $trusted_rdp_subnets_real = $trusted_rdp_subnets ? {
-    default => $trusted_rdp_subnets,
-    []      => 'any'
-  }
-
-  # Configure firewall
+  # Configure firewall. If $trusted_rdp_subnets is empty, 'any' will be used
   windows_firewall_rule { 'Remote Desktop - User Mode (TCP-In)' :
     ensure                => 'present',
     description           => 'Inbound rule for the Remote Desktop service to allow RDP traffic. [TCP 3389]',
     action                => 'allow',
     enabled               => true,
     local_address         => $facts[networking][ip],
-    remote_address        => $trusted_rdp_subnets_real,
+    remote_address        => $trusted_rdp_subnets.empty ? { true => 'any', false => $trusted_rdp_subnets, }, #lint:ignore:selector_inside_resource
     local_port            => '3389',
     protocol              => 'tcp',
     remote_port           => 'any',
@@ -40,7 +35,7 @@ class cis_security_hardening_windows::remote_desktop (
     action                => 'allow',
     enabled               => true,
     local_address         => $facts[networking][ip],
-    remote_address        => $trusted_rdp_subnets_real,
+    remote_address        => $trusted_rdp_subnets.empty ? { true => 'any', false => $trusted_rdp_subnets, }, #lint:ignore:selector_inside_resource
     local_port            => '3389',
     protocol              => 'udp',
     remote_port           => 'any',
