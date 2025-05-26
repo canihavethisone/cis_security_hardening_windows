@@ -316,7 +316,7 @@ cis_security_hardening_windows::cis_level_1:
 #      ensure:    present
 #      data:      4
 
-  "(L1) Ensure 'LxssManager (LxssManager) is set to 'Disabled' or 'Not Installed'":
+  "(L1) Ensure 'LxssManager (LxssManager)' is set to 'Disabled' or 'Not Installed'":
     'HKLM\SYSTEM\CurrentControlSet\Services\LxssManager\Start':
       ensure:    present
       data:      4
