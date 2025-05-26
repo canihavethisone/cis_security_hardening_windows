@@ -6,13 +6,13 @@
 
 ### Classes
 
-* [`cis_security_hardening_windows`](#cis_security_hardening_windows): Windows main class.  The entry point with most parameters processed here. It applies CIS hardening
+* [`cis_security_hardening_windows`](#cis_security_hardening_windows): Windows main class.  The entry point with all parameters processed here. It applies CIS hardening
 
 ## Classes
 
 ### <a name="cis_security_hardening_windows"></a>`cis_security_hardening_windows`
 
-Windows main class.  The entry point with most parameters processed here.
+Windows main class.  The entry point with all parameters processed here.
 It applies CIS hardening
 
 #### Examples
@@ -137,7 +137,7 @@ Default value: `lookup( 'enable_remote_desktop',    Boolean,                    
 
 Data type: `Array`
 
-Trusted subnets for inbound rdp connections for firewall rules. Undef will be converted to 'any'
+Trusted subnets for inbound rdp connections for firewall rules. Empty will be converted to 'any'
 
 Default value: `lookup( 'trusted_rdp_subnets',      Array,                        undef, [])`
 
