@@ -1,4 +1,4 @@
-## Windows main class.  The entry point with most parameters processed here.
+## Windows main class.  The entry point with all parameters processed here.
 # It applies CIS hardening
 #
 # @example Declaring the class
@@ -15,7 +15,7 @@
 # @param [Hash]                          misc_registry            Lookup of misc registry items to apply.  Currently sets Puppet logging to event viewer and disables SMB1
 # @param [Boolean]                       enable_administrator     If the local adminsitrator account is enabled. Note that account must be renamed if enabled or not
 # @param [Boolean]                       enable_remote_desktop    If true the RDP service will be enabled and firewall rule created (false)
-# @param [Array]                         trusted_rdp_subnets      Trusted subnets for inbound rdp connections for firewall rules. Undef will be converted to 'any'
+# @param [Array]                         trusted_rdp_subnets      Trusted subnets for inbound rdp connections for firewall rules. Empty will be converted to 'any'
 # @param [Boolean]                       remote_local_accounts    If true and RDP is enabled, this allows local user accounts to connect remotely. Required if not domain joined (true)
 # @param [Boolean]                       performance_powerscheme  If true, set the powerscheme to high performance to prevent sleep.
 # @param [Boolean]                       clear_temp_files         If true clears user temp and system temp directories

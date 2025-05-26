@@ -385,5 +385,3 @@ cis_security_hardening_windows::cis_secpol_level_2:
       policy_value: 'WDAGUtilityAccount'
 #    policy_value: '*S-1-0-0'
 #      ensure: 'absent'
-
-

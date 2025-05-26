@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 2.1.0
+
+**Features**
+- Update Windows 10 Enterprise benchmark to CIS v4.0.0
+- Update Windows 11 Standalone benchmark to CIS v4.0.0
+- Improve selector in remote_desktop class
+- Reduce documentation to main init class
+
+**Bugfixes**
+- Fix missing single quote in 'LxssManager' rule title (10 & 11)
+
+
 ## Release 2.0.0
 
 **Features**

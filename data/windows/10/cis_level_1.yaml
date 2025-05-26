@@ -314,7 +314,7 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      4
 
-  "(L1) Ensure 'LxssManager (LxssManager) is set to 'Disabled' or 'Not Installed'":
+  "(L1) Ensure 'LxssManager (LxssManager)' is set to 'Disabled' or 'Not Installed'":
     'HKLM\SYSTEM\CurrentControlSet\Services\LxssManager\Start':
       ensure:    present
       data:      4
@@ -1031,7 +1031,7 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-## This registry_value may not be idempotent, causing boot loops after Windows Update has occurred
+## Removed in v4.0.0
 #  "(L1) Ensure 'Turn off Microsoft Defender AntiVirus' is set to 'Disabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\DisableAntiSpyware':
 #      ensure:    present
@@ -1248,9 +1248,10 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-  "(L1) Ensure 'Only display the private store within the Microsoft Store' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\WindowsStore\RequirePrivateStoreOnly':
-      ensure:    present
+## Removed in v4.0.0
+#  "(L1) Ensure 'Only display the private store within the Microsoft Store' is set to 'Enabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\WindowsStore\RequirePrivateStoreOnly':
+#      ensure:    present
 
   "(L1) Ensure 'Require use of specific security layer for remote (RDP) connections' is set to 'Enabled: SSL'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\SecurityLayer':
@@ -1476,10 +1477,11 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-  "(L1) Ensure 'Enable App Installer' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableAppInstaller':
-      ensure:    present
-      data:      0
+## Moved to L2 in v4.0.0
+#  "(L1) Ensure 'Enable App Installer' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableAppInstaller':
+#      ensure:    present
+#      data:      0
 
   "(L1) Ensure 'Enable App Installer Experimental Features' is set to 'Disabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableExperimentalFeatures':
@@ -1555,7 +1557,8 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       type:      'string'
 
-  "(L1) Ensure 'Enable MPR notifications for the system' is set to 'Disabled'":
+## Renamed from "Ensure 'Enable MPR notifications for the system' is set to 'Disabled'" in v4.0.0
+  "(L1) Ensure 'Configure the transmission of the user's password in the content of MPR notifications sent by winlogon.' is set to 'Disabled'":
     'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableMPR':
       ensure:    present
       data:      0
@@ -1644,6 +1647,65 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
+# Updated in v4.0.0 to add 2nd key for 32bit subsystem
   "(L1) Ensure 'Enable Certificate Padding' is set to 'Enabled'":
     'HKLM\SOFTWARE\Microsoft\Cryptography\Wintrust\Config\EnableCertPaddingCheck':
+      ensure:    present
+    'HKLM\SOFTWARE\Wow6432Node\Microsoft\Cryptography\Wintrust\Config\EnableCertPaddingCheck':
+      ensure:    present
+
+
+## ----------- updates from CIS v4.0.0 ----------- ##
+  "(L1) Ensure 'Turn on Basic feed authentication over HTTP' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\AllowBasicAuthInClear':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Configure multicast DNS (mDNS) protocol' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\EnableMDNS':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Enable App Installer Local Archive Malware Scan Override' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableLocalArchiveMalwareScanOverride':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Enable App Installer Microsoft Store Source Certificate Validation Bypass' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableBypassCertificatePinningForMicrosoftStore':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Do not apply the Mark of the Web tag to files copied from insecure sources' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer\DisableMotWOnInsecurePathCopy':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Control whether exclusions are visible to local users' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\HideExclusionsFromLocalUsers':
+      ensure:    present
+
+  "(L1) Ensure 'Enable EDR in block mode' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Features\PassiveRemediation':
+      ensure:    present
+
+  "(L1) Ensure 'Configure real-time protection and Security Intelligence Updates during OOBE' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection\OobeEnableRtpAndSigUpdate':
+      ensure:    present
+
+  "(L1) Ensure 'Configure Remote Encryption Protection Mode' is set to 'Enabled: Audit' or higher":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Brute Force Protection\BruteForceProtectionConfiguredState':
+      ensure:    present
+
+  "(L1) Ensure 'Scan excluded files and directories during quick scans' is set to 'Enabled: 1'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Scan\QuickScanIncludeExclusions':
+      ensure:    present
+
+  "(L1) Ensure 'Trigger a quick scan after X days without any scans' is set to 'Enabled: 7'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Scan\DaysUntilAggressiveCatchupQuickScan':
+      ensure:    present
+      data:      7
+
+  "(L1) Ensure 'Require Encryption' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\RequireEncryption':
       ensure:    present
