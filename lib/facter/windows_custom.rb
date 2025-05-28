@@ -13,16 +13,30 @@ Facter.add('windows') do
 
   begin
     # Check if running on a supported Windows platform
-    if RUBY_PLATFORM =~ /mswin|mingw32/i
+    if RUBY_PLATFORM.match?(%r{mswin|mingw32}i)
       # Connect to WMI to get OS details
       wmi = WIN32OLE.connect('winmgmts:\\\\.\\root\\cimv2')
       windows_version = wmi.ExecQuery('SELECT Caption, BuildNumber FROM Win32_OperatingSystem').each.first
 
-      # Open registry path to retrieve build-related versioning info
+      # Open registry path once and read needed values
       Win32::Registry::HKEY_LOCAL_MACHINE.open('Software\\Microsoft\\Windows NT\\CurrentVersion') do |reg|
-        windows_currentbuildnumber = reg['CurrentBuildNumber'] rescue 'unknown'
-        windows_displayversion     = reg['DisplayVersion']     rescue 'unknown'
-        windows_releaseid          = reg['ReleaseId']          rescue 'unknown'
+        begin
+          windows_currentbuildnumber = reg['CurrentBuildNumber']
+        rescue StandardError
+          windows_currentbuildnumber = 'unknown'
+        end
+
+        begin
+          windows_displayversion = reg['DisplayVersion']
+        rescue StandardError
+          windows_displayversion = 'unknown'
+        end
+
+        begin
+          windows_releaseid = reg['ReleaseId']
+        rescue StandardError
+          windows_releaseid = 'unknown'
+        end
       end
     end
   rescue => e
@@ -31,18 +45,17 @@ Facter.add('windows') do
   end
 
   # Microsoft moved from ReleaseId to DisplayVersion starting around build 19043
-  windows_display_version = windows_currentbuildnumber >= '19043' ? windows_displayversion : windows_releaseid
+  windows_display_version = (windows_currentbuildnumber >= '19043') ? windows_displayversion : windows_releaseid
 
   setcode do
     if windows_version
-      # Safely split the caption string to extract product and edition info
       caption_parts = windows_version.Caption.to_s.split(' ')
       {
-        'product_name'    => caption_parts[1..].join(' '),              # Strip "Microsoft" prefix
-        'release'         => caption_parts[2] || 'unknown',             # e.g. "10"
-        'edition_id'      => caption_parts[3] || 'unknown',             # e.g. "Pro"
-        'display_version' => windows_display_version,                   # e.g. "22H2"
-        'build_number'    => windows_version.BuildNumber                # e.g. "19045"
+        'product_name'    => caption_parts[1..].join(' '), # Strip "Microsoft" prefix
+        'release'         => caption_parts[2] || 'unknown',
+        'edition_id'      => caption_parts[3] || 'unknown',
+        'display_version' => windows_display_version,
+        'build_number'    => windows_version.BuildNumber
       }
     else
       {}
