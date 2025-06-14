@@ -1,7 +1,6 @@
 [![Build Status](https://github.com/canihavethisone/cis_security_hardening_windows/actions/workflows/ci.yml/badge.svg)](https://github.com/canihavethisone/cis_security_hardening_windows/actions)
 [![GitHub license](https://img.shields.io/github/license/canihavethisone/cis_security_hardening_windows)](https://github.com/canihavethisone/cis_security_hardening_windows/blob/main/LICENSE)
 ![GitHub last commit](https://img.shields.io/github/last-commit/canihavethisone/cis_security_hardening_windows)
-
 ![Repo Size](https://img.shields.io/github/repo-size/canihavethisone/cis_security_hardening_windows)
 [![Puppet Forge – Version](https://img.shields.io/puppetforge/v/canihavethisone/cis_security_hardening_windows.svg?style=flat-square)](https://forge.puppet.com/canihavethisone/cis_security_hardening_windows)
 [![Puppet Forge – Downloads](https://img.shields.io/puppetforge/dt/canihavethisone/cis_security_hardening_windows.svg?style=flat-square)](https://forge.puppet.com/canihavethisone/cis_security_hardening_windows)
