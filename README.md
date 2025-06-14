@@ -1,31 +1,10 @@
 [![Build Status](https://github.com/canihavethisone/cis_security_hardening_windows/actions/workflows/ci.yml/badge.svg)](https://github.com/canihavethisone/cis_security_hardening_windows/actions)
 [![GitHub license](https://img.shields.io/github/license/canihavethisone/cis_security_hardening_windows)](https://github.com/canihavethisone/cis_security_hardening_windows/blob/main/LICENSE)
 ![GitHub last commit](https://img.shields.io/github/last-commit/canihavethisone/cis_security_hardening_windows)
+
 ![Repo Size](https://img.shields.io/github/repo-size/canihavethisone/cis_security_hardening_windows)
 [![Puppet Forge – Version](https://img.shields.io/puppetforge/v/canihavethisone/cis_security_hardening_windows.svg?style=flat-square)](https://forge.puppet.com/canihavethisone/cis_security_hardening_windows)
 [![Puppet Forge – Downloads](https://img.shields.io/puppetforge/dt/canihavethisone/cis_security_hardening_windows.svg?style=flat-square)](https://forge.puppet.com/canihavethisone/cis_security_hardening_windows)
-
-<p align="center">
-  <a href="https://github.com/canihavethisone/cis_security_hardening_windows/actions">
-    <img alt="Build Status" src="https://github.com/canihavethisone/cis_security_hardening_windows/actions/workflows/ci.yml/badge.svg">
-  </a>
-  <a href="https://github.com/canihavethisone/cis_security_hardening_windows/blob/main/LICENSE">
-    <img alt="License: Apache-2.0" src="https://img.shields.io/github/license/canihavethisone/cis_security_hardening_windows">
-  </a>
-  <img alt="Last Commit" src="https://img.shields.io/github/last-commit/canihavethisone/cis_security_hardening_windows">
-</p>
-
-<p align="center">
-  <img alt="Repo Size" src="https://img.shields.io/github/repo-size/canihavethisone/cis_security_hardening_windows">
-  <a href="https://forge.puppet.com/canihavethisone/cis_security_hardening_windows">
-    <img alt="Puppet Forge – Version" src="https://img.shields.io/puppetforge/v/canihavethisone/cis_security_hardening_windows.svg?style=flat-square">
-  </a>
-  <a href="https://forge.puppet.com/canihavethisone/cis_security_hardening_windows">
-    <img alt="Puppet Forge – Downloads" src="https://img.shields.io/puppetforge/dt/canihavethisone/cis_security_hardening_windows.svg?style=flat-square">
-  </a>
-</p>
-
-
 
 # cis_security_hardening_windows
 
