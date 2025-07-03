@@ -21,7 +21,7 @@ cis_security_hardening_windows::users:
 
 # Add some exclude rules to test that the optout works
 cis_security_hardening_windows::cis_exclude_rules:
-  - "(L1) Ensure 'Accounts: Block Microsoft accounts' is set to 'Users can't add or log on with Microsoft accounts'"  # registry
+  - "(L1) Ensure 'Audit: Shut down system immediately if unable to log security audits' is set to 'Disabled'"  # registry
 
 # This allows root user to ssh during acceptance tests
 cis_security_hardening_windows::enable_remote_desktop:  true
