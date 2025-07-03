@@ -93,9 +93,8 @@ shared_examples 'windows tests' do |agent:, _agent_ip:|
   end
 
   # Exclude rules - ensure that exclusions in overrides are applying correctly
-  # Registry - online accounts allowed
-  # "(L1) Ensure 'Accounts: Block Microsoft accounts' is set to 'Users can't add or log on with Microsoft accounts'":
-  describe windows_registry_key('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System') do
-    it { is_expected.not_to have_property_value('NoConnectedUser', :type_dword, '3') }
+  # "(L1) Ensure 'Audit: Force audit policy subcategory settings to override audit policy category settings' is set to 'Enabled'":
+  describe windows_registry_key('HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa') do
+    it { is_expected.not_to have_property_value('SCENoApplyLegacyAuditPolicy', :type_dword, '1') }
   end
 end
