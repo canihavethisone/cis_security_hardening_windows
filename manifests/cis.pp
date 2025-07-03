@@ -78,7 +78,7 @@ class cis_security_hardening_windows::cis (
   # Assemble total rules
   $total_rules = $base_rules + $bitlocker_rules + $nextgen_rules
 
-  # Determine if exclude rules sould be combined with standalone optouts
+  # Determine if exclude rules should be combined with standalone optouts
   $cis_exclude_rules_real = $cis_profile_type ? {
     'domain'     => $cis_exclude_rules,
     'standalone' => $cis_exclude_rules + $cis_standalone_optout,
@@ -100,6 +100,7 @@ class cis_security_hardening_windows::cis (
           ensure => 'present',
         }
       }
+      # Create all the registry values using puppetlabs/registry
       registry_value {
         default:
           type => 'dword',
