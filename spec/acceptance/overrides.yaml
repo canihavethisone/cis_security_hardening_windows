@@ -21,7 +21,7 @@ cis_security_hardening_windows::users:
 
 # Add some exclude rules to test that the optout works
 cis_security_hardening_windows::cis_exclude_rules:
-  - "(L1) Ensure 'Audit: Force audit policy subcategory settings to override audit policy category settings' is set to 'Enabled'"  # registry
+  - "(L1) Ensure 'Microsoft network client: Digitally sign communications (always)' is set to 'Enabled'"
 
 # This allows root user to ssh during acceptance tests
 cis_security_hardening_windows::enable_remote_desktop:  true
