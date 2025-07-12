@@ -1510,10 +1510,6 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SYSTEM\CurrentControlSet\Control\Print\RpcAuthnLevelPrivacyEnabled':
       ensure:    present
 
-  "(L1) Ensure 'LSA Protection' is set to 'Enabled'":
-    'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\RunAsPPL':
-      ensure:    present
-
   "(L1) Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution on public networks'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\EnableNetbios':
       ensure:    present
@@ -1708,4 +1704,9 @@ cis_security_hardening_windows::cis_level_1:
 
   "(L1) Ensure 'Require Encryption' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\RequireEncryption':
+      ensure:    present
+
+# Not present in v4.0.0 change log but in PDF
+  "(L1) Ensure 'Not allow per-user unsigned packages to install by default (requires explicitly allow per install)' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Appx\DisablePerUserUnsignedPackagesByDefault':
       ensure:    present

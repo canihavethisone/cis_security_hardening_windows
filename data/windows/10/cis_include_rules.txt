@@ -306,6 +306,7 @@ cis_security_hardening_windows::cis_include_rules:
   - "(L1) Ensure 'Scan excluded files and directories during quick scans' is set to 'Enabled: 1'"
   - "(L1) Ensure 'Trigger a quick scan after X days without any scans' is set to 'Enabled: 7'"
   - "(L1) Ensure 'Require Encryption' is set to 'Enabled'"
+  - "(L1) Ensure 'Not allow per-user unsigned packages to install by default (requires explicitly allow per install)' is set to 'Enabled'"
   - "(L2) Ensure 'Devices: Prevent users from installing printer drivers' is set to 'Enabled'"
   - "(L2) Ensure 'Interactive logon: Number of previous logons to cache (in case domain controller is not available)' is set to '4 or fewer logon(s)'"
   - "(L2) Ensure 'System cryptography: Force strong key protection for user keys stored on the computer' is set to 'User is prompted when the key is first used'"

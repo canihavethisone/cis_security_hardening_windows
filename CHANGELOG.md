@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 2.1.1
+
+**Bugfixes**
+- Add missing Windows 10 key not shown in CIS v4.0.0 changelog
+- Correct Windows 10 regkey for 'LSASS to run as a protected process' as per documented ADMX template bug (see CIS PDF)
+
+
 ## Release 2.1.0
 
 **Features**
