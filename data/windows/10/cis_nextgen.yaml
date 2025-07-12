@@ -85,5 +85,5 @@ cis_security_hardening_windows::cis_nextgen:
 ## ----------- updates from CIS 22H2 v2.0.0 ----------- ##
 
   "(NG) Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock'":
-    'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\ConfigureLsaProtectedProcess':
+    'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\RunAsPPL':
       ensure:    present

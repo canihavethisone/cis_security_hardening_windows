@@ -1709,3 +1709,8 @@ cis_security_hardening_windows::cis_level_1:
   "(L1) Ensure 'Require Encryption' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\RequireEncryption':
       ensure:    present
+
+# Not present in v4.0.0 change log but in PDF
+  "(L1) Ensure 'Not allow per-user unsigned packages to install by default (requires explicitly allow per install)' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Appx\DisablePerUserUnsignedPackagesByDefault':
+      ensure:    present
