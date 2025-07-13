@@ -1,17 +1,16 @@
 Facter.add('windows') do
-  # Only run this fact on Windows systems
   confine kernel: 'windows'
 
-  require 'win32/registry'
-  require 'win32ole'
+  setcode do
+    require 'win32/registry'
+    require 'win32ole'
 
-  # Default values in case retrieval fails
-  windows_currentbuildnumber = 'unknown'
-  windows_displayversion     = 'unknown'
-  windows_releaseid          = 'unknown'
-  windows_version            = nil
+    # Default values in case retrieval fails
+    windows_currentbuildnumber = 'unknown'
+    windows_displayversion     = 'unknown'
+    windows_releaseid          = 'unknown'
+    windows_version            = nil
 
-  begin
     # Check if running on a supported Windows platform
     if RUBY_PLATFORM.match?(%r{mswin|mingw32}i)
       # Connect to WMI to get OS details
@@ -39,15 +38,10 @@ Facter.add('windows') do
         end
       end
     end
-  rescue => e
-    # Log errors without failing the fact
-    Facter.debug("windows custom fact error: #{e.class}: #{e.message}")
-  end
 
-  # Microsoft moved from ReleaseId to DisplayVersion starting around build 19043
-  windows_display_version = (windows_currentbuildnumber >= '19043') ? windows_displayversion : windows_releaseid
+    # Microsoft moved from ReleaseId to DisplayVersion starting around build 19043
+    windows_display_version = (windows_currentbuildnumber >= '19043') ? windows_displayversion : windows_releaseid
 
-  setcode do
     if windows_version
       caption_parts = windows_version.Caption.to_s.split(' ')
       {
@@ -60,5 +54,8 @@ Facter.add('windows') do
     else
       {}
     end
+  rescue => e
+    Facter.debug("windows custom fact error: #{e.class}: #{e.message}")
+    {}
   end
 end
