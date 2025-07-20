@@ -190,8 +190,10 @@ def setup_puppet_on(_host, opts = {})
       on(agent, powershell('Stop-Service wuauserv -Force'), acceptable_exit_codes: [0, 1])
 
       # Install puppet-agent if not already installed
-      unless on(agent, powershell('if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match \'Puppet Agent\') {exit 0} else {exit 1}')).exit_code.zero?
-        on(agent, powershell('Invoke-WebRequest https://downloads.puppetlabs.com/windows/puppet8/puppet-agent-x64-latest.msi -OutFile c:\\puppet-agent-x64-latest.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\puppet-agent-x64-latest.msi\' -Wait'))
+#      unless on(agent, powershell("if(($apps = (gp 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*').DisplayName) -match 'Puppet Agent' -or $apps -match 'OpenVox Agent \\(64-bit\\)'){exit 0}else{exit 1}")).exit_code.zero?
+#        on(agent, powershell('Invoke-WebRequest https://downloads.puppetlabs.com/windows/puppet8/puppet-agent-x64-latest.msi -OutFile c:\\puppet-agent-x64-latest.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\puppet-agent-x64-latest.msi\' -Wait'))
+      unless on(agent, powershell("if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match 'Puppet Agent^|OpenVox Agent \\(64-bit\\)') {exit 0} else {exit 1}")).exit_code.zero?
+        on(agent, powershell('Invoke-WebRequest https://artifacts.voxpupuli.org/downloads/windows/openvox8/openvox-agent-8.19.2-x64.msi -OutFile c:\\openvox-agent-8.19.2-x64.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\openvox-agent-8.19.2-x64.msi\' -Wait'))
       end
 
       # Configure Puppet agent settings
