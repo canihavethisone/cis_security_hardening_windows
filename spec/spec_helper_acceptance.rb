@@ -38,7 +38,7 @@ ENVIRONMENT = if master['hypervisor'] == 'none'
 
 ## Configuration
 CONFIG = {
-  release_yum_repo_url: 'https://yum.overlookinfratech.com/openvox8-release-el-9.noarch.rpm',
+  release_yum_repo_url: 'https://yum.voxpupuli.org/openvox8-release-el-9.noarch.rpm',
   server_package_name: 'openvox-server',
   agent_package_name: 'openvox-agent',
   puppet_collection: 'openvox8',
