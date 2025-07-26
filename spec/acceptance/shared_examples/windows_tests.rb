@@ -1,4 +1,4 @@
-shared_examples 'windows tests' do |agent:, _agent_ip:|
+shared_examples 'windows tests' do |agent:|
   # Number of combined registry entries to select
   reg_entries_to_test = 50
 

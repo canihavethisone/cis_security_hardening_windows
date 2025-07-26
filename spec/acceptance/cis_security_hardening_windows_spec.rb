@@ -52,7 +52,8 @@ describe 'cis_security_hardening_windows acceptance testing' do
     agents.each do |agent|
       # The first test after in_parallel fails, so this overcomes that
       next unless agents.count > 1
-      on(agent, 'This is an expected warning as connection is re-established after reboot', reset_connection: true) # similar alternative is 'expect_connection_failure: true'
+      info_msg('This is an expected warning as connection is re-established after reboot')
+      on(agent, 'waiting', reset_connection: true) # similar alternative is 'expect_connection_failure: true'
     end
   end
 
@@ -68,7 +69,7 @@ describe 'cis_security_hardening_windows acceptance testing' do
             'powershell Set-NetConnectionProfile -NetworkCategory private',
           ].join('; '))
           # Include test examples
-          it_behaves_like 'windows tests', agent: agent, _agent_ip: agent.get_ip
+          it_behaves_like 'windows tests', agent: agent
         end
       end
     end

@@ -6,8 +6,8 @@ shared_examples 'run idempotently' do
       ## Run it twice and test for idempotency after reboot
       on(agent, puppet('agent', '-t'), acceptable_exit_codes: [2])
       agent.close
-      puts "\e[0;36m \nSleeping for 90 seconds to allow reboot to occur \e[0m\n"
-      sleep(90)
+      info_msg('Sleeping for 30 seconds to allow reboot to occur')
+      sleep(30)
       # Wait while agent reboots
       agent.wait_for_port(22)
       ## Second Puppet run
@@ -16,8 +16,8 @@ shared_examples 'run idempotently' do
       ## Run it twice and test for idempotency after reboot
       on(agent, puppet('agent', '-t'), acceptable_exit_codes: [2])
       agent.close
-      puts "\e[0;36m \nSleeping for 90 seconds to allow reboot to occur \e[0m\n"
-      sleep(90)
+      info_msg('Sleeping for 30 seconds to allow reboot to occur')
+      sleep(30)
       # Wait while agent reboots
       agent.wait_for_port(22)
       ## Second Puppet run

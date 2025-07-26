@@ -60,6 +60,11 @@ def print_stage(header)
   puts "\n\n#{separator}\n\e[0;36m#{header}\e[0m\n#{separator}\n"
 end
 
+# Color info message
+def info_msg(text)
+  puts "\e[0;36m\n#{text}\e[0m\n"
+end
+
 ## As each dependency is installed from fixtures, add the latest version to an array (uses the 5th line of output so that only primary dependencies are written to metadata.json
 def compile_dependency_versions(output)
   dep_line = output.lines[4]&.split
