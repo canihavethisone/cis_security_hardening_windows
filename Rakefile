@@ -1,164 +1,126 @@
-require 'rubygems'
-require 'bundler'
+# Updated Rakefile for Voxpupuli toolchain
+# Safely adapted from the original Puppetlabs-based test structure
+
+#require 'rubygems'
+#require 'bundler/setup'
+#require 'tmpdir'
+#require 'rake/clean'
+#require 'rake'
+#require 'yaml'
+#require 'voxpupuli/test/rake'
+#require 'voxpupuli/acceptance/rake'
+#require 'voxpupuli/release/rake_tasks'
+#require 'puppet-lint/tasks/puppet-lint'
+#require 'metadata-json-lint/rake_task'
+#require 'puppet/version'
+#require 'semantic_puppet'
+##require 'rspec/core/rake_task'
+
 require 'bundler/setup'
 require 'tmpdir'
 require 'rake/clean'
-require 'puppet-strings/tasks'
-require 'puppetlabs_spec_helper/rake_tasks'
-require 'puppet/version'
-require 'semantic_puppet'
-require 'puppet-lint/tasks/puppet-lint'
-require 'puppet-syntax/tasks/puppet-syntax'
-require 'metadata-json-lint/rake_task'
 require 'yaml'
-# require 'puppet_blacksmith/rake_tasks'
+require 'voxpupuli/test/rake'
+require 'voxpupuli/release/rake_tasks'
 
-# Hobble the puppet gem so the Openvox gem is used exclusively
-begin
-  puppet_path = Bundler.rubygems.find_name('puppet').first.full_gem_path
-  if defined?(Puppet) && File.directory?(puppet_path)
-    system('bundle binstub openvox --force')
-    system("rm -rf #{puppet_path}.old")
-    if File.rename(puppet_path, "#{puppet_path}.old")
-      puts "\e[0;36m\nRenamed puppet rubygem in #{puppet_path} to ensure Openvox is used\e[0m\n\n"
-    end
-  end
-rescue => e
-  warn "Could not locate puppet gem: #{e.message}"
-end
+# Load standard Voxpupuli rake tasks
+task_path = File.expand_path('lib/voxpupuli/test/rake_tasks.rb', Gem.loaded_specs['voxpupuli-test']&.full_gem_path || '')
+require task_path if File.exist?(task_path)
 
-# Allow acceptances tests to set their own value for the BEAKER_set variable.
-beaker_set = {}
+# Disable default :lint task to customize paths
+Rake::Task[:lint].clear rescue nil
 
-exclude_paths = [
-    "bundle/**/*",
-    "pkg/**/*",
-    "vendor/**/*",
-    "spec/**/*",
-]
-
-all_acc_tasks = []
-
-Rake::Task[:lint].clear
 PuppetLint.configuration.send('disable_relative')
-
+exclude_paths = ["bundle/**/*", "pkg/**/*", "vendor/**/*", "spec/**/*"]
 PuppetLint::RakeTask.new :lint do |config|
   config.ignore_paths = exclude_paths
 end
 
-PuppetSyntax.exclude_paths = exclude_paths
-
-# Create rake tasks for individual acceptance tests
-# Need to cater for nested structure
-# Enables the ability to run tests on different hiera configurations
+# Acceptance test task creation
+beaker_set = {}
+all_acc_tasks = []
 acc_tests = Dir.glob(['spec/acceptance/**/*']).grep(/_spec\.rb/i)
 acc_tests.each do |item|
-
-  target = item.sub('spec/', '').gsub('/', ':').sub(/_spec\.rb/, '') # Generate task name
+  target = item.sub('spec/', '').gsub('/', ':').sub(/_spec\.rb/, '')
   hiera_target = target.gsub('acceptance', '').gsub(':', '/').gsub('.yaml', '')
   hiera_tests = Dir.glob(["spec/fixtures/hiera/data/#{hiera_target}/*"]).grep(/acceptance/)
-
-  if hiera_tests.empty?
-    hiera_tests.push('acceptance')
-  else
-    hiera_tests.map! {|hiera_test| File.basename hiera_test}
-  end
+  hiera_tests = ['acceptance'] if hiera_tests.empty?
+  hiera_tests.map! { |hiera_test| File.basename(hiera_test) }
 
   hiera_tests.each do |testcase|
     target_task = target + testcase.gsub('acceptance','').gsub('.yaml', '')
     all_acc_tasks.push(target_task)
     RSpec::Core::RakeTask.new(target_task) do |task|
-      if beaker_set[target_task]
-        ENV['BEAKER_set'] = beaker_set[target_task]
-      end
-
+      ENV['BEAKER_set'] = beaker_set[target_task] if beaker_set[target_task]
       handle_beaker_provision
-
-      # second argument is the hiera file assigned to this test case
-      task.rspec_opts = ['--color' , "--options #{testcase.gsub('.yaml', '')}"]
+      task.rspec_opts = ['--color', "--options #{testcase.gsub('.yaml', '')}"]
       task.pattern = item
     end
   end
 end
 
-# Create rake tasks for individual spec tests
-# Need to cater for nested structure
-spec_tests = Dir.glob(['spec/classes/**/*', 'spec/defines/**/*'])
+# Unit test tasks for each spec file
+spec_tests = Dir.glob(['spec/classes/**/*', 'spec/defines/**/*']).grep(/_spec\.rb/i)
 spec_tests.each do |item|
-
-  if item =~ /_spec\.rb/i
-    target = item.sub('spec/', '').gsub('classes', 'spec/classes').gsub('/', ':').sub(/_spec\.rb/, '') # Generate task name
-
-    RSpec::Core::RakeTask.new(target) do |task|
-      Rake::Task[:syntax].invoke
-      Rake::Task[:lint].invoke
-      Rake::Task[:spec_prep].invoke
-      task.rspec_opts = ['--color']
-      task.pattern = item
-    end
+  target = item.sub('spec/', '').gsub('classes', 'spec/classes').gsub('/', ':').sub(/_spec\.rb/, '')
+  RSpec::Core::RakeTask.new(target) do |task|
+    Rake::Task[:syntax].invoke if Rake::Task.task_defined?(:syntax)
+    Rake::Task[:lint].invoke if Rake::Task.task_defined?(:lint)
+    Rake::Task[:spec_prep].invoke if Rake::Task.task_defined?(:spec_prep)
+    task.rspec_opts = ['--color']
+    task.pattern = item
   end
 end
 
-# *** Important Note: we need to cater for nested structure
-# where the profiles/roles are nested the tests, metadata and hiera data will conform to the same structure
-
-# Create tasks for running all role/profile acceptance tests in parallel
-# Get array of all acceptance tasks
 namespace 'acceptance' do
   desc "Run acceptance tests in parallel"
   multitask :all_p => all_acc_tasks
-  desc "Run acceptance tests"
+
+  desc "Run acceptance tests sequentially"
   task :all do
-    all_acc_tasks.each do |task|
-      Rake::Task[task].invoke()
-    end
+    all_acc_tasks.each { |task| Rake::Task[task].invoke() }
   end
 end
 
-desc "Run syntax, lint, and spec tests."
+desc "Run full test suite: metadata, syntax, lint, and spec."
 task :test => [
-    :metadata_lint,
-    :syntax,
-    :lint,
-    :spec,
+  :metadata_lint,
+  :syntax,
+  :lint,
+  :spec
 ]
 
-# Set the BEAKER_setfile env variable to use a temporary nodefile crafted
-# with the machine names from the previous run when BEAKER_provision=no
 def handle_beaker_provision
-  bp = ENV['BEAKER_provision'] ? ENV['BEAKER_provision'] : 'yes'
-  p "handling BEAKER_provision ('#{bp}')"
-  if bp.casecmp('no') == 0
+  bp = ENV['BEAKER_provision'] || 'yes'
+  return unless bp.casecmp('no').zero?
 
-    # Find the logfile for the last run
-    nodeset_name = ENV['BEAKER_set'] ? ENV['BEAKER_set'] : 'default'
-    logdir = File.join(Dir.pwd, "log", nodeset_name)
-    last_logfile = Dir.glob("#{logdir}/**/*.*").max_by { |f| File.mtime(f) }
-    p "Extracting node names from #{File.expand_path(last_logfile)}"
+  nodeset_name = ENV['BEAKER_set'] || 'default'
+  logdir = File.join(Dir.pwd, "log", nodeset_name)
+  last_logfile = Dir.glob("#{logdir}/**/*.*").max_by { |f| File.mtime(f) }
+  return unless last_logfile
 
-    # Extract node name to role mapping
-    nodenames = Hash.new
-    File.open(last_logfile).each do |line|
-      hostname, role = line.split.values_at(5, 6).map { |v| v.gsub(/[()]/, '') }
-      nodenames[role] = hostname
-    end
-    p "Node mapping: #{nodenames.to_s}"
-
-    # Generate temporary nodeset file
-    nodeset_dir = File.join(Dir.pwd, 'spec', 'acceptance', 'nodesets')
-    nodeset = YAML::load(File.open(File.join(nodeset_dir, "#{nodeset_name}.yml")))
-    nodeset['HOSTS'] = nodeset['HOSTS'].inject({}) { |result, node|
-      result.merge({nodenames[node.first] => node.last})
-    }
-    File.open(Dir::Tmpname.create(['tmp_nodeset', '.yaml'], nodeset_dir) {}, 'w') { |nodefile|
-      nodefile.write nodeset.to_yaml
-      p "Nodeset YAML written to #{File.expand_path(nodefile)}"
-
-      # Set env to use temp nodeset file
-      ENV['BEAKER_setfile'] = File.expand_path(nodefile)
-      ENV.delete('BEAKER_set')
-    }
+  nodenames = {}
+  File.foreach(last_logfile) do |line|
+    hostname, role = line.split.values_at(5, 6).map { |v| v&.gsub(/[()]/, '') }
+    nodenames[role] = hostname if hostname && role
   end
+
+  nodeset_dir = File.join(Dir.pwd, 'spec', 'acceptance', 'nodesets')
+  nodeset_file = File.join(nodeset_dir, "#{nodeset_name}.yml")
+  nodeset = YAML.load_file(nodeset_file)
+  nodeset['HOSTS'] = nodeset['HOSTS'].transform_keys { |role| nodenames[role] || role }
+
+  tmp_nodefile = Dir::Tmpname.create(['tmp_nodeset', '.yaml'], nodeset_dir) {}
+  File.write(tmp_nodefile, nodeset.to_yaml)
+  ENV['BEAKER_setfile'] = File.expand_path(tmp_nodefile)
+  ENV.delete('BEAKER_set')
 
   CLEAN.include(FileList["#{nodeset_dir}/tmp_nodeset*.yaml"])
 end
+
+Rake::Task[:default].clear
+task :default do
+  puts "\nAvailable Rake tasks:\n\n"
+  system("bundle exec rake --tasks")
+end
+

@@ -15,10 +15,9 @@
 # https://github.com/simp/rubygem-simp-beaker-helpers
 
 ### ---------------- Gems Required ------------------- ###
-# require_relative 'beaker-openstack'
-require 'beaker-puppet'
-require 'beaker-rspec/spec_helper'
-require 'beaker-rspec/helpers/serverspec'
+require 'beaker-hiera'
+require 'beaker_puppet_helpers'
+require 'beaker-rspec'
 require 'serverspec'
 require 'beaker/module_install_helper'
 
