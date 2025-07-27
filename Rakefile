@@ -14,12 +14,17 @@ require 'yaml'
 # require 'puppet_blacksmith/rake_tasks'
 
 # Hobble the puppet gem so the Openvox gem is used exclusively
-system('bundle binstub openvox --force')
-if defined?(Puppet) && File.directory?(src = './vendor/ruby/3.1.0/gems/puppet-8.10.0')
-  system("rm -rf #{src}.old")
-  if File.rename(src, "#{src}.old")
-    puts "\e[0;36m\nRenamed puppet rubygem to ensure Openvox is used\e[0m\n\n"
+begin
+  puppet_path = Bundler.rubygems.find_name('puppet').first.full_gem_path
+  if defined?(Puppet) && File.directory?(puppet_path)
+    system('bundle binstub openvox --force')
+    system("rm -rf #{puppet_path}.old")
+    if File.rename(puppet_path, "#{puppet_path}.old")
+      puts "\e[0;36m\nRenamed puppet rubygem in #{puppet_path} to ensure Openvox is used\e[0m\n\n"
+    end
   end
+rescue => e
+  warn "Could not locate puppet gem: #{e.message}"
 end
 
 # Allow acceptances tests to set their own value for the BEAKER_set variable.
