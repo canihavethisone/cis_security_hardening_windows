@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+**Development**
+- Updated testing dependencies to latest versions (rspec, voxpupuli-test, beaker)
+- Improved CI stability with updated test tooling
+
+
 ## Release 2.1.1
 
 **Features**
