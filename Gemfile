@@ -51,6 +51,14 @@ gem 'in-parallel'
 gem 'pry'
 gem 'test-unit'
 gem 'rainbow'
+if RUBY_VERSION < '3.0'
+  gem 'ffi', '~> 1.15.5'
+else
+  gem 'ffi'
+end
+
+# Other gems...
+
 # gem 'fast_gettext'          # Needed by i18n tooling (eyaml etc.)
 # gem 'json_pure'             # Only if you're explicitly avoiding native JSON
 # gem 'rb-readline'
