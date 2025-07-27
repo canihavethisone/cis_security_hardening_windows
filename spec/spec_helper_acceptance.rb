@@ -20,6 +20,7 @@ require 'beaker-rspec'                  # Beaker integration with RSpec and Serv
 require 'beaker/module_install_helper'  # Helper to install module and dependencies
 require 'beaker-hiera'                  # Optional Hiera integration for Beaker
 require 'beaker_puppet_helpers'         # Additional Puppet-related helpers for Beaker
+require 'rainbow'                       # Add color to console printed text
 
 ### ---------------- Set Variables ------------------- ###
 ## Set unique environment variable if static-master, otherwise use production
@@ -55,14 +56,15 @@ ALL_DEPS = []
 ### ---------------- Define Functions ------------------- ###
 ## Print stage headings
 def print_stage(header)
-  separator = "\e[0;32m#{'-' * 100}\e[0m"
-  puts "\n\n#{separator}\n\e[0;36m#{header}\e[0m\n#{separator}\n"
+  separator = Rainbow('-' * 100).green
+  puts "\n\n#{separator}\n#{Rainbow(header).cyan}\n#{separator}\n"
 end
 
 # Color info message
 def info_msg(text)
-  puts "\e[0;36m\n#{text}\e[0m\n"
+  puts "\n#{Rainbow(text).cyan}\n"
 end
+
 
 ## As each dependency is installed from fixtures, add the latest version to an array (uses the 5th line of output so that only primary dependencies are written to metadata.json
 def compile_dependency_versions(output)
@@ -262,7 +264,7 @@ end
 
 ## Determine and install dependencies from either .fixtures or metadata.json
 def install_dependencies_from(list)
-  puts "\e[0;36m \n#{list} selected to determine dependencies \e[0m\n\n"
+  puts " \n#{Rainbow("#{list} selected to determine dependencies").cyan}\n\n"
   file_path = PROJECT_ROOT + ((list == 'fixtures') ? '/.fixtures.yml' : '/metadata.json')
   return unless File.exist?(file_path)
 
