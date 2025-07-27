@@ -18,7 +18,6 @@
 require 'serverspec'                    # Base Serverspec framework
 require 'beaker-rspec'                  # Beaker integration with RSpec and Serverspec
 require 'beaker/module_install_helper'  # Helper to install module and dependencies
-require 'beaker-hiera'                  # Optional Hiera integration for Beaker
 require 'beaker_puppet_helpers'         # Additional Puppet-related helpers for Beaker
 require 'rainbow'                       # Add color to console printed text
 
