@@ -5,15 +5,17 @@ group :test do
   gem 'voxpupuli-test'
   gem 'voxpupuli-release'
   gem 'hiera-eyaml'
+  gem 'beaker-hiera'
   gem 'in-parallel'
   gem 'rainbow'
 end
 
 # System / acceptance tests
-group :system_tests do
+group :development do
   gem 'voxpupuli-acceptance'
   gem 'beaker-openstack'
   gem 'beaker-module_install_helper'
+  gem 'beaker_puppet_helpers'
 end
 
 # Required for Puppet compatibility (runtime)
