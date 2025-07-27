@@ -5,9 +5,6 @@ group :test do
   gem 'voxpupuli-test'
   gem 'voxpupuli-release'
   gem 'hiera-eyaml'
-  gem 'simplecov'
-  gem 'simplecov-console'
-  gem 'concurrent-ruby'
   gem 'in-parallel'
   gem 'rainbow'
 end
