@@ -15,11 +15,11 @@
 # https://github.com/simp/rubygem-simp-beaker-helpers
 
 ### ---------------- Gems Required ------------------- ###
-require 'beaker-hiera'
-require 'beaker_puppet_helpers'
-require 'beaker-rspec'
-require 'serverspec'
-require 'beaker/module_install_helper'
+require 'serverspec'                    # Base Serverspec framework
+require 'beaker-rspec'                  # Beaker integration with RSpec and Serverspec
+require 'beaker/module_install_helper'  # Helper to install module and dependencies
+require 'beaker-hiera'                  # Optional Hiera integration for Beaker
+require 'beaker_puppet_helpers'         # Additional Puppet-related helpers for Beaker
 
 ### ---------------- Set Variables ------------------- ###
 ## Set unique environment variable if static-master, otherwise use production

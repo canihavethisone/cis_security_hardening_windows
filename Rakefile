@@ -1,27 +1,12 @@
 # Updated Rakefile for Voxpupuli toolchain
 # Safely adapted from the original Puppetlabs-based test structure
 
-#require 'rubygems'
-#require 'bundler/setup'
-#require 'tmpdir'
-#require 'rake/clean'
-#require 'rake'
-#require 'yaml'
-#require 'voxpupuli/test/rake'
-#require 'voxpupuli/acceptance/rake'
-#require 'voxpupuli/release/rake_tasks'
-#require 'puppet-lint/tasks/puppet-lint'
-#require 'metadata-json-lint/rake_task'
-#require 'puppet/version'
-#require 'semantic_puppet'
-##require 'rspec/core/rake_task'
-
-require 'bundler/setup'
-require 'tmpdir'
-require 'rake/clean'
-require 'yaml'
-require 'voxpupuli/test/rake'
-require 'voxpupuli/release/rake_tasks'
+require 'bundler/setup'                # Ensures all gems in Gemfile are available (must be first)
+require 'tmpdir'                       # Standard library: used for temporary file/dir handling
+require 'yaml'                         # Standard library: used for parsing YAML files
+require 'rake/clean'                   # Adds Rake tasks for cleaning files/directories
+require 'voxpupuli/test/rake'          # Loads test-related Rake tasks (e.g., lint, syntax, spec)
+require 'voxpupuli/release/rake_tasks' # Adds Voxpupuli release automation tasks (e.g., changelog, tagging)
 
 # Load standard Voxpupuli rake tasks
 task_path = File.expand_path('lib/voxpupuli/test/rake_tasks.rb', Gem.loaded_specs['voxpupuli-test']&.full_gem_path || '')

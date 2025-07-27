@@ -4,12 +4,15 @@ source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 gem 'voxpupuli-test'
 gem 'openvox'
 
-# Acceptance / Beaker
+# Acceptance testing
 gem 'voxpupuli-acceptance'
-gem 'voxpupuli-release'
 gem 'beaker-openstack'
+gem 'beaker-module_install_helper'
 
-# Coverage
+# Release tooling
+gem 'voxpupuli-release'
+
+# Test coverage (optional, but useful)
 gem 'simplecov'
 gem 'simplecov-console'
 
@@ -20,11 +23,7 @@ gem 'in-parallel'
 gem 'rainbow'
 
 # Platform-specific dependency
-if RUBY_VERSION < '3.0'
-  gem 'ffi', '~> 1.15.5'
-else
-  gem 'ffi'
-end
+gem 'ffi', RUBY_VERSION < '3.0' ? '~> 1.15.5' : nil
 
 
 # Other gems...
