@@ -4,6 +4,7 @@ source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 group :test do
   gem 'voxpupuli-test'
   gem 'voxpupuli-release'
+  gem 'beaker-hiera'
   gem 'hiera-eyaml'
   gem 'in-parallel'
   gem 'rainbow'
