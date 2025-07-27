@@ -3,17 +3,13 @@ source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 # Core test framework (used in dev/test only)
 group :test do
   gem 'voxpupuli-test'
+  gem 'voxpupuli-release'
   gem 'hiera-eyaml'
   gem 'simplecov'
   gem 'simplecov-console'
   gem 'concurrent-ruby'
   gem 'in-parallel'
   gem 'rainbow'
-end
-
-# Release tooling (used during release process)
-group :release do
-  gem 'voxpupuli-release'
 end
 
 # System / acceptance tests
