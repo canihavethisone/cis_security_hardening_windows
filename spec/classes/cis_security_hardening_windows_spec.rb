@@ -35,7 +35,7 @@ describe 'cis_security_hardening_windows' do
           # Write out catalogue
           # it { File.write("cis_security_hardening_windows_failure_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource)) }
 
-          # fail tp compile with deps
+          # fail to compile with deps
           # it { pp catalogue.resources }
           it { is_expected.not_to compile.with_all_deps }
           it { is_expected.to raise_error(%r{The following parameters must be defined:\nlogon_banner\nlogon_message\nadministrator_newname\nadministrator_newpassword\ndisabled_guest_newname}) }
