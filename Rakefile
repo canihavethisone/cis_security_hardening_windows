@@ -11,7 +11,16 @@ require 'puppet-lint/tasks/puppet-lint'
 require 'puppet-syntax/tasks/puppet-syntax'
 require 'metadata-json-lint/rake_task'
 require 'yaml'
-require 'puppet_blacksmith/rake_tasks'
+# require 'puppet_blacksmith/rake_tasks'
+
+# Hobble the puppet gem so the Openvox gem is used exclusively
+system('bundle binstub openvox --force')
+if defined?(Puppet) && File.directory?(src = './vendor/ruby/3.1.0/gems/puppet-8.10.0')
+  system("rm -rf #{src}.old")
+  if File.rename(src, "#{src}.old")
+    puts "\e[0;36m\nRenamed puppet rubygem to ensure Openvox is used\e[0m\n\n"
+  end
+end
 
 # Allow acceptances tests to set their own value for the BEAKER_set variable.
 beaker_set = {}

@@ -8,6 +8,14 @@ require 'parallel_tests'
 
 include RspecPuppetFacts
 
+# puts "Openvox present? #{Gem.loaded_specs.key?('openvox')}"
+puts "\n"
+puts "Loaded Puppet module version: #{Puppet.version}"
+puts "Loaded from: #{Gem.loaded_specs['openvox']&.full_gem_path}"
+puts "Old Puppet gem: #{Gem.loaded_specs['puppet']&.full_name || 'none'}"
+puts "Active openvox gem: #{Gem.loaded_specs['openvox']&.full_name || 'none'}"
+puts "\e[0;36m\nUsing Puppet #{Puppet.version}\e[0m\n\n" if defined?(Puppet)
+
 default_facts = {
   puppetversion: Puppet.version,
   facterversion: Facter.version,

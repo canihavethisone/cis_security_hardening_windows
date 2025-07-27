@@ -92,7 +92,6 @@ class cis_security_hardening_windows::cis (
   # Remove the rule title from the hashes so the registry resource can apply them
   $enforced_rules.each | String $title, Hash $rule = {} | {
     $rule.each |String $key, Hash $value = {} | {
-
       # Ensure the registry path exists.  This will fail for duplicates with different CASE (capitalisation)!
       $regpath = regsubst($key, '[\\\*]+[^\\\*]+$', '')
       if !defined(Registry_key[$regpath]) and $value['ensure'] != 'absent' {

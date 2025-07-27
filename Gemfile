@@ -1,50 +1,61 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
-gem "beaker", '~> 5'
-gem "beaker-abs"
-gem "beaker-hostgenerator"
-gem "beaker-module_install_helper"
-gem "beaker-openstack"#, '>= 2.0.0'
-gem "beaker-puppet"
-gem "beaker-rspec"
-gem "codecov"
-gem "concurrent-ruby"
-gem "dependency_checker"
-gem "facterdb"
-gem "fast_gettext"
-gem "hiera-eyaml"
-gem "json_pure"
-gem "metadata-json-lint"
-gem "mocha"
-gem "parallel"
-gem "parallel_tests", '>= 4.5.1', group: [:development, :test]
-#gem "parallel_rspec"
-gem "in-parallel"
-gem "pry"
-gem "puppet", "< 8.0.0"
-gem "puppet-blacksmith"
-gem "puppet-debugger"
-gem "puppet-lint"
-gem "puppet-resource_api"
-gem "puppet-strings"
-gem "puppet-syntax"
-gem "puppetlabs_spec_helper", '>= 7.0.0'
-gem "rake"
-gem "rainbow"
-gem "rb-readline"
-gem "rspec"
-gem "rspec_junit_formatter"
-gem "rspec-puppet"
-gem "rspec-puppet-facts"
-gem "rubocop"
-gem "rubocop-rspec"
-gem "rubocop-performance"
-gem "serverspec"
-gem "simplecov"
-gem "simplecov-console"
-gem "specinfra"
+# Core test framework
+gem 'rspec'
+gem 'puppetlabs_spec_helper', '>= 7.0.0'
+gem 'rspec-puppet'
+gem 'rspec-puppet-facts'
+gem 'rspec_junit_formatter'
+gem 'serverspec'
+gem 'specinfra'
+gem 'openvox'
 
-gem "test-unit"
+# Acceptance / Beaker
+gem 'voxpupuli-acceptance'
+gem 'beaker'
+gem 'beaker-openstack'
+gem 'beaker-abs'
+gem 'beaker-puppet'
+gem 'beaker-rspec'
+gem 'beaker-hostgenerator'
+gem 'beaker-module_install_helper'
 
-#gem "puppet-module-posix-dev-r2.7"
-#gem "winrm"
+# Puppet tools
+gem 'puppet-debugger'
+gem 'puppet-lint'
+gem 'puppet-strings'
+gem 'puppet-syntax'
+gem 'puppet-resource_api'
+
+# Code quality / linting
+gem 'rubocop'
+gem 'rubocop-rspec'
+gem 'rubocop-performance'
+gem 'metadata-json-lint'
+gem 'dependency_checker'
+
+# Coverage
+gem 'simplecov'
+gem 'simplecov-console'
+gem 'codecov'
+
+# Utilities
+gem 'facterdb'
+gem 'hiera-eyaml'
+gem 'concurrent-ruby'
+gem 'mocha'
+gem 'rake'
+gem 'parallel'
+gem 'parallel_tests'
+gem 'in-parallel'
+gem 'pry'
+gem 'test-unit'
+gem 'rainbow'
+# gem 'fast_gettext'          # Needed by i18n tooling (eyaml etc.)
+# gem 'json_pure'             # Only if you're explicitly avoiding native JSON
+# gem 'rb-readline'
+
+# Old and unused
+#gem 'puppet-module-posix-dev-r2.7'
+#gem 'winrm'
+#gem 'parallel_rspec'
