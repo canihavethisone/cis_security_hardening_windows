@@ -1,12 +1,13 @@
 # frozen_string_literal: true
+require 'voxpupuli/test/spec_helper'
 
-require 'puppetlabs_spec_helper/module_spec_helper'
-require 'rspec-puppet-facts'
-require 'spec_helper_local' if File.file?(File.join(File.dirname(__FILE__), 'spec_helper_local.rb'))
-require 'puppet/util/windows'
-require 'parallel_tests'
-
-include RspecPuppetFacts
+# puts "Openvox present? #{Gem.loaded_specs.key?('openvox')}"
+puts "\n"
+puts "Loaded Puppet module version: #{Puppet.version}"
+puts "Loaded from: #{Gem.loaded_specs['openvox']&.full_gem_path}"
+puts "Old Puppet gem: #{Gem.loaded_specs['puppet']&.full_name || 'none'}"
+puts "Active openvox gem: #{Gem.loaded_specs['openvox']&.full_name || 'none'}"
+puts "\e[0;36m\nUsing Puppet #{Puppet.version}\e[0m\n\n" if defined?(Puppet)
 
 default_facts = {
   puppetversion: Puppet.version,

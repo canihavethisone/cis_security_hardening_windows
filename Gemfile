@@ -1,50 +1,26 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
-gem "beaker", '~> 5'
-gem "beaker-abs"
-gem "beaker-hostgenerator"
-gem "beaker-module_install_helper"
-gem "beaker-openstack"#, '>= 2.0.0'
-gem "beaker-puppet"
-gem "beaker-rspec"
-gem "codecov"
-gem "concurrent-ruby"
-gem "dependency_checker"
-gem "facterdb"
-gem "fast_gettext"
-gem "hiera-eyaml"
-gem "json_pure"
-gem "metadata-json-lint"
-gem "mocha"
-gem "parallel"
-gem "parallel_tests", '>= 4.5.1', group: [:development, :test]
-#gem "parallel_rspec"
-gem "in-parallel"
-gem "pry"
-gem "puppet", "< 8.0.0"
-gem "puppet-blacksmith"
-gem "puppet-debugger"
-gem "puppet-lint"
-gem "puppet-resource_api"
-gem "puppet-strings"
-gem "puppet-syntax"
-gem "puppetlabs_spec_helper", '>= 7.0.0'
-gem "rake"
-gem "rainbow"
-gem "rb-readline"
-gem "rspec"
-gem "rspec_junit_formatter"
-gem "rspec-puppet"
-gem "rspec-puppet-facts"
-gem "rubocop"
-gem "rubocop-rspec"
-gem "rubocop-performance"
-gem "serverspec"
-gem "simplecov"
-gem "simplecov-console"
-gem "specinfra"
+# Core test framework (used in dev/test only)
+group :test do
+  gem 'voxpupuli-test'
+  gem 'voxpupuli-release'
+  gem 'hiera-eyaml'
+  gem 'simplecov'
+  gem 'simplecov-console'
+  gem 'concurrent-ruby'
+  gem 'in-parallel'
+  gem 'rainbow'
+end
 
-gem "test-unit"
+# System / acceptance tests
+group :system_tests do
+  gem 'voxpupuli-acceptance'
+  gem 'beaker-openstack'
+  gem 'beaker-module_install_helper'
+end
 
-#gem "puppet-module-posix-dev-r2.7"
-#gem "winrm"
+# Required for Puppet compatibility (runtime)
+gem 'openvox'
+
+# Platform-specific ffi version for Ruby < 3.0
+gem 'ffi', RUBY_VERSION < '3.0' ? '~> 1.15.5' : nil
