@@ -127,6 +127,7 @@ def stop_firewall_on(host)
   end
 end
 
+## Install Puppet agent
 def install_puppet_agent(agent)
   print_stage("Installing #{CONFIG[:agent_package_name]} on #{agent}")
   on(agent, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
@@ -196,11 +197,12 @@ def setup_puppet_on(_host, opts = {})
       on(agent, powershell("taskkill /f /t /fi 'SERVICES eq wuauserv'"), acceptable_exit_codes: [0, 1])
       on(agent, powershell('Stop-Service wuauserv -Force'), acceptable_exit_codes: [0, 1])
 
-      # Configure Puppet agent settings
+      # Install puppet-agent if not already installed
       unless on(agent, powershell("if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match 'Puppet Agent^|OpenVox Agent \\(64-bit\\)') {exit 0} else {exit 1}")).exit_code.zero?
         on(agent, powershell('Invoke-WebRequest https://artifacts.voxpupuli.org/downloads/windows/openvox8/openvox-agent-8.19.2-x64.msi -OutFile c:\\openvox-agent-8.19.2-x64.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\openvox-agent-8.19.2-x64.msi\' -Wait'))
       end
 
+      # Configure Puppet agent settings
       on(agent, powershell("Set-Content -path c:\\ProgramData\\PuppetLabs\\puppet\\etc\\puppet.conf -Value \"[agent]`r`nserver=#{MASTER_FQDN}`r`nenvironment=#{ENVIRONMENT}\""))
 
       print_stage("Disabling Puppet service so only manual runs occur on #{agent_fqdn}")
