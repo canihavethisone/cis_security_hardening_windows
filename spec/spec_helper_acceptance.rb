@@ -22,6 +22,7 @@ require 'beaker_puppet_helpers'         # Additional Puppet-related helpers for 
 require 'rainbow'                       # Add color to console printed text
 
 ### ---------------- Set Variables ------------------- ###
+## Set unique environment variable if static-master, otherwise use production
 CLASS = 'canihavethisone/cis_security_hardening_windows'.freeze
 MASTER_IP = on(master, 'hostname -i | cut -d" " -f2').stdout.strip # master.get_ip
 MASTER_FQDN = on(master, 'hostname').stdout.strip # master.node_name
@@ -46,16 +47,35 @@ CONFIG = {
 
 ALL_DEPS = []
 
+# DOMAIN           = fact_on(master, 'domain')
+# master_domain    = master.node_name.split('.', 2)[1]
+# agent_domain     = agent.node_name.split('.', 2)[1]
+
 ### ---------------- Define Functions ------------------- ###
+## Print stage headings
 def print_stage(header)
   separator = Rainbow('-' * 100).green
   puts "\n\n#{separator}\n#{Rainbow(header).cyan}\n#{separator}\n"
 end
 
+# Color info message
 def info_msg(text)
   puts "\n#{Rainbow(text).cyan}\n"
 end
 
+# Get agent ip and fqdn
+def get_ip_and_fqdn(host)
+  if host['platform'] =~ %r{windows}
+    ip = on(host, "powershell -Command \"(Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notmatch '^169\\.' -and $_.IPAddress -notmatch '^127\\.' } | Select-Object -First 1).IPAddress\"").stdout.strip
+    fqdn = on(host, "powershell -Command \"[System.Net.Dns]::GetHostEntry('localhost').HostName\"").stdout.strip
+  else
+    ip = on(host, 'hostname -i | cut -d" " -f2').stdout.strip
+    fqdn = on(host, 'hostname').stdout.strip
+  end
+  [ip, fqdn]
+end
+
+## As each dependency is installed from fixtures, add the latest version to an array (uses the 5th line of output so that only primary dependencies are written to metadata.json
 def compile_dependency_versions(output)
   dep_line = output.lines[4]&.split
   return if dep_line.nil? || dep_line.size < 3
@@ -64,17 +84,20 @@ def compile_dependency_versions(output)
   ALL_DEPS.push({ dep_name: dep_name, dep_ver: dep_ver }) if dep_name && dep_ver
 end
 
+## Update dependencies in metadata
 def write_metadata_dot_json(dependencies)
   metadata_path = File.join(PROJECT_ROOT, 'metadata.json')
   return unless File.exist?(metadata_path)
   metadata_json = JSON.parse(File.read(metadata_path))
 
+  # Group dependencies by name and select the highest version
   unique_dependencies = dependencies.group_by { |dep| dep[:dep_name] }
                                     .map { |_name, deps| deps.max_by { |dep| dep[:dep_ver] } }
                                     .sort_by { |dep| dep[:dep_name] }
 
   dependencies = unique_dependencies.map do |dep|
     next if dep[:dep_name].match?(%r{puppetlabs-.*_core})
+    # Construct dependency hash based on version locking requirements
     version_req = if ['puppetlabs-example1', 'puppetlabs-example2'].include?(dep[:dep_name])
                     dep[:dep_ver].to_s
                   else
@@ -84,10 +107,13 @@ def write_metadata_dot_json(dependencies)
   end
 
   metadata_json['dependencies'] = dependencies.compact
+
+  # Write the updated JSON to metadata.json with trailing newline
   json_output = JSON.pretty_generate(metadata_json) + "\n"
   File.write(metadata_path, json_output)
 end
 
+## Stop firewall
 def stop_firewall_on(host)
   case host['platform']
   when %r{debian}
@@ -106,8 +132,11 @@ def install_puppet_agent(agent)
   on(agent, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
   on(agent, "yum install -y #{CONFIG[:release_yum_repo_url]}")
   on(agent, "yum install -y #{CONFIG[:agent_package_name]}")
+  # install_puppetlabs_release_repo(agent, CONFIG[:puppet_collection], CONFIG[release_yum_repo_url])
+  # install_puppet_agent_on(agent, puppet_agent_version: CONFIG[:puppet_agent_version], puppet_collection: CONFIG[:puppet_collection])
 end
 
+## Agent options
 def agent_opts(_host)
   {
     main: { color: 'ansi' },
@@ -115,17 +144,16 @@ def agent_opts(_host)
   }
 end
 
-def get_ip_and_fqdn(host)
-  if host['platform'] =~ %r{windows}
-    ip = on(host, "powershell -Command \"(Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notmatch '^169\\.' -and $_.IPAddress -notmatch '^127\\.' } | Select-Object -First 1).IPAddress\"").stdout.strip
-    fqdn = on(host, "powershell -Command \"[System.Net.Dns]::GetHostEntry('localhost').HostName\"").stdout.strip
-  else
-    ip = on(host, 'hostname -i | cut -d" " -f2').stdout.strip
-    fqdn = on(host, 'hostname').stdout.strip
-  end
-  [ip, fqdn]
-end
+## Install Puppetserver
+def install_puppetserver(host)
+  print_stage("Installing #{CONFIG[:server_package_name]} on #{host}")
+  on(master, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
+  on(master, "yum install -y #{CONFIG[:release_yum_repo_url]}")
+  on(master, "yum install -y #{CONFIG[:server_package_name]}")
+  # install_puppetlabs_release_repo(master, CONFIG[:puppet_collection], CONFIG[release_yum_repo_url])
+  # install_puppetserver_on(master, version: CONFIG['puppetserver_version'], puppet_collection: CONFIG[:puppet_collection])
 
+## Setup Puppet agent on el-|centos or windows
 def setup_puppet_on(_host, opts = {})
   opts = { agent: true }.merge(opts)
   return unless opts[:agent]
@@ -139,6 +167,7 @@ def setup_puppet_on(_host, opts = {})
 
     case agent['platform']
     when %r{el-|centos}
+      # Display welcome message on CentOS/EL agents
       message = <<~WELCOME
         You are running an acceptance test of \e[1;32m#{CLASS}\e[0m
         on this AGENT\t\e[1;36m#{agent_fqdn}\t#{agent_ip}\e[0m
@@ -148,6 +177,7 @@ def setup_puppet_on(_host, opts = {})
       on(agent, "echo -e '#{message}' | tee /etc/motd /etc/issue")
       on(agent, 'systemctl restart getty@tty1')
 
+      # Install puppet-agent if not already installed
       unless on(agent, "rpm -qa | grep -E #{CONFIG[:agent_package_name]}", acceptable_exit_codes: [0, 1]).exit_code.zero?
         install_puppet_agent(agent)
       end
@@ -155,6 +185,7 @@ def setup_puppet_on(_host, opts = {})
       configure_puppet_on(agent, puppet_opts)
       stop_firewall_on(agent)
 
+      # Disable Windows Update service for testing on Windows agents
       print_stage("Disabling Puppet service so only manual runs occur on #{agent_ip} #{agent_fqdn}")
       on(agent, 'systemctl disable puppet --now', acceptable_exit_codes: [0])
       on(agent, "echo '#{MASTER_IP} #{MASTER_FQDN}' >> /etc/hosts")
@@ -165,6 +196,7 @@ def setup_puppet_on(_host, opts = {})
       on(agent, powershell("taskkill /f /t /fi 'SERVICES eq wuauserv'"), acceptable_exit_codes: [0, 1])
       on(agent, powershell('Stop-Service wuauserv -Force'), acceptable_exit_codes: [0, 1])
 
+      # Configure Puppet agent settings
       unless on(agent, powershell("if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match 'Puppet Agent^|OpenVox Agent \\(64-bit\\)') {exit 0} else {exit 1}")).exit_code.zero?
         on(agent, powershell('Invoke-WebRequest https://artifacts.voxpupuli.org/downloads/windows/openvox8/openvox-agent-8.19.2-x64.msi -OutFile c:\\openvox-agent-8.19.2-x64.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\openvox-agent-8.19.2-x64.msi\' -Wait'))
       end
@@ -177,6 +209,7 @@ def setup_puppet_on(_host, opts = {})
     end
   end
 
+  # Enable autosign on the master
   on(master, "echo '*' > /etc/puppetlabs/puppet/autosign.conf")
 end
 
@@ -280,15 +313,19 @@ unless ENV['BEAKER_provision'] == 'no'
 end
 
 RSpec.configure do |c|
+  ## Readable test descriptions
   c.formatter = :documentation
+  ## Actions before suite
   c.before :suite do
   end
-  c.after :suite do
+  ## Actions after suite
     if master['hypervisor'] == 'none'
       print_stage("Cleaning up static-master at #{MASTER_IP} #{MASTER_FQDN}")
+      ## Delete accumulating lines in sshd_conf and /etc/hosts when reusing master
       on(master, "sed -i '/PermitUserEnvironment yes/d' /etc/ssh/sshd_config")
       on(master, "echo -e \"127.0.0.1\tlocalhost localhost.localdomain\n#{MASTER_IP}\t#{MASTER_FQDN}\" > /etc/hosts")
       unless ENV['BEAKER_destroy'] == 'no'
+        ## Clean up environment and certificates when using static-master
         on(master, "find /etc/puppetlabs/code/environments/#{ENVIRONMENT} ! -name production -type d -exec rm -rf {} +")
         agents.each do |agent|
           on(master, "/opt/puppetlabs/bin/puppetserver ca clean --certname #{agent.node_name}")
