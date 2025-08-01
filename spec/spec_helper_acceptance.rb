@@ -332,5 +332,9 @@ RSpec.configure do |c|
         end
       end
     end
+    agents.each do |agent|
+      print_stage("Completed tests on agent at #{agent_ip} #{agent_fqdn}")
+    end
+    print_stage("Completed tests using master at #{MASTER_IP} #{MASTER_FQDN} #{host}")
   end
 end
