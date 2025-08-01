@@ -7,6 +7,8 @@
 ### Classes
 
 * [`cis_security_hardening_windows`](#cis_security_hardening_windows): Windows main class.  The entry point with all parameters processed here. It applies CIS hardening
+* [`cis_security_hardening_windows::cis`](#cis_security_hardening_windows--cis): Windows cis class.  It is called from the cis_security_hardening_windows class.  Params are derived from in-module hiera and can be excluded.
+* [`cis_security_hardening_windows::remote_desktop`](#cis_security_hardening_windows--remote_desktop): Windows remote_desktop class.  It is called from the cis_security_hardening_windows class when $allow_remote_desktop is true.
 
 ## Classes
 
@@ -180,4 +182,94 @@ Data type: `Boolean`
 Do not cache the puppet catalog on disk, as passwords and other values are in plain text
 
 Default value: `lookup( 'catalog_no_cache',         Boolean,                      undef,    false )`
+
+### <a name="cis_security_hardening_windows--cis"></a>`cis_security_hardening_windows::cis`
+
+Windows cis class.  It is called from the cis_security_hardening_windows class.  Params are derived from in-module hiera and can be excluded.
+
+#### Examples
+
+##### Declaring the class
+
+```puppet
+include cis_security_hardening_windows
+```
+
+#### Parameters
+
+The following parameters are available in the `cis_security_hardening_windows::cis` class:
+
+* [`cis_profile_type`](#-cis_security_hardening_windows--cis--cis_profile_type)
+* [`cis_enforcement_level`](#-cis_security_hardening_windows--cis--cis_enforcement_level)
+* [`cis_include_bitlocker`](#-cis_security_hardening_windows--cis--cis_include_bitlocker)
+* [`cis_include_nextgen`](#-cis_security_hardening_windows--cis--cis_include_nextgen)
+* [`cis_exclude_rules`](#-cis_security_hardening_windows--cis--cis_exclude_rules)
+* [`cis_include_hkcu`](#-cis_security_hardening_windows--cis--cis_include_hkcu)
+
+##### <a name="-cis_security_hardening_windows--cis--cis_profile_type"></a>`cis_profile_type`
+
+Data type: `Enum['domain', 'standalone']`
+
+Apply domain or standalone CIS benchmark
+
+##### <a name="-cis_security_hardening_windows--cis--cis_enforcement_level"></a>`cis_enforcement_level`
+
+Data type: `Integer[1, 2]`
+
+CIS level to apply. Level 2 includes level 1
+
+##### <a name="-cis_security_hardening_windows--cis--cis_include_bitlocker"></a>`cis_include_bitlocker`
+
+Data type: `Boolean`
+
+If cis bitlocker rules should be included
+
+##### <a name="-cis_security_hardening_windows--cis--cis_include_nextgen"></a>`cis_include_nextgen`
+
+Data type: `Boolean`
+
+If cis nextgen rules should be included
+
+##### <a name="-cis_security_hardening_windows--cis--cis_exclude_rules"></a>`cis_exclude_rules`
+
+Data type: `Hash`
+
+Lookup of optional array for cis_exclude_rules (to opt out of included rules)
+
+##### <a name="-cis_security_hardening_windows--cis--cis_include_hkcu"></a>`cis_include_hkcu`
+
+Data type: `Boolean`
+
+If true, lgpo is used to import group policy objects for HKCU as puppetlabs/registry cannot apply them
+
+### <a name="cis_security_hardening_windows--remote_desktop"></a>`cis_security_hardening_windows::remote_desktop`
+
+Windows remote_desktop class.  It is called from the cis_security_hardening_windows class when $allow_remote_desktop is true.
+
+#### Examples
+
+##### Declaring the class
+
+```puppet
+include cis_security_hardening_windows
+```
+
+#### Parameters
+
+The following parameters are available in the `cis_security_hardening_windows::remote_desktop` class:
+
+* [`trusted_rdp_subnets`](#-cis_security_hardening_windows--remote_desktop--trusted_rdp_subnets)
+* [`remote_local_accounts`](#-cis_security_hardening_windows--remote_desktop--remote_local_accounts)
+
+##### <a name="-cis_security_hardening_windows--remote_desktop--trusted_rdp_subnets"></a>`trusted_rdp_subnets`
+
+Data type: `Array`
+
+Trusted subnets for inbound rdp connections for firewall rules. Undef will be converted to 'any'
+
+##### <a name="-cis_security_hardening_windows--remote_desktop--remote_local_accounts"></a>`remote_local_accounts`
+
+Data type: `Boolean`
+
+If local accounts are permitted to connect remotely. Required if not domain joined
 

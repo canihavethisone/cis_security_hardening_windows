@@ -22,7 +22,6 @@ require 'beaker_puppet_helpers'         # Additional Puppet-related helpers for 
 require 'rainbow'                       # Add color to console printed text
 
 ### ---------------- Set Variables ------------------- ###
-## Set unique environment variable if static-master, otherwise use production
 CLASS = 'canihavethisone/cis_security_hardening_windows'.freeze
 MASTER_IP = on(master, 'hostname -i | cut -d" " -f2').stdout.strip # master.get_ip
 MASTER_FQDN = on(master, 'hostname').stdout.strip # master.node_name
@@ -35,7 +34,6 @@ ENVIRONMENT = if master['hypervisor'] == 'none'
                 'production'
               end
 
-## Configuration
 CONFIG = {
   release_yum_repo_url: 'https://yum.voxpupuli.org/openvox8-release-el-9.noarch.rpm',
   server_package_name: 'openvox-server',
@@ -48,24 +46,16 @@ CONFIG = {
 
 ALL_DEPS = []
 
-# DOMAIN           = fact_on(master, 'domain')
-# master_domain    = master.node_name.split('.', 2)[1]
-# agent_domain     = agent.node_name.split('.', 2)[1]
-
 ### ---------------- Define Functions ------------------- ###
-## Print stage headings
 def print_stage(header)
   separator = Rainbow('-' * 100).green
   puts "\n\n#{separator}\n#{Rainbow(header).cyan}\n#{separator}\n"
 end
 
-# Color info message
 def info_msg(text)
   puts "\n#{Rainbow(text).cyan}\n"
 end
 
-
-## As each dependency is installed from fixtures, add the latest version to an array (uses the 5th line of output so that only primary dependencies are written to metadata.json
 def compile_dependency_versions(output)
   dep_line = output.lines[4]&.split
   return if dep_line.nil? || dep_line.size < 3
@@ -74,21 +64,17 @@ def compile_dependency_versions(output)
   ALL_DEPS.push({ dep_name: dep_name, dep_ver: dep_ver }) if dep_name && dep_ver
 end
 
-## Update dependencies in metadata
 def write_metadata_dot_json(dependencies)
   metadata_path = File.join(PROJECT_ROOT, 'metadata.json')
   return unless File.exist?(metadata_path)
   metadata_json = JSON.parse(File.read(metadata_path))
 
-  # Group dependencies by name and select the highest version
   unique_dependencies = dependencies.group_by { |dep| dep[:dep_name] }
                                     .map { |_name, deps| deps.max_by { |dep| dep[:dep_ver] } }
                                     .sort_by { |dep| dep[:dep_name] }
 
   dependencies = unique_dependencies.map do |dep|
     next if dep[:dep_name].match?(%r{puppetlabs-.*_core})
-
-    # Construct dependency hash based on version locking requirements
     version_req = if ['puppetlabs-example1', 'puppetlabs-example2'].include?(dep[:dep_name])
                     dep[:dep_ver].to_s
                   else
@@ -98,13 +84,10 @@ def write_metadata_dot_json(dependencies)
   end
 
   metadata_json['dependencies'] = dependencies.compact
-
-  # Write the updated JSON to metadata.json with trailing newline
   json_output = JSON.pretty_generate(metadata_json) + "\n"
   File.write(metadata_path, json_output)
 end
 
-## Stop firewall
 def stop_firewall_on(host)
   case host['platform']
   when %r{debian}
@@ -118,17 +101,13 @@ def stop_firewall_on(host)
   end
 end
 
-## Install Puppet agent
 def install_puppet_agent(agent)
   print_stage("Installing #{CONFIG[:agent_package_name]} on #{agent}")
   on(agent, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
   on(agent, "yum install -y #{CONFIG[:release_yum_repo_url]}")
   on(agent, "yum install -y #{CONFIG[:agent_package_name]}")
-  # install_puppetlabs_release_repo(agent, CONFIG[:puppet_collection], CONFIG[release_yum_repo_url])
-  # install_puppet_agent_on(agent, puppet_agent_version: CONFIG[:puppet_agent_version], puppet_collection: CONFIG[:puppet_collection])
 end
 
-## Agent options
 def agent_opts(_host)
   {
     main: { color: 'ansi' },
@@ -136,17 +115,17 @@ def agent_opts(_host)
   }
 end
 
-## Install Puppetserver
-def install_puppetserver(host)
-  print_stage("Installing #{CONFIG[:server_package_name]} on #{host}")
-  on(master, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
-  on(master, "yum install -y #{CONFIG[:release_yum_repo_url]}")
-  on(master, "yum install -y #{CONFIG[:server_package_name]}")
-  # install_puppetlabs_release_repo(master, CONFIG[:puppet_collection], CONFIG[release_yum_repo_url])
-  # install_puppetserver_on(master, version: CONFIG['puppetserver_version'], puppet_collection: CONFIG[:puppet_collection])
+def get_ip_and_fqdn(host)
+  if host['platform'] =~ %r{windows}
+    ip = on(host, "powershell -Command \"(Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notmatch '^169\\.' -and $_.IPAddress -notmatch '^127\\.' } | Select-Object -First 1).IPAddress\"").stdout.strip
+    fqdn = on(host, "powershell -Command \"[System.Net.Dns]::GetHostEntry('localhost').HostName\"").stdout.strip
+  else
+    ip = on(host, 'hostname -i | cut -d" " -f2').stdout.strip
+    fqdn = on(host, 'hostname').stdout.strip
+  end
+  [ip, fqdn]
 end
 
-## Setup Puppet agent on el-|centos or windows
 def setup_puppet_on(_host, opts = {})
   opts = { agent: true }.merge(opts)
   return unless opts[:agent]
@@ -155,13 +134,11 @@ def setup_puppet_on(_host, opts = {})
     agent['type'] = 'aio'
     puppet_opts = agent_opts(master.to_s)
 
+    agent_ip, agent_fqdn = get_ip_and_fqdn(agent)
+    print_stage("Configuring agent at #{agent_ip} #{agent_fqdn}")
+
     case agent['platform']
     when %r{el-|centos}
-      agent_ip = on(agent, 'hostname -i | cut -d" " -f2').stdout.strip # agent.get_ip
-      agent_fqdn = on(agent, 'hostname').stdout.strip # agent.node_name
-      print_stage("Configuring agent at #{agent_ip} #{agent_fqdn}")
-
-      # Display welcome message on CentOS/EL agents
       message = <<~WELCOME
         You are running an acceptance test of \e[1;32m#{CLASS}\e[0m
         on this AGENT\t\e[1;36m#{agent_fqdn}\t#{agent_ip}\e[0m
@@ -171,7 +148,6 @@ def setup_puppet_on(_host, opts = {})
       on(agent, "echo -e '#{message}' | tee /etc/motd /etc/issue")
       on(agent, 'systemctl restart getty@tty1')
 
-      # Install puppet-agent if not already installed
       unless on(agent, "rpm -qa | grep -E #{CONFIG[:agent_package_name]}", acceptable_exit_codes: [0, 1]).exit_code.zero?
         install_puppet_agent(agent)
       end
@@ -184,22 +160,15 @@ def setup_puppet_on(_host, opts = {})
       on(agent, "echo '#{MASTER_IP} #{MASTER_FQDN}' >> /etc/hosts")
 
     when %r{windows}
-      agent_ip = on(agent, "powershell -Command \"(Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notmatch '^169\.' -and $_.IPAddress -notmatch '^127\.' } | Select-Object -First 1).IPAddress\"").stdout.strip
-      agent_fqdn = on(agent, "powershell -Command \"[System.Net.Dns]::GetHostEntry('localhost').HostName\"").stdout.strip
-      print_stage("Configuring agent at #{agent_ip} #{agent_fqdn}")
-
-      # Disable Windows Update service for testing on Windows agents
       print_stage("Disabling Windows Update service to prevent updates during testing on #{agent_fqdn}")
       on(agent, powershell('Set-Service wuauserv -StartupType Disabled'))
       on(agent, powershell("taskkill /f /t /fi 'SERVICES eq wuauserv'"), acceptable_exit_codes: [0, 1])
       on(agent, powershell('Stop-Service wuauserv -Force'), acceptable_exit_codes: [0, 1])
 
-      # Install puppet-agent if not already installed
       unless on(agent, powershell("if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match 'Puppet Agent^|OpenVox Agent \\(64-bit\\)') {exit 0} else {exit 1}")).exit_code.zero?
         on(agent, powershell('Invoke-WebRequest https://artifacts.voxpupuli.org/downloads/windows/openvox8/openvox-agent-8.19.2-x64.msi -OutFile c:\\openvox-agent-8.19.2-x64.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\openvox-agent-8.19.2-x64.msi\' -Wait'))
       end
 
-      # Configure Puppet agent settings
       on(agent, powershell("Set-Content -path c:\\ProgramData\\PuppetLabs\\puppet\\etc\\puppet.conf -Value \"[agent]`r`nserver=#{MASTER_FQDN}`r`nenvironment=#{ENVIRONMENT}\""))
 
       print_stage("Disabling Puppet service so only manual runs occur on #{agent_fqdn}")
@@ -208,7 +177,6 @@ def setup_puppet_on(_host, opts = {})
     end
   end
 
-  # Enable autosign on the master
   on(master, "echo '*' > /etc/puppetlabs/puppet/autosign.conf")
 end
 
@@ -312,20 +280,15 @@ unless ENV['BEAKER_provision'] == 'no'
 end
 
 RSpec.configure do |c|
-  ## Readable test descriptions
   c.formatter = :documentation
-  ## Actions before suite
   c.before :suite do
   end
-  ## Actions after suite
   c.after :suite do
     if master['hypervisor'] == 'none'
       print_stage("Cleaning up static-master at #{MASTER_IP} #{MASTER_FQDN}")
-      ## Delete accumulating lines in sshd_conf and /etc/hosts when reusing master
       on(master, "sed -i '/PermitUserEnvironment yes/d' /etc/ssh/sshd_config")
       on(master, "echo -e \"127.0.0.1\tlocalhost localhost.localdomain\n#{MASTER_IP}\t#{MASTER_FQDN}\" > /etc/hosts")
       unless ENV['BEAKER_destroy'] == 'no'
-        ## Clean up environment and certificates when using static-master
         on(master, "find /etc/puppetlabs/code/environments/#{ENVIRONMENT} ! -name production -type d -exec rm -rf {} +")
         agents.each do |agent|
           on(master, "/opt/puppetlabs/bin/puppetserver ca clean --certname #{agent.node_name}")
@@ -333,8 +296,9 @@ RSpec.configure do |c|
       end
     end
     agents.each do |agent|
+      agent_ip, agent_fqdn = get_ip_and_fqdn(agent)
       print_stage("Completed tests on agent at #{agent_ip} #{agent_fqdn}")
     end
-    print_stage("Completed tests using master at #{MASTER_IP} #{MASTER_FQDN} #{host}")
+    print_stage("Completed tests using master at #{MASTER_IP} #{MASTER_FQDN}")
   end
 end
