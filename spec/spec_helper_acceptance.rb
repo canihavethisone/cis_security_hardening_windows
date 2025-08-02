@@ -35,6 +35,7 @@ ENVIRONMENT = if master['hypervisor'] == 'none'
                 'production'
               end
 
+## Configuration
 CONFIG = {
   release_yum_repo_url: 'https://yum.voxpupuli.org/openvox8-release-el-9.noarch.rpm',
   server_package_name: 'openvox-server',
@@ -97,6 +98,7 @@ def write_metadata_dot_json(dependencies)
 
   dependencies = unique_dependencies.map do |dep|
     next if dep[:dep_name].match?(%r{puppetlabs-.*_core})
+
     # Construct dependency hash based on version locking requirements
     version_req = if ['puppetlabs-example1', 'puppetlabs-example2'].include?(dep[:dep_name])
                     dep[:dep_ver].to_s
@@ -153,6 +155,7 @@ def install_puppetserver(host)
   on(master, "yum install -y #{CONFIG[:server_package_name]}")
   # install_puppetlabs_release_repo(master, CONFIG[:puppet_collection], CONFIG[release_yum_repo_url])
   # install_puppetserver_on(master, version: CONFIG['puppetserver_version'], puppet_collection: CONFIG[:puppet_collection])
+end
 
 ## Setup Puppet agent on el-|centos or windows
 def setup_puppet_on(_host, opts = {})
@@ -160,14 +163,15 @@ def setup_puppet_on(_host, opts = {})
   return unless opts[:agent]
 
   agents.each do |agent|
-    agent['type'] = 'aio'
-    puppet_opts = agent_opts(master.to_s)
-
     agent_ip, agent_fqdn = get_ip_and_fqdn(agent)
     print_stage("Configuring agent at #{agent_ip} #{agent_fqdn}")
 
+    agent['type'] = 'aio'
+    puppet_opts = agent_opts(master.to_s)
+
     case agent['platform']
     when %r{el-|centos}
+
       # Display welcome message on CentOS/EL agents
       message = <<~WELCOME
         You are running an acceptance test of \e[1;32m#{CLASS}\e[0m
@@ -186,12 +190,12 @@ def setup_puppet_on(_host, opts = {})
       configure_puppet_on(agent, puppet_opts)
       stop_firewall_on(agent)
 
-      # Disable Windows Update service for testing on Windows agents
       print_stage("Disabling Puppet service so only manual runs occur on #{agent_ip} #{agent_fqdn}")
       on(agent, 'systemctl disable puppet --now', acceptable_exit_codes: [0])
       on(agent, "echo '#{MASTER_IP} #{MASTER_FQDN}' >> /etc/hosts")
 
     when %r{windows}
+      # Disable Windows Update service for testing on Windows agents
       print_stage("Disabling Windows Update service to prevent updates during testing on #{agent_fqdn}")
       on(agent, powershell('Set-Service wuauserv -StartupType Disabled'))
       on(agent, powershell("taskkill /f /t /fi 'SERVICES eq wuauserv'"), acceptable_exit_codes: [0, 1])
@@ -203,7 +207,8 @@ def setup_puppet_on(_host, opts = {})
       end
 
       # Configure Puppet agent settings
-      on(agent, powershell("Set-Content -path c:\\ProgramData\\PuppetLabs\\puppet\\etc\\puppet.conf -Value \"[agent]`r`nserver=#{MASTER_FQDN}`r`nenvironment=#{ENVIRONMENT}\""))
+      # on(agent, powershell("Set-Content -path c:\\ProgramData\\PuppetLabs\\puppet\\etc\\puppet.conf -Value \"[agent]`r`nserver=#{MASTER_FQDN}`r`nenvironment=#{ENVIRONMENT}\""))
+      on(agent, powershell("puppet config set server #{MASTER_FQDN} --section agent; puppet config set environment #{ENVIRONMENT} --section agent"))
 
       print_stage("Disabling Puppet service so only manual runs occur on #{agent_fqdn}")
       on(agent, powershell('Set-Service puppet -StartupType Disabled; Stop-Service puppet -Force'))
@@ -321,6 +326,7 @@ RSpec.configure do |c|
   c.before :suite do
   end
   ## Actions after suite
+  c.after :suite do
     if master['hypervisor'] == 'none'
       print_stage("Cleaning up static-master at #{MASTER_IP} #{MASTER_FQDN}")
       ## Delete accumulating lines in sshd_conf and /etc/hosts when reusing master
