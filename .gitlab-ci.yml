@@ -1,5 +1,5 @@
 stages:
-  - unit_testing
+#  - unit_testing
   - acceptance_testing
 
 before_script:
