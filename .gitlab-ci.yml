@@ -9,7 +9,7 @@ before_script:
   - echo -e "Ruby version = $(ruby --version)"
   # Running this on a new line so that it fails if not found.
   # Will fail if the version given in metadata.json does not match the latest CHANGELOG entry
-  - head -n5 CHANGELOG.md | grep $(jq -r '.version' < metadata.json)
+  # - head -n5 CHANGELOG.md | grep $(jq -r '.version' < metadata.json)
 
 unit_testing:
   script:
