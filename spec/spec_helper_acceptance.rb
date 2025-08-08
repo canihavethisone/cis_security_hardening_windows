@@ -35,6 +35,14 @@ ENVIRONMENT = if master['hypervisor'] == 'none'
                 'production'
               end
 
+if ENV['GITLAB_CI']
+  puts "Running in GitLab CI pipeline"
+  # CI-specific setup
+else
+  puts "Running locally on developer machine"
+  # Local setup
+end
+
 ## Configuration
 CONFIG = {
   release_yum_repo_url: 'https://yum.voxpupuli.org/openvox8-release-el-9.noarch.rpm',
@@ -47,10 +55,6 @@ CONFIG = {
 }.freeze
 
 ALL_DEPS = []
-
-# DOMAIN           = fact_on(master, 'domain')
-# master_domain    = master.node_name.split('.', 2)[1]
-# agent_domain     = agent.node_name.split('.', 2)[1]
 
 ### ---------------- Define Functions ------------------- ###
 ## Print stage headings
@@ -129,27 +133,9 @@ def stop_firewall_on(host)
   end
 end
 
-## Install Puppet agent
-def install_puppet_agent(agent)
-  print_stage("Installing #{CONFIG[:agent_package_name]} on #{agent}")
-  on(agent, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
-  on(agent, "yum install -y #{CONFIG[:release_yum_repo_url]}")
-  on(agent, "yum install -y #{CONFIG[:agent_package_name]}")
-  # install_puppetlabs_release_repo(agent, CONFIG[:puppet_collection], CONFIG[release_yum_repo_url])
-  # install_puppet_agent_on(agent, puppet_agent_version: CONFIG[:puppet_agent_version], puppet_collection: CONFIG[:puppet_collection])
-end
-
-## Agent options
-def agent_opts(_host)
-  {
-    main: { color: 'ansi' },
-    agent: { ssldir: '$vardir/ssl', server: MASTER_FQDN, environment: ENVIRONMENT },
-  }
-end
-
 ## Install Puppetserver
 def install_puppetserver(host)
-  print_stage("Installing #{CONFIG[:server_package_name]} on #{host}")
+  info_msg("Installing #{CONFIG[:server_package_name]} on #{host}")
   on(master, "echo -e 'minrate=5\ntimeout=500' >> /etc/yum.conf")
   on(master, "yum install -y #{CONFIG[:release_yum_repo_url]}")
   on(master, "yum install -y #{CONFIG[:server_package_name]}")
@@ -157,72 +143,42 @@ def install_puppetserver(host)
   # install_puppetserver_on(master, version: CONFIG['puppetserver_version'], puppet_collection: CONFIG[:puppet_collection])
 end
 
-## Setup Puppet agent on el-|centos or windows
-def setup_puppet_on(_host, opts = {})
-  opts = { agent: true }.merge(opts)
-  return unless opts[:agent]
-
+## Setup Puppet agent on windows
+def setup_puppet_on(host)
   agents.each do |agent|
     agent_ip, agent_fqdn = get_ip_and_fqdn(agent)
     print_stage("Configuring agent at #{agent_ip} #{agent_fqdn}")
-
-    agent['type'] = 'aio'
-    puppet_opts = agent_opts(master.to_s)
-
     case agent['platform']
-    when %r{el-|centos}
-
-      # Display welcome message on CentOS/EL agents
-      message = <<~WELCOME
-        You are running an acceptance test of \e[1;32m#{CLASS}\e[0m
-        on this AGENT\t\e[1;36m#{agent_fqdn}\t#{agent_ip}\e[0m
-        from MASTER\t\e[1;34m#{MASTER_FQDN}\t#{MASTER_IP}\e[0m
-      WELCOME
-
-      on(agent, "echo -e '#{message}' | tee /etc/motd /etc/issue")
-      on(agent, 'systemctl restart getty@tty1')
-
-      # Install puppet-agent if not already installed
-      unless on(agent, "rpm -qa | grep -E #{CONFIG[:agent_package_name]}", acceptable_exit_codes: [0, 1]).exit_code.zero?
-        install_puppet_agent(agent)
-      end
-
-      configure_puppet_on(agent, puppet_opts)
-      stop_firewall_on(agent)
-
-      print_stage("Disabling Puppet service so only manual runs occur on #{agent_ip} #{agent_fqdn}")
-      on(agent, 'systemctl disable puppet --now', acceptable_exit_codes: [0])
-      on(agent, "echo '#{MASTER_IP} #{MASTER_FQDN}' >> /etc/hosts")
-
     when %r{windows}
+      # Set network profile to private
+      info_msg("Setting network profile to private on #{agent_fqdn}")
+      on(agent, powershell('Set-NetConnectionProfile -NetworkCategory private'))
       # Disable Windows Update service for testing on Windows agents
-      print_stage("Disabling Windows Update service to prevent updates during testing on #{agent_fqdn}")
+      info_msg("Disabling Windows Update service to prevent updates during testing on #{agent_fqdn}")
       on(agent, powershell('Set-Service wuauserv -StartupType Disabled'))
       on(agent, powershell("taskkill /f /t /fi 'SERVICES eq wuauserv'"), acceptable_exit_codes: [0, 1])
       on(agent, powershell('Stop-Service wuauserv -Force'), acceptable_exit_codes: [0, 1])
-
       # Install puppet-agent if not already installed
+      info_msg("Checking if Puppet or Openvox agent is installed on #{agent_fqdn}")
       unless on(agent, powershell("if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match 'Puppet Agent^|OpenVox Agent \\(64-bit\\)') {exit 0} else {exit 1}")).exit_code.zero?
         on(agent, powershell('Invoke-WebRequest https://artifacts.voxpupuli.org/downloads/windows/openvox8/openvox-agent-8.19.2-x64.msi -OutFile c:\\openvox-agent-8.19.2-x64.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\openvox-agent-8.19.2-x64.msi\' -Wait'))
       end
-
       # Configure Puppet agent settings
       # on(agent, powershell("Set-Content -path c:\\ProgramData\\PuppetLabs\\puppet\\etc\\puppet.conf -Value \"[agent]`r`nserver=#{MASTER_FQDN}`r`nenvironment=#{ENVIRONMENT}\""))
+      info_msg("Configuring puppet agent.conf and add host entry for master on #{agent_fqdn}")
       on(agent, powershell("puppet config set server #{MASTER_FQDN} --section agent; puppet config set environment #{ENVIRONMENT} --section agent"))
-
-      print_stage("Disabling Puppet service so only manual runs occur on #{agent_fqdn}")
-      on(agent, powershell('Set-Service puppet -StartupType Disabled; Stop-Service puppet -Force'))
       on(agent, powershell("Add-Content -path c:\\windows\\system32\\drivers\\etc\\hosts -Value \"#{MASTER_IP}`t#{MASTER_FQDN}\""))
+      # Disable the Puppet service for manual runs only
+      info_msg("Disabling Puppet service so only manual runs occur on #{agent_fqdn}")
+      on(agent, powershell('Set-Service puppet -StartupType Disabled; Stop-Service puppet -Force'))
+    else
+      info_msg('This module only support Windows agents')
     end
   end
-
-  # Enable autosign on the master
-  on(master, "echo '*' > /etc/puppetlabs/puppet/autosign.conf")
 end
 
 ## Setup Puppetserver
-def setup_puppetserver_on(host, _opts = {})
-  # opts = { master => true, agent: false }.merge(opts)
+def setup_puppetserver_on(host)
   print_stage("Configuring master at #{MASTER_IP} #{MASTER_FQDN} #{host}")
   ## Set class under test to console display. Requires restart of tty1 serivce to display without logon or reboot
   agent_names = agents.map { |a| "#{a['roles'].first.gsub('agent_', '').ljust(20)}#{a.node_name.ljust(30)}#{a.ip.ljust(40)}" }.join("\n")
@@ -257,12 +213,15 @@ def setup_puppetserver_on(host, _opts = {})
   ## Generate puppet types on master to overcome issue with some windows types on initial runs
   on(master, "/opt/puppetlabs/puppet/bin/puppet generate types --environment #{ENVIRONMENT}")
   on master, puppet('resource', 'service', 'puppetserver', 'ensure=running')
+  # Enable autosign on the master
+  on(master, "echo '*' > /etc/puppetlabs/puppet/autosign.conf")
+  # Stop firewall on master
   stop_firewall_on master
 end
 
 ## Copy test module and install dependencies on Puppetserver
 def install_modules_on(host)
-  print_stage("Copying module and installing dependencies on master at #{MASTER_IP} #{MASTER_FQDN}")
+  info_msg("Copying module and installing dependencies on master at #{MASTER_IP} #{MASTER_FQDN}")
   install_dependencies_from DEPENDENCY_LIST
   copy_module_to(host, source: PROJECT_ROOT, target_module_path: "/etc/puppetlabs/code/environments/#{ENVIRONMENT}/modules/", protocol: 'rsync')
   on(master, "echo -e 'modulepath = /etc/puppetlabs/code/environments/#{ENVIRONMENT}/modules' > /etc/puppetlabs/code/environments/#{ENVIRONMENT}/environment.conf")
@@ -342,8 +301,7 @@ RSpec.configure do |c|
     end
     agents.each do |agent|
       agent_ip, agent_fqdn = get_ip_and_fqdn(agent)
-      print_stage("Completed tests on agent at #{agent_ip} #{agent_fqdn}")
+      print_stage("Completed tests on agent #{agent_ip} #{agent_fqdn} using master #{MASTER_IP} #{MASTER_FQDN}")
     end
-    print_stage("Completed tests using master at #{MASTER_IP} #{MASTER_FQDN}")
   end
 end

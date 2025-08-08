@@ -14,16 +14,11 @@ Dir['./spec/acceptance/shared_examples/*.rb'].sort.each { |f| require f }
 
 describe 'cis_security_hardening_windows acceptance testing' do
   context 'Configure the master and run puppet on agents' do
-    print_stage('Adding agents and class to nodeset on Master')
+    info_msg('Adding agents and class to nodeset on Master')
 
     agents.each do |agent|
       pp = <<-SITE_PP
         node '#{agent.node_name}' {
-          exec { 'set_network_profile':
-            command  => 'Set-NetConnectionProfile -NetworkCategory private',
-            unless   => 'if (Get-NetConnectionProfile | select NetworkCategory -ExpandProperty NetworkCategory | Select-String -Pattern private) { exit 0 } else { exit 1 }',
-            provider => powershell,
-          }
           include cis_security_hardening_windows
         }
       SITE_PP
@@ -32,7 +27,7 @@ describe 'cis_security_hardening_windows acceptance testing' do
 
     # Copy environment-specific overrides for acceptance testing
     if File.file?(overrides_file)
-      print_stage('Copying environment specific hiera overrides from spec/acceptance/overrides.yaml to master')
+      info_msg('Copying environment specific hiera overrides from spec/acceptance/overrides.yaml to master')
       scp_to(master, overrides_file, "#{env_path}/data/overrides.yaml")
       on(master, "echo -e \"  - name: 'Override hiera'\\n    path: 'overrides.yaml'\" >> #{env_path}/hiera.yaml")
     end
@@ -66,7 +61,7 @@ describe 'cis_security_hardening_windows acceptance testing' do
           on(agent, [
             'powershell Set-ExecutionPolicy RemoteSigned',
             'powershell Get-ExecutionPolicy',
-            'powershell Set-NetConnectionProfile -NetworkCategory private',
+#            'powershell Set-NetConnectionProfile -NetworkCategory private',
           ].join('; '))
           # Include test examples
           it_behaves_like 'windows tests', agent: agent
