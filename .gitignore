@@ -11,7 +11,7 @@
 /bin/
 /doc/
 /Gemfile.local
-/Gemfile.lock
+#/Gemfile.lock
 /Gemfile.pdk
 /Rakefile.pdk
 /junit/
