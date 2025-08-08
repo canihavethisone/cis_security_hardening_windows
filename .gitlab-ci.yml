@@ -1,0 +1,28 @@
+stages:
+  - unit_testing
+  - acceptance_testing
+
+before_script:
+  # Display testing information to standard out
+  - echo -e "Project directory = $CI_PROJECT_DIR"
+  - echo -e "Current directory = $PWD"
+  - echo -e "Ruby version = $(ruby --version)"
+  # Running this on a new line so that it fails if not found.
+  # Will fail if the version given in metadata.json does not match the latest CHANGELOG entry
+  - head -n5 CHANGELOG.md | grep $(jq -r '.version' < metadata.json)
+
+unit_testing:
+  script:
+    - bundle install --deployment --jobs $(nproc) "${FLAGS[@]}"
+    - bundle exec rake spec
+  stage: unit_testing
+  except:
+      - master
+
+acceptance_testing:
+  script:
+    - bundle install --deployment --jobs $(nproc) "${FLAGS[@]}"
+    - bundle exec rake -j 100 acceptance:all_p
+  stage: acceptance_testing
+  except:
+    - master
