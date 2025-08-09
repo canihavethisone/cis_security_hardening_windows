@@ -35,14 +35,6 @@ ENVIRONMENT = if master['hypervisor'] == 'none'
                 'production'
               end
 
-if ENV['GITLAB_CI']
-  puts "Running in GitLab CI pipeline"
-  # CI-specific setup
-else
-  puts "Running locally on developer machine"
-  # Local setup
-end
-
 ## Configuration
 CONFIG = {
   release_yum_repo_url: 'https://yum.voxpupuli.org/openvox8-release-el-9.noarch.rpm',
@@ -274,6 +266,13 @@ end
 
 ### ---------------- Call Functions ------------------- ###
 unless ENV['BEAKER_provision'] == 'no'
+  # Message if the test is run on a gitlab runner or not
+  if ENV['GITLAB_CI']
+    info_msg('Running in GitLab CI pipeline')
+  else
+    info_msg('Running locally on developer machine')
+  end
+
   setup_puppetserver_on(master)
   setup_puppet_on(agents)
 end
