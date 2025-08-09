@@ -123,7 +123,7 @@ See example minimum hiera data [here](spec/fixtures/data/minimum.yaml)
     ```
    - other methods such as resource collectors to override registry key values if wrapping this module into your own class or control repo
 
- 
+
 
 ## Reference
 
