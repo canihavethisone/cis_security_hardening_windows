@@ -54,7 +54,7 @@ describe 'cis_security_hardening_windows acceptance testing' do
     end
   end
 
-  context 'Run tests according to platform' do
+  context 'Run tests' do
     agents.each do |agent|
       context 'run tests on windows agent', node: agent do
         # Allow PowerShell scripts to run on windows host

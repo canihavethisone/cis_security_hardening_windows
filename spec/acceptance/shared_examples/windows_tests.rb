@@ -28,8 +28,6 @@ shared_examples 'windows tests' do |agent:|
 
     # Exclude hash titles and combined data
     exclude_keys = exclude_yaml_data['cis_security_hardening_windows::cis_exclude_rules']
-
-    # Remove exclude keys from registry combined data
     registry_combined_data.reject! { |key, _| exclude_keys.include?(key) }
 
     # Default properties
@@ -48,38 +46,44 @@ shared_examples 'windows tests' do |agent:|
       %r{Remote Desktop Services UserMode Port Redirector},
     ])
 
-    # Convert registry_combined_data to an array and randomly select 50 entries
-    random_registry_entries = registry_combined_data.to_a.sample(reg_entries_to_test)
-
-    print_stage("Verifying registry with a random sample of #{reg_entries_to_test} entries")
-
-    # Generate one describe block for all registry checks to avoid deep recursion
+    # Generate one test block for a batch of registry keys to avoid deep recursion
     describe 'Registry keys validation' do
-      random_registry_entries.each do |title, hash|
-        # Skip if title matches any exclusion pattern
-        next if exclusion_patterns.any? { |pattern| title.match?(pattern) }
+      # Convert registry_combined_data to an array and randomly select entries
+      random_registry_entries = registry_combined_data.to_a.sample([reg_entries_to_test, registry_combined_data.size].min)
+      print_stage("Verifying registry with a random sample of #{random_registry_entries.size} entries")
 
-        # Set title to 'as per previous' if it's empty or same as previous title
-        title = previous_title || 'as per previous' if title.nil? || title.empty? || title == previous_title
+      # Split into batches of 10 to reduce nesting
+      random_registry_entries.each_slice(10) do |batch|
+        it "validates a batch of #{batch.size} registry entries" do
+          batch.each do |title, hash|
+            # Skip if title matches any exclusion pattern
+            next if exclusion_patterns.any? { |pattern| title.match?(pattern) }
 
-        hash.each do |regkey, properties|
-          # Helper method to process registry data
-          processed_properties = default_properties.merge(properties)
-          if processed_properties['data'].is_a?(Array)
-            processed_properties['data'] = processed_properties['data'].map { |element| "'#{element}'" }.join(',')
-          end
-          processed_properties['data'] = processed_properties['data'].to_s
+            # Set title to 'as per previous' if it's empty or same as previous title
+            local_title = previous_title || 'as per previous'
+            local_title = title if title && !title.empty? && title != previous_title
 
-          extracted_key, extracted_value = regkey.match(%r{^(.*)\\([^\\]*)$})&.captures
+            hash.each do |regkey, properties|
+              # Helper method to process registry data
+              processed_properties = default_properties.merge(properties)
+              if processed_properties['data'].is_a?(Array)
+                processed_properties['data'] = processed_properties['data'].map { |e| "'#{e}'" }.join(',')
+              end
+              processed_properties['data'] = processed_properties['data'].to_s
 
-          it "Registry key: #{title} - #{regkey} has expected property value" do
-            expect(windows_registry_key(extracted_key))
-              .to have_property_value(extracted_value, ":type_#{processed_properties['type']}", processed_properties['data'])
+              # Extract registry key path and value name safely
+              match_data = regkey.match(%r{^(.*)\\([^\\]*)$})
+              next unless match_data
+              extracted_key, extracted_value = match_data.captures
+
+              # Run the check directly in this it block instead of nesting describe
+              expect(windows_registry_key(extracted_key))
+                .to have_property_value(extracted_value, ":type_#{processed_properties['type']}", processed_properties['data'])
+            end
+
+            previous_title = local_title
           end
         end
-
-        # Update previous_title to the current title
-        previous_title = title
       end
     end
 
@@ -94,7 +98,6 @@ shared_examples 'windows tests' do |agent:|
     end
 
     # Exclude rules - ensure that exclusions in overrides are applying correctly
-    # "(L1) Ensure 'Microsoft network client: Digitally sign communications (always)' is set to 'Enabled'"
     describe windows_registry_key('HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters') do
       it { is_expected.not_to have_property_value('RequireSecuritySignature', :type_dword, '1') }
     end
