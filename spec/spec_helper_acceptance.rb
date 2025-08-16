@@ -1,4 +1,5 @@
 ## spec_helper_acceptance.rb
+# frozen_string_literal: true
 
 ### ---------------- References ------------------- ###
 # https://rdoc.info/gems/beaker-puppet/1.18.15/Beaker/DSL/InstallUtils/FOSSUtils
@@ -22,13 +23,20 @@ require 'beaker_puppet_helpers'         # Additional Puppet-related helpers for 
 require 'rainbow'                       # Add color to console printed text
 
 ### ---------------- Set Variables ------------------- ###
-## Set unique environment variable if static-master, otherwise use production
-CLASS = 'canihavethisone/cis_security_hardening_windows'.freeze
-MASTER_IP = on(master, 'hostname -i | cut -d" " -f2').stdout.strip # master.get_ip
-MASTER_FQDN = on(master, 'hostname').stdout.strip # master.node_name
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+METADATA_PATH = File.join(PROJECT_ROOT, 'metadata.json'); raise "metadata.json missing at #{METADATA_PATH}" unless File.exist?(METADATA_PATH)
+
+@metadata_json = JSON.parse(File.read(METADATA_PATH))
+CLASS = @metadata_json['name'].tr('-', '::').freeze
+
 TEST_FILES = File.expand_path(File.join(File.dirname(__FILE__), 'acceptance', 'files'))
 DEPENDENCY_LIST = 'fixtures'.freeze
+
+# Safer: prefer hostname -I and filter loopback/APIPA so multiple addresses don't break parsing
+MASTER_IP = on(master, "hostname -I | tr ' ' '\\n' | grep -vE '^(127|169)\\.' | head -n1").stdout.strip # master.get_ip
+MASTER_FQDN = on(master, 'hostname').stdout.strip # master.node_name
+
+## Set unique environment variable if static-master, otherwise use production
 ENVIRONMENT = if master['hypervisor'] == 'none'
                 agents[0].hostname
               else
@@ -57,16 +65,22 @@ end
 
 # Color info message
 def info_msg(text)
-  puts "\n#{Rainbow(text).cyan}\n"
+  # fallback to plain text if Rainbow fails for any reason
+  begin
+    puts "\n#{Rainbow(text).cyan}\n"
+  rescue StandardError
+    puts "\n#{text}\n"
+  end
 end
 
 # Get agent ip and fqdn
 def get_ip_and_fqdn(host)
-  if host['platform'] =~ %r{windows}
+  if host['platform'] =~ %r{windows}i
     ip = on(host, "powershell -Command \"(Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notmatch '^169\\.' -and $_.IPAddress -notmatch '^127\\.' } | Select-Object -First 1).IPAddress\"").stdout.strip
     fqdn = on(host, "powershell -Command \"[System.Net.Dns]::GetHostEntry('localhost').HostName\"").stdout.strip
   else
-    ip = on(host, 'hostname -i | cut -d" " -f2').stdout.strip
+    # Safer Linux IP extraction: hostname -I then filter
+    ip = on(host, "hostname -I | tr ' ' '\\n' | grep -vE '^(127|169)\\.' | head -n1").stdout.strip
     fqdn = on(host, 'hostname').stdout.strip
   end
   [ip, fqdn]
@@ -83,10 +97,6 @@ end
 
 ## Update dependencies in metadata
 def write_metadata_dot_json(dependencies)
-  metadata_path = File.join(PROJECT_ROOT, 'metadata.json')
-  return unless File.exist?(metadata_path)
-  metadata_json = JSON.parse(File.read(metadata_path))
-
   # Group dependencies by name and select the highest version
   unique_dependencies = dependencies.group_by { |dep| dep[:dep_name] }
                                     .map { |_name, deps| deps.max_by { |dep| dep[:dep_ver] } }
@@ -102,24 +112,26 @@ def write_metadata_dot_json(dependencies)
                     ">= #{dep[:dep_ver]} < #{dep[:dep_ver].to_i + 1}.0.0"
                   end
     { 'name' => dep[:dep_name], 'version_requirement' => version_req }
-  end
+  end.compact
 
-  metadata_json['dependencies'] = dependencies.compact
+  # Merge with existing dependencies to avoid wiping unrelated entries
+  existing = @metadata_json['dependencies'] || []
+  filtered_existing = existing.reject { |dep| dependencies.any? { |new_dep| new_dep['name'] == dep['name'] } }
+  @metadata_json['dependencies'] = filtered_existing + dependencies
 
   # Write the updated JSON to metadata.json with trailing newline
-  json_output = JSON.pretty_generate(metadata_json) + "\n"
-  File.write(metadata_path, json_output)
+  File.write(METADATA_PATH, JSON.pretty_generate(@metadata_json) + "\n")
 end
 
 ## Stop firewall
 def stop_firewall_on(host)
   case host['platform']
   when %r{debian}
-    on host, 'iptables -F'
+    on host, 'iptables -F', acceptable_exit_codes: [0, 1]
   when %r{fedora|el-|centos}
-    on host, puppet('resource', 'service', 'firewalld', 'ensure=stopped')
+    on host, puppet('resource', 'service', 'firewalld', 'ensure=stopped'), acceptable_exit_codes: [0, 1]
   when %r{ubuntu}
-    on host, puppet('resource', 'service', 'ufw', 'ensure=stopped')
+    on host, puppet('resource', 'service', 'ufw', 'ensure=stopped'), acceptable_exit_codes: [0, 1]
   else
     logger.notify("Not sure how to clear firewall on #{host['platform']}")
   end
@@ -141,25 +153,29 @@ def setup_puppet_on(host)
     agent_ip, agent_fqdn = get_ip_and_fqdn(agent)
     print_stage("Configuring agent at #{agent_ip} #{agent_fqdn}")
     case agent['platform']
-    when %r{windows}
+    when %r{windows}i
       # Set network profile to private
       info_msg("Setting network profile to private on #{agent_fqdn}")
       on(agent, powershell('Set-NetConnectionProfile -NetworkCategory private'))
+
       # Disable Windows Update service for testing on Windows agents
       info_msg("Disabling Windows Update service to prevent updates during testing on #{agent_fqdn}")
       on(agent, powershell('Set-Service wuauserv -StartupType Disabled'))
       on(agent, powershell("taskkill /f /t /fi 'SERVICES eq wuauserv'"), acceptable_exit_codes: [0, 1])
       on(agent, powershell('Stop-Service wuauserv -Force'), acceptable_exit_codes: [0, 1])
+
       # Install puppet-agent if not already installed
       info_msg("Checking if Puppet or Openvox agent is installed on #{agent_fqdn}")
       unless on(agent, powershell("if((gp HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*).DisplayName -Match 'Puppet Agent^|OpenVox Agent \\(64-bit\\)') {exit 0} else {exit 1}")).exit_code.zero?
         on(agent, powershell('Invoke-WebRequest https://artifacts.voxpupuli.org/downloads/windows/openvox8/openvox-agent-8.19.2-x64.msi -OutFile c:\\openvox-agent-8.19.2-x64.msi; Start-Process msiexec -ArgumentList \'/qn /norestart /i c:\\openvox-agent-8.19.2-x64.msi\' -Wait'))
       end
+
       # Configure Puppet agent settings
       # on(agent, powershell("Set-Content -path c:\\ProgramData\\PuppetLabs\\puppet\\etc\\puppet.conf -Value \"[agent]`r`nserver=#{MASTER_FQDN}`r`nenvironment=#{ENVIRONMENT}\""))
       info_msg("Configuring puppet agent.conf and add host entry for master on #{agent_fqdn}")
       on(agent, powershell("puppet config set server #{MASTER_FQDN} --section agent; puppet config set environment #{ENVIRONMENT} --section agent"))
       on(agent, powershell("Add-Content -path c:\\windows\\system32\\drivers\\etc\\hosts -Value \"#{MASTER_IP}`t#{MASTER_FQDN}\""))
+
       # Disable the Puppet service for manual runs only
       info_msg("Disabling Puppet service so only manual runs occur on #{agent_fqdn}")
       on(agent, powershell('Set-Service puppet -StartupType Disabled; Stop-Service puppet -Force'))
@@ -172,7 +188,7 @@ end
 ## Setup Puppetserver
 def setup_puppetserver_on(host)
   print_stage("Configuring master at #{MASTER_IP} #{MASTER_FQDN} #{host}")
-  ## Set class under test to console display. Requires restart of tty1 serivce to display without logon or reboot
+  # Set class under test to console display. Requires restart of tty1 serivce to display without logon or reboot
   agent_names = agents.map { |a| "#{a['roles'].first.gsub('agent_', '').ljust(20)}#{a.node_name.ljust(30)}#{a.ip.ljust(40)}" }.join("\n")
   master_info = "#{master['roles'].first.ljust(20)}#{MASTER_FQDN.ljust(30)}#{MASTER_IP.ljust(40)}"
   message = <<~MSG
@@ -194,15 +210,13 @@ def setup_puppetserver_on(host)
   master['type'] = 'aio'
   # Check if puppetserver package installed, if not install it
   result = on(master, "rpm -qa | grep -E 'puppetserver|openvox-server'", acceptable_exit_codes: [0, 1])
-  if result.exit_code == 1
-    install_puppetserver master
-  end
-  ## Set the puppetserver to know it is its own master, so commands like 'puppetserver ca list' work
+  install_puppetserver(master) if result.exit_code == 1
+  # Set the puppetserver to know it is its own master, so commands like 'puppetserver ca list' work
   on(master, 'puppet config set server `hostname`')
-  ## Create folder for module and install dependencies
+  # Create folder for module and install dependencies
   on(master, "install -d -o puppet -g puppet /etc/puppetlabs/code/environments/#{ENVIRONMENT}/{modules,data,manifests}")
   install_modules_on master
-  ## Generate puppet types on master to overcome issue with some windows types on initial runs
+  # Generate puppet types on master to overcome issue with some windows types on initial runs
   on(master, "/opt/puppetlabs/puppet/bin/puppet generate types --environment #{ENVIRONMENT}")
   on master, puppet('resource', 'service', 'puppetserver', 'ensure=running')
   # Enable autosign on the master
@@ -222,15 +236,21 @@ end
 
 ## Determine and install dependencies from either .fixtures or metadata.json
 def install_dependencies_from(list)
-  puts " \n#{Rainbow("#{list} selected to determine dependencies").cyan}\n\n"
-  file_path = PROJECT_ROOT + ((list == 'fixtures') ? '/.fixtures.yml' : '/metadata.json')
+  puts "\n#{Rainbow("#{list} selected to determine dependencies").cyan}\n\n"
+  file_path = case list
+              when 'fixtures' then File.join(PROJECT_ROOT, '.fixtures.yml')
+              when 'metadata' then File.join(PROJECT_ROOT, 'metadata.json')
+              else
+                raise ArgumentError, "Invalid dependency list source: #{list.inspect}"
+              end
+
   return unless File.exist?(file_path)
 
   dependencies = if list == 'fixtures'
                    begin
-                     yaml_content = File.read(file_path)
-                     parsed_yaml = YAML.safe_load(yaml_content, permitted_classes: [Hash, Array])
-                     parsed_yaml['fixtures']['forge_modules'].map do |dep|
+                     yaml_content = File.read(file_path, encoding: 'UTF-8')
+                     parsed_yaml = YAML.safe_load(yaml_content, permitted_classes: [Hash, Array], aliases: true)
+                     parsed_yaml.fetch('fixtures', {}).fetch('forge_modules', []).map do |dep|
                        {
                          name: dep[1].is_a?(Hash) ? dep[1]['repo'].tr('/', '-') : dep[1].tr('/', '-'),
                          version: dep[1].is_a?(Hash) ? dep[1]['ref'] : nil
@@ -241,7 +261,7 @@ def install_dependencies_from(list)
                    end
                  else
                    begin
-                     JSON.parse(File.read(file_path))['dependencies'].map do |dep|
+                     JSON.parse(File.read(file_path, encoding: 'UTF-8')).fetch('dependencies', []).map do |dep|
                        {
                          name: dep['name'].tr('/', '-'),
                          version: dep.key?('version_requirement') ? module_version_from_requirement(dep['name'], dep['version_requirement']) : nil
@@ -278,20 +298,20 @@ unless ENV['BEAKER_provision'] == 'no'
 end
 
 RSpec.configure do |c|
-  ## Readable test descriptions
+  # Readable test descriptions
   c.formatter = :documentation
-  ## Actions before suite
+  # Actions before suite
   c.before :suite do
   end
-  ## Actions after suite
+  # Actions after suite
   c.after :suite do
     if master['hypervisor'] == 'none'
       print_stage("Cleaning up static-master at #{MASTER_IP} #{MASTER_FQDN}")
-      ## Delete accumulating lines in sshd_conf and /etc/hosts when reusing master
+      # Delete accumulating lines in sshd_conf and /etc/hosts when reusing master
       on(master, "sed -i '/PermitUserEnvironment yes/d' /etc/ssh/sshd_config")
       on(master, "echo -e \"127.0.0.1\tlocalhost localhost.localdomain\n#{MASTER_IP}\t#{MASTER_FQDN}\" > /etc/hosts")
       unless ENV['BEAKER_destroy'] == 'no'
-        ## Clean up environment and certificates when using static-master
+        # Clean up environment and certificates when using static-master
         on(master, "find /etc/puppetlabs/code/environments/#{ENVIRONMENT} ! -name production -type d -exec rm -rf {} +")
         agents.each do |agent|
           on(master, "/opt/puppetlabs/bin/puppetserver ca clean --certname #{agent.node_name}")

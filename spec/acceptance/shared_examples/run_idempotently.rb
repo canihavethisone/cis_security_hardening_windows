@@ -1,5 +1,5 @@
 shared_examples 'run idempotently' do
-  agents.each_in_parallel do |agent|
+  block_on agents, run_in_parallel: true do |agent|
     case agent['platform']
     ## Run tests on Windows hosts
     when %r{windows-10}
