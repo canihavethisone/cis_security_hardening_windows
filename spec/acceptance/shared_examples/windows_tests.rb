@@ -98,6 +98,7 @@ shared_examples 'windows tests' do |agent:|
     end
 
     # Exclude rules - ensure that exclusions in overrides are applying correctly
+    # "(L1) Ensure 'Microsoft network client: Digitally sign communications (always)' is set to 'Enabled'"
     describe windows_registry_key('HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters') do
       it { is_expected.not_to have_property_value('RequireSecuritySignature', :type_dword, '1') }
     end
