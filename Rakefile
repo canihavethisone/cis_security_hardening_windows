@@ -13,7 +13,7 @@ task_path = File.expand_path('lib/voxpupuli/test/rake_tasks.rb', Gem.loaded_spec
 require task_path if File.exist?(task_path)
 
 # Disable default :lint task to customize paths
-Rake::Task[:lint].clear rescue nil
+Rake::Task[:lint].clear if Rake::Task.task_defined?(:lint)
 
 PuppetLint.configuration.send('disable_relative')
 exclude_paths = ["bundle/**/*", "pkg/**/*", "vendor/**/*", "spec/**/*"]
@@ -38,7 +38,7 @@ acc_tests.each do |item|
     RSpec::Core::RakeTask.new(target_task) do |task|
       ENV['BEAKER_set'] = beaker_set[target_task] if beaker_set[target_task]
       handle_beaker_provision
-      task.rspec_opts = ['--color', "--options #{testcase.gsub('.yaml', '')}"]
+      task.rspec_opts = ["--format", "documentation", "--options", testcase.gsub('.yaml', '')]
       task.pattern = item
     end
   end
@@ -52,7 +52,7 @@ spec_tests.each do |item|
     Rake::Task[:syntax].invoke if Rake::Task.task_defined?(:syntax)
     Rake::Task[:lint].invoke if Rake::Task.task_defined?(:lint)
     Rake::Task[:spec_prep].invoke if Rake::Task.task_defined?(:spec_prep)
-    task.rspec_opts = ['--color']
+    task.rspec_opts = ["--format", "documentation"]
     task.pattern = item
   end
 end
@@ -63,8 +63,26 @@ namespace 'acceptance' do
 
   desc "Run acceptance tests sequentially"
   task :all do
-    all_acc_tasks.each { |task| Rake::Task[task].invoke() }
+    all_acc_tasks.each { |task| Rake::Task[task].invoke }
   end
+
+  desc "Run Windows 10 tests"
+  task :windows10 do
+    ENV['BEAKER_set'] = 'windows10'
+    sh "bundle exec rspec spec/acceptance/cis_security_hardening_windows_spec.rb"
+  end
+
+  desc "Run Windows 11 tests"
+  task :windows11 do
+    ENV['BEAKER_set'] = 'windows11'
+    sh "bundle exec rspec spec/acceptance/cis_security_hardening_windows_spec.rb"
+  end
+
+  desc "Run Windows 10 and 11 tests in parallel"
+  multitask :windows_p => [:windows10, :windows11]
+
+  # desc "Run Windows 10 and 11 tests sequentially"
+  # task :windows => [:windows10, :windows11]
 end
 
 desc "Run full test suite: metadata, syntax, lint, and spec."
@@ -108,4 +126,3 @@ task :default do
   puts "\nAvailable Rake tasks:\n\n"
   system("bundle exec rake --tasks")
 end
-

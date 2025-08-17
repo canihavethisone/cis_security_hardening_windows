@@ -167,7 +167,7 @@ class cis_security_hardening_windows (
     }
   }
 
-  # Ensure that any registry_value or local_security_policy changes in any classes trigger a reboot to take affect
+  # Ensure that any registry_value or local_security_policy changes in any classes trigger reboot to take affect
   if $auto_restart {
     Registry_value <| |> { notify  => Reboot['after_run'] }
     Local_security_policy <| |> { notify => Reboot['after_run'] }

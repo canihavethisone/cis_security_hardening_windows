@@ -29,3 +29,5 @@
 /inventory.yaml
 /spec/fixtures/litmus_inventory.yaml
 spec/acceptance/nodesets/default.yml
+spec/acceptance/nodesets/windows10.yml
+spec/acceptance/nodesets/windows11.yml

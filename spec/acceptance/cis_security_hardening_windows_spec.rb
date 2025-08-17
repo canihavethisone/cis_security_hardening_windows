@@ -44,28 +44,27 @@ describe 'cis_security_hardening_windows acceptance testing' do
   end
 
   context 'Check if run in_parallel fix required' do
-    agents.each do |agent|
+    it 'works around in_parallel connection reset issue if multiple agents' do
       # The first test after in_parallel fails, so this overcomes that
       next unless agents.count > 1
-      info_msg('This is an expected warning as connection is re-established after reboot')
-      on(agent, 'waiting', reset_connection: true) # similar alternative is 'expect_connection_failure: true'
+      agents.each do |agent|
+        info_msg('This is an expected warning as connection is re-established after reboot')
+        on(agent, 'waiting', reset_connection: true) # similar alternative is 'expect_connection_failure: true'
+      end
     end
   end
 
-  context 'Run tests according to platform' do
+  context 'Run tests' do
     agents.each do |agent|
-      case agent['platform']
-      when %r{windows}
-        context 'run tests on windows agent', node: agent do
-          # Allow PowerShell scripts to run on windows host
-          on(agent, [
-            'powershell Set-ExecutionPolicy RemoteSigned',
-            'powershell Get-ExecutionPolicy',
-#            'powershell Set-NetConnectionProfile -NetworkCategory private',
-          ].join('; '))
-          # Include test examples
-          it_behaves_like 'windows tests', agent: agent
-        end
+      context 'run tests on windows agent', node: agent do
+        # Allow PowerShell scripts to run on windows host
+        on(agent, [
+          'powershell Set-ExecutionPolicy RemoteSigned',
+          'powershell Get-ExecutionPolicy',
+#          'powershell Set-NetConnectionProfile -NetworkCategory private',
+        ].join('; '))
+        # Include test examples
+        it_behaves_like 'windows tests', agent: agent
       end
     end
   end
