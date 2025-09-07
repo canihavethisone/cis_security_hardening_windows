@@ -68,21 +68,22 @@ namespace 'acceptance' do
 
   desc "Run Windows 10 tests"
   task :windows10 do
-    ENV['BEAKER_set'] = 'windows10'
-    sh "bundle exec rspec spec/acceptance/cis_security_hardening_windows_spec.rb"
+    sh({ 'BEAKER_set' => 'windows10' },
+       "bundle exec rspec spec/acceptance/cis_security_hardening_windows_spec.rb")
   end
-
+  
   desc "Run Windows 11 tests"
   task :windows11 do
-    ENV['BEAKER_set'] = 'windows11'
-    sh "bundle exec rspec spec/acceptance/cis_security_hardening_windows_spec.rb"
+    sh({ 'BEAKER_set' => 'windows11' },
+       "bundle exec rspec spec/acceptance/cis_security_hardening_windows_spec.rb")
   end
-
+  
   desc "Run Windows 10 and 11 tests in parallel"
   multitask :windows_p => [:windows10, :windows11]
+  
+  desc "Run Windows 10 and 11 tests sequentially"
+  task :windows => [:windows10, :windows11]
 
-  # desc "Run Windows 10 and 11 tests sequentially"
-  # task :windows => [:windows10, :windows11]
 end
 
 desc "Run full test suite: metadata, syntax, lint, and spec."
@@ -110,7 +111,7 @@ def handle_beaker_provision
 
   nodeset_dir = File.join(Dir.pwd, 'spec', 'acceptance', 'nodesets')
   nodeset_file = File.join(nodeset_dir, "#{nodeset_name}.yml")
-  nodeset = YAML.load_file(nodeset_file)
+  nodeset = YAML.safe_load(File.read(nodeset_file), aliases: true)
   nodeset['HOSTS'] = nodeset['HOSTS'].transform_keys { |role| nodenames[role] || role }
 
   tmp_nodefile = Dir::Tmpname.create(['tmp_nodeset', '.yaml'], nodeset_dir) {}
