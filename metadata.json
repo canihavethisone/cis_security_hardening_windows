@@ -22,7 +22,7 @@
     },
     {
       "name": "puppetlabs-powershell",
-      "version_requirement": ">= 6.0.2 < 7.0.0"
+      "version_requirement": ">= 6.1.0 < 7.0.0"
     },
     {
       "name": "puppetlabs-reboot",
