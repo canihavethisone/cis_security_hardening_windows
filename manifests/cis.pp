@@ -104,10 +104,10 @@ class cis_security_hardening_windows::cis (
         default:
           type => 'dword',
           data => '1',
-          ;
+        ;
         $key:
           * => $value,
-          ;
+        ;
       }
     }
   }
