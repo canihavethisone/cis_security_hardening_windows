@@ -20,7 +20,7 @@ group :system_tests do
 end
 
 group :release do
-  gem 'voxpupuli-release', '~> 5.0',  :require => false
+  gem 'voxpupuli-release', '>= 4.0', '< 6.0',   :require => false
 end
 
 # Platform-specific ffi version for Ruby < 3.0
