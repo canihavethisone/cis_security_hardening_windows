@@ -3,6 +3,7 @@ source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 group :test do
   gem 'voxpupuli-test', '~> 13.0',  :require => false
   gem 'puppet_metadata', '~> 5.0',  :require => false
+  gem 'voxpupuli-release', '>= 4.0', '< 6.0',   :require => false
   gem 'in-parallel'
   gem 'beaker-puppet'
   gem 'beaker-openstack'
@@ -17,10 +18,6 @@ end
 
 group :system_tests do
   gem 'voxpupuli-acceptance', '>= 3.0', '< 5.0',  :require => false
-end
-
-group :release do
-  gem 'voxpupuli-release', '>= 4.0', '< 6.0',   :require => false
 end
 
 # Platform-specific ffi version for Ruby < 3.0
