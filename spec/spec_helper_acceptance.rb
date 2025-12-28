@@ -15,10 +15,18 @@
 # https://github.com/puppetlabs/beaker-windows
 # https://github.com/simp/rubygem-simp-beaker-helpers
 
+# Patch occurences of file.exists with file.exist for ruby > 3.x
+class File
+  class << self
+    alias_method :exists?, :exist?
+  end
+end
+
 ### ---------------- Gems Required ------------------- ###
 require 'serverspec'                    # Base Serverspec framework
 require 'beaker-rspec'                  # Beaker integration with RSpec and Serverspec
-require 'beaker/module_install_helper'  # Helper to install module and dependencies
+# require 'beaker/module_install_helper'  # Helper to install module and dependencies
+require 'beaker-puppet'                 # Only 'copy_module_to' function used from module_install_helper which is in fact from this gem
 require 'beaker_puppet_helpers'         # Additional Puppet-related helpers for Beaker
 require 'rainbow'                       # Add color to console printed text
 
@@ -86,7 +94,8 @@ def get_ip_and_fqdn(host)
   [ip, fqdn]
 end
 
-## As each dependency is installed from fixtures, add the latest version to an array (uses the 5th line of output so that only primary dependencies are written to metadata.json
+## As each dependency is installed from fixtures, add the latest version to an array
+## (uses the 5th line of output so that only primary dependencies are written to metadata.json)
 def compile_dependency_versions(output)
   dep_line = output.lines[4]&.split
   return if dep_line.nil? || dep_line.size < 3
