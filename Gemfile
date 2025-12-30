@@ -3,7 +3,7 @@ source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 # Unit / fast tests
 group :test do
   gem 'voxpupuli-test', '~> 13.0', require: false
-  gem 'puppet_metadata', '~> 6.0', require: false
+  gem 'puppet_metadata', '>= 5.0', '< 7.0', require: false
   gem 'voxpupuli-release', '>= 4.0', '< 6.0', require: false
   gem 'in-parallel'
   gem 'beaker-openstack'
