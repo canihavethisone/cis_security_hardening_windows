@@ -26,7 +26,6 @@ end
 require 'serverspec'                    # Base Serverspec framework
 require 'beaker-rspec'                  # Beaker integration with RSpec and Serverspec
 # require 'beaker/module_install_helper'  # Helper to install module and dependencies
-require 'beaker-puppet'                 # Only 'copy_module_to' function used from module_install_helper which is in fact from this gem
 require 'beaker_puppet_helpers'         # Additional Puppet-related helpers for Beaker
 require 'rainbow'                       # Add color to console printed text
 
@@ -39,6 +38,9 @@ CLASS = @metadata_json['name'].tr('-', '::').freeze
 
 TEST_FILES = File.expand_path(File.join(File.dirname(__FILE__), 'acceptance', 'files'))
 DEPENDENCY_LIST = 'fixtures'.freeze
+
+# Dirs to rsync to master for testing
+FILES_TO_COPY = "data/ manifests/ files/ lib/ ./hiera.yaml ./metadata.json"
 
 # Safer: prefer hostname -I and filter loopback/APIPA so multiple addresses don't break parsing
 MASTER_IP = on(master, "hostname -I | tr ' ' '\\n' | grep -vE '^(127|169)\\.' | head -n1").stdout.strip # master.get_ip
@@ -53,7 +55,7 @@ ENVIRONMENT = if master['hypervisor'] == 'none'
 
 ## Configuration
 CONFIG = {
-  release_yum_repo_url: 'https://yum.voxpupuli.org/openvox8-release-el-9.noarch.rpm',
+  release_yum_repo_url: 'https://yum.voxpupuli.org/openvox8-release-el-10.noarch.rpm',
   server_package_name: 'openvox-server',
   agent_package_name: 'openvox-agent',
   puppet_collection: 'openvox8',
@@ -138,9 +140,9 @@ def stop_firewall_on(host)
   when %r{debian}
     on host, 'iptables -F', acceptable_exit_codes: [0, 1]
   when %r{fedora|el-|centos}
-    on host, puppet('resource', 'service', 'firewalld', 'ensure=stopped'), acceptable_exit_codes: [0, 1]
-  when %r{ubuntu}
-    on host, puppet('resource', 'service', 'ufw', 'ensure=stopped'), acceptable_exit_codes: [0, 1]
+    on(host, 'puppet resource service firewalld ensure=stopped', acceptable_exit_codes: [0, 1])
+  when %r{debian}
+    on(host, 'puppet resource service ufw ensure=stopped', acceptable_exit_codes: [0, 1])
   else
     logger.notify("Not sure how to clear firewall on #{host['platform']}")
   end
@@ -227,7 +229,7 @@ def setup_puppetserver_on(host)
   install_modules_on master
   # Generate puppet types on master to overcome issue with some windows types on initial runs
   on(master, "/opt/puppetlabs/puppet/bin/puppet generate types --environment #{ENVIRONMENT}")
-  on master, puppet('resource', 'service', 'puppetserver', 'ensure=running')
+  on(master, 'puppet resource service puppetserver ensure=running')
   # Enable autosign on the master
   on(master, "echo '*' > /etc/puppetlabs/puppet/autosign.conf")
   # Stop firewall on master
@@ -238,7 +240,11 @@ end
 def install_modules_on(host)
   info_msg("Copying module and installing dependencies on master at #{MASTER_IP} #{MASTER_FQDN}")
   install_dependencies_from DEPENDENCY_LIST
-  copy_module_to(host, source: PROJECT_ROOT, target_module_path: "/etc/puppetlabs/code/environments/#{ENVIRONMENT}/modules/", protocol: 'rsync')
+
+  # Copy only required files to the master for testing
+  info_msg("Copying required module files to master at #{MASTER_IP} #{MASTER_FQDN}")
+  system("rsync -avR #{FILES_TO_COPY} root@#{MASTER_IP}:/etc/puppetlabs/code/environments/production/modules/cis_security_hardening_windows") || (raise "rsync failed")
+               
   on(master, "echo -e 'modulepath = /etc/puppetlabs/code/environments/#{ENVIRONMENT}/modules' > /etc/puppetlabs/code/environments/#{ENVIRONMENT}/environment.conf")
   on(master, 'puppet module list --tree')
 end
