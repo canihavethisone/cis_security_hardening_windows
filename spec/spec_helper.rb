@@ -64,7 +64,6 @@ RSpec.configure do |c|
 
   # Report coverage after entire suite
   c.after(:suite) do
-    # This ensures only one report, threshold applies across all OSes
     RSpec::Puppet::Coverage.report!(90)
   end
 
