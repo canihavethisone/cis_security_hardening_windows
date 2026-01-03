@@ -21,6 +21,7 @@
 /spec/fixtures/modules/*
 /tmp/
 /vendor*/
+/rubygems/
 /convert_report.txt
 /update_report.txt
 .DS_Store

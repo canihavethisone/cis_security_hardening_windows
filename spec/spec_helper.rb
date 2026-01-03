@@ -2,7 +2,6 @@
 require 'voxpupuli/test/spec_helper'
 require 'rainbow'
 
-# puts "Openvox present? #{Gem.loaded_specs.key?('openvox')}"
 puts "\n"
 puts "Loaded Puppet module version: #{Puppet.version}"
 puts "Loaded from: #{Gem.loaded_specs['openvox']&.full_gem_path}"
@@ -41,9 +40,9 @@ RSpec.configure do |c|
   c.mock_with :rspec
   c.tty = true
   c.default_facts = default_facts
+
   c.before :each do
     # set to strictest setting for testing
-    # by default Puppet runs at warning level
     Puppet.settings[:strict] = :warning
     Puppet.settings[:strict_variables] = true
 
@@ -59,25 +58,20 @@ RSpec.configure do |c|
     allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('WDAGUtilityAccount').and_return('S-1-5-21')
     # keep original call behavior
     allow(Puppet::Util).to receive(:which).and_call_original
-    # allow(Puppet::Util).to receive(:which).with('wmic').and_return('c:\\tools\\wmic')
-    # allow(Puppet::Util).to receive(:which).with('secedit').and_return('c:\\tools\\secedit')
-    # allow(Puppet::Util).to receive(:which).with("/sbin/initctl").and_return("/sbin/initctl")
   end
+
   c.filter_run_excluding(bolt: true) unless ENV['GEM_BOLT']
+
+  # Report coverage after entire suite
   c.after(:suite) do
+    # This ensures only one report, threshold applies across all OSes
     RSpec::Puppet::Coverage.report!(90)
   end
 
   # Filter backtrace noise
-  backtrace_exclusion_patterns = [
-    %r{spec_helper},
-    %r{gems},
-  ]
-
-  if c.respond_to?(:backtrace_exclusion_patterns)
-    c.backtrace_exclusion_patterns = backtrace_exclusion_patterns
-  elsif c.respond_to?(:backtrace_clean_patterns)
-    c.backtrace_clean_patterns = backtrace_exclusion_patterns
+  backtrace_exclusion_patterns = [%r{spec_helper}, %r{gems}]
+  [:backtrace_exclusion_patterns, :backtrace_clean_patterns].each do |attr|
+    c.public_send("#{attr}=", backtrace_exclusion_patterns) if c.respond_to?(attr)
   end
 end
 

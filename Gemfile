@@ -1,19 +1,20 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
+#source "file://#{File.expand_path('rubygems')}"
 
 # Unit / fast tests
 group :test do
-  gem 'voxpupuli-test', '~> 13.0', require: false
+  gem 'beaker-openstack', '>= 2.0', '< 3.0', require: false
+  gem 'hiera-eyaml', '>= 4.0', '< 5.0', require: false
+  gem 'in-parallel', '>= 1.0', '< 2.0', require: false
   gem 'puppet_metadata', '>= 5.0', '< 7.0', require: false
+  gem 'rainbow', '>= 3.0', '< 4.0', require: false
+  gem 'voxpupuli-test', '~> 13.0', require: false
   gem 'voxpupuli-release', '>= 4.0', '< 6.0', require: false
-  gem 'in-parallel'
-  gem 'beaker-openstack'
-  gem 'hiera-eyaml'
-  gem 'rainbow'
 end
 
 # Development / tooling
 group :development do
-  gem 'guard-rake', require: false
+  gem 'guard-rake', '>= 1.0', '< 2.0', require: false
   gem 'overcommit', '>= 0.39.1', require: false
 end
 
