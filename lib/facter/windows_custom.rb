@@ -1,54 +1,48 @@
-Facter.add('windows') do
+Facter.add(:windows) do
   confine kernel: 'windows'
 
   setcode do
     require 'win32/registry'
     require 'win32ole'
 
-    # Default values in case retrieval fails
-    windows_currentbuildnumber = 'unknown'
-    windows_displayversion     = 'unknown'
-    windows_releaseid          = 'unknown'
-    windows_version            = nil
+    windows_version = nil
+    current_build_number = nil
+    display_version = 'unknown'
+    release_id = 'unknown'
 
-    # Check if running on a supported Windows platform
-    if RUBY_PLATFORM.match?(%r{mswin|mingw32}i)
-      # Connect to WMI to get OS details
-      wmi = WIN32OLE.connect('winmgmts:\\\\.\\root\\cimv2')
-      windows_version = wmi.ExecQuery('SELECT Caption, BuildNumber FROM Win32_OperatingSystem').each.first
+    # Query WMI for OS information
+    wmi = WIN32OLE.connect('winmgmts:\\\\.\\root\\cimv2')
+    windows_version = wmi.ExecQuery(
+      'SELECT Caption, BuildNumber FROM Win32_OperatingSystem'
+    ).each.first
 
-      # Open registry path once and read needed values
-      Win32::Registry::HKEY_LOCAL_MACHINE.open('Software\\Microsoft\\Windows NT\\CurrentVersion') do |reg|
-        begin
-          windows_currentbuildnumber = reg['CurrentBuildNumber']
-        rescue StandardError
-          windows_currentbuildnumber = 'unknown'
-        end
-
-        begin
-          windows_displayversion = reg['DisplayVersion']
-        rescue StandardError
-          windows_displayversion = 'unknown'
-        end
-
-        begin
-          windows_releaseid = reg['ReleaseId']
-        rescue StandardError
-          windows_releaseid = 'unknown'
-        end
-      end
+    # Read registry values
+    Win32::Registry::HKEY_LOCAL_MACHINE.open(
+      'Software\\Microsoft\\Windows NT\\CurrentVersion'
+    ) do |reg|
+      current_build_number = reg['CurrentBuildNumber'].to_i rescue nil
+      display_version      = reg['DisplayVersion'] rescue 'unknown'
+      release_id           = reg['ReleaseId'] rescue 'unknown'
     end
 
-    # Microsoft moved from ReleaseId to DisplayVersion starting around build 19043
-    windows_display_version = (windows_currentbuildnumber >= '19043') ? windows_displayversion : windows_releaseid
+    # Microsoft moved from ReleaseId to DisplayVersion around build 19043
+    effective_display_version =
+      if current_build_number && current_build_number >= 19043
+        display_version
+      else
+        release_id
+      end
 
     if windows_version
-      caption_parts = windows_version.Caption.to_s.split(' ')
+      # Strip "Microsoft" prefix
+      caption = windows_version.Caption.to_s.sub(/^Microsoft\s+/i, '')
+      caption_parts = caption.split(' ')
+
       {
-        'product_name'    => caption_parts[1..].join(' '), # Strip "Microsoft" prefix
-        'release'         => caption_parts[2] || 'unknown',
-        'edition_id'      => caption_parts[3] || 'unknown',
-        'display_version' => windows_display_version,
+        'product_name'    => caption,
+        'release'         => caption_parts[1] || 'unknown',
+        'edition_id'      => caption_parts[2] || 'unknown',
+        'display_version' => effective_display_version,
         'build_number'    => windows_version.BuildNumber
       }
     else
