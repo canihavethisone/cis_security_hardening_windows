@@ -2,7 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## Release 2.2.0
+**Bugfixes**
+- Updated custom Windows fact to v4 style with numeric build comparison
+
 **Development**
 - Updated testing dependencies to latest versions (rspec, voxpupuli-test, beaker)
 - Improved CI stability with updated test tooling
