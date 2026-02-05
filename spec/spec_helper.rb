@@ -2,12 +2,17 @@
 require 'voxpupuli/test/spec_helper'
 require 'rainbow'
 
-puts "\n"
-puts "Loaded Puppet module version: #{Puppet.version}"
-puts "Loaded from: #{Gem.loaded_specs['openvox']&.full_gem_path}"
-puts "Old Puppet gem: #{Gem.loaded_specs['puppet']&.full_name || 'none'}"
-puts "Active openvox gem: #{Gem.loaded_specs['openvox']&.full_name || 'none'}"
-puts "\n#{Rainbow("Using Puppet #{Puppet.version}").cyan}\n\n" if defined?(Puppet)
+puts
+puts Rainbow(
+  if Gem.loaded_specs['openvox'] && defined?(Puppet)
+    "Using OpenVox #{Puppet.version}"
+  elsif defined?(Puppet)
+    "Using Puppet #{Puppet.version}"
+  else
+    "No Puppet loaded"
+  end
+).cyan
+puts
 
 default_facts = {
   puppetversion: Puppet.version,
