@@ -35,8 +35,5 @@ on:
 
 jobs:
   puppet:
+    name: Puppet
     uses: voxpupuli/gha-puppet/.github/workflows/beaker.yml@v4
-    with:
-      puppet_versions: 8.0
-      ruby_versions: 3.3
-      fixtures_yml: .fixtures.yml
