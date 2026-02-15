@@ -18,7 +18,9 @@ class cis_security_hardening_windows::cis (
   $cis_include_hkcu,
   $cis_exclude_rules,
 ) {
-  # Assign values to CIS hashes from in-module hiera
+  # Assign values to CIS hashes from in-module hiera.  Legacy lookup is used here to support testing
+  # Variable                     ( 'Name',                                                  Type,  Merge, Default )
+  # ---------------------------------------------------------------------------------------------------------------
   $cis_level_1           = lookup( 'cis_security_hardening_windows::cis_level_1',           Hash, 'deep', {})
   $cis_level_2           = lookup( 'cis_security_hardening_windows::cis_level_2',           Hash, 'deep', {})
   $cis_bitlocker         = lookup( 'cis_security_hardening_windows::cis_bitlocker',         Hash, 'deep', {})

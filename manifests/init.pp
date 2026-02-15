@@ -23,25 +23,25 @@
 # @param [Boolean]                       catalog_no_cache         Do not cache the puppet catalog on disk, as passwords and other values are in plain text
 #
 class cis_security_hardening_windows (
-# Variable                         ( 'Name',                     Type,                         Merge,  Default )
-# --------------------------------------------------------------------------------------------------------------
-  $users                   = lookup( 'users',                    Hash,                         'deep', {}),
-  $purge_unmanaged_users   = lookup( 'purge_unmanaged_users',    Boolean,                      undef,    false ),
-  $cis_profile_type        = lookup( 'cis_profile_type',         Enum['domain', 'standalone'], undef, 'domain' ),
-  $cis_enforcement_level   = lookup( 'cis_enforcement_level',    Integer[1, 2],                undef,    2     ),
-  $cis_include_bitlocker   = lookup( 'cis_include_bitlocker',    Boolean,                      undef,    true  ),
-  $cis_include_nextgen     = lookup( 'cis_include_nextgen',      Boolean,                      undef,    true  ),
-  $cis_exclude_rules       = lookup( 'cis_exclude_rules',        Array,                        'deep', []),
-  $cis_include_hkcu        = lookup( 'cis_include_hkcu',         Boolean,                      undef,    true  ),
-  $misc_registry           = lookup( 'misc_registry',            Hash,                         'deep', {}),
-  $enable_administrator    = lookup( 'enable_administrator',     Boolean,                      undef,    false ),
-  $enable_remote_desktop   = lookup( 'enable_remote_desktop',    Boolean,                      undef,    false ),
-  $trusted_rdp_subnets     = lookup( 'trusted_rdp_subnets',      Array,                        undef, []),
-  $remote_local_accounts   = lookup( 'remote_local_accounts',    Boolean,                      undef,    true  ),
-  $performance_powerscheme = lookup( 'performance_powerscheme',  Boolean,                      undef,    false ),
-  $clear_temp_files        = lookup( 'clear_temp_files',         Boolean,                      undef,    false ),
-  $auto_restart            = lookup( 'auto_restart',             Boolean,                      undef,    true  ),
-  $catalog_no_cache        = lookup( 'catalog_no_cache',         Boolean,                      undef,    false ),
+  # Type                      'Name',                    Default 
+  # ------------------------------------------------------------
+  Hash                        $users                   = {},
+  Boolean                     $purge_unmanaged_users   = false,
+  Enum['domain','standalone'] $cis_profile_type        = 'domain',
+  Integer[1,2]                $cis_enforcement_level   = 2,
+  Boolean                     $cis_include_bitlocker   = true,
+  Boolean                     $cis_include_nextgen     = true,
+  Array                       $cis_exclude_rules       = [],
+  Boolean                     $cis_include_hkcu        = true,
+  Hash                        $misc_registry           = {},
+  Boolean                     $enable_administrator    = false,
+  Boolean                     $enable_remote_desktop   = false,
+  Array                       $trusted_rdp_subnets     = [],
+  Boolean                     $remote_local_accounts   = true,
+  Boolean                     $performance_powerscheme = false,
+  Boolean                     $clear_temp_files        = false,
+  Boolean                     $auto_restart            = true,
+  Boolean                     $catalog_no_cache        = false,
 ) {
   # Check that the release is supported. These are backed by hiera directories
   if !($facts['windows']['release'] in ['10','11']) {
