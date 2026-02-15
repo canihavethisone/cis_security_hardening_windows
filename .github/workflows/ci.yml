@@ -2,36 +2,15 @@
 name: CI
 
 on:
-  push:
-#    branches:
-#      - main
-#      - feature/*
-    paths:
-    - '.github/**'
-    - 'hiera.yaml'
-    - 'data/**'
-    - 'manifests/**'
-    - 'files/**'
-    - 'spec/**'
-    - 'lib/**'
-    - 'Gemfile'
-  workflow_dispatch:
-    paths:
-    - '.github/**'
-    - 'hiera.yaml'
-    - 'data/**'
-    - 'manifests/**'
-    - 'files/**'
-    - 'spec/**'
-    - 'lib/**'
-    - 'Gemfile'
-  pull_request:
-    paths:
-    - 'hiera.yaml'
-    - 'data/**'
-    - 'manifests/**'
-    - 'spec/**'
-    - 'lib/**'
+  pull_request: {}
+  push: {}
+
+concurrency:
+  group: ${{ github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   puppet:
