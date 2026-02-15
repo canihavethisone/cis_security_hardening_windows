@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 
 **Features**
 - Update parameter lookups
-- 
+-
 
 
 ## Release 2.2.0
