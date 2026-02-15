@@ -13,6 +13,17 @@ permissions:
   contents: read
 
 jobs:
-  puppet:
-    name: Puppet
-    uses: voxpupuli/gha-puppet/.github/workflows/beaker.yml@v4
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - run: bundle install --jobs 4
+      - name: Validate
+        run: bundle exec rake syntax lint metadata_lint
+      - name: Run tests
+        run: bundle exec rake parallel_spec
