@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 3.0.0
+
+**Breaking Changes**
+- Drop Puppet / Openvox 7 support
+
+**Features**
+- Update parameter lookups
+- 
+
+
 ## Release 2.2.0
 **Bugfixes**
 - Updated custom Windows fact to v4 style with numeric build comparison

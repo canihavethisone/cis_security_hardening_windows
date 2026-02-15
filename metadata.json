@@ -1,6 +1,6 @@
 {
   "name": "canihavethisone-cis_security_hardening_windows",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "author": "canihavethisone",
   "summary": "Harden Windows 10 & 11 to CIS standards",
   "license": "Apache-2.0",
@@ -53,11 +53,11 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 7.0.0 < 9.0.0"
+      "version_requirement": ">= 8.0.0 < 9.0.0"
     },
     {
       "name": "openvox",
-      "version_requirement": ">= 7.0.0 < 9.0.0"
+      "version_requirement": ">= 8.0.0 < 9.0.0"
     }
   ],
   "pdk-version": "3.0.1",
