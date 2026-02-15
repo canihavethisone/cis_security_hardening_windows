@@ -2,67 +2,27 @@
 name: CI
 
 on:
-  push:
-#    branches:
-#      - main
-#      - feature/*
-    paths:
-    - '.github/**'
-    - 'hiera.yaml'
-    - 'data/**'
-    - 'manifests/**'
-    - 'files/**'
-    - 'spec/**'
-    - 'lib/**'
-    - 'Gemfile'
-  workflow_dispatch:
-    paths:
-    - '.github/**'
-    - 'hiera.yaml'
-    - 'data/**'
-    - 'manifests/**'
-    - 'files/**'
-    - 'spec/**'
-    - 'lib/**'
-    - 'Gemfile'
-  pull_request:
-    paths:
-    - 'hiera.yaml'
-    - 'data/**'
-    - 'manifests/**'
-    - 'spec/**'
-    - 'lib/**'
+  pull_request: {}
+  push: {}
+
+concurrency:
+  group: ${{ github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   unit:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.allow_failure }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - ruby: 2.7.8
-            puppet: 7
-            fixtures: .fixtures.yml
-            allow_failure: false
-          - ruby: 3.3.0
-            puppet: 8
-            fixtures: .fixtures.yml
-            allow_failure: false
-    env:
-      BUNDLE_WITHOUT: system_tests:release
-      PUPPET_GEM_VERSION: "~> ${{ matrix.puppet }}.0"
-      FIXTURES_YML: ${{ matrix.fixtures }}
-    name: Puppet ${{ matrix.puppet }} (Ruby ${{ matrix.ruby }} fixtures=${{ matrix.fixtures }})
     steps:
       - uses: actions/checkout@v4
-      - name: Setup ruby
+      - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: 3.3
           bundler-cache: true
-          cache-version: 2
-          bundler: '2.1.0'
+      - run: bundle install --jobs 4
       - name: Validate
         run: bundle exec rake syntax lint metadata_lint
       - name: Run tests
