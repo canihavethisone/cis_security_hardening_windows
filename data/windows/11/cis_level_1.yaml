@@ -57,10 +57,11 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\RequireStrongKey':
       ensure:    present
 
-  "(L1) Ensure 'Interactive logon: Do not require CTRL+ALT+DEL' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\DisableCAD':
-      ensure:    present
-      data:      0
+# Moved to L2 in v5.0.0
+#  "(L1) Ensure 'Interactive logon: Do not require CTRL+ALT+DEL' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\DisableCAD':
+#      ensure:    present
+#      data:      0
 
 ## renamed from 'Interactive logon: Do not display last user name' in 1.5.0 v1803 
   "(L1) Ensure 'Interactive logon: Don't display last signed-in' is set to 'Enabled'":
@@ -100,9 +101,10 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\RequireSecuritySignature':
       ensure:    present
 
-  "(L1) Ensure 'Microsoft network client: Digitally sign communications (if server agrees)' is set to 'Enabled'":
-    'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\EnableSecuritySignature':
-      ensure:    present
+## Removed in v5.0.0
+#  "(L1) Ensure 'Microsoft network client: Digitally sign communications (if server agrees)' is set to 'Enabled'":
+#    'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\EnableSecuritySignature':
+#      ensure:    present
 
   "(L1) Ensure 'Microsoft network client: Send unencrypted password to third-party SMB servers' is set to 'Disabled'":
     'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\EnablePlainTextPassword':
@@ -118,9 +120,10 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\RequireSecuritySignature':
       ensure:    present
 
-  "(L1) Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'":
-    'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\EnableSecuritySignature':
-      ensure:    present
+## Removed in v5.0.0
+#  "(L1) Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'":
+#    'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\EnableSecuritySignature':
+#      ensure:    present
 
   "(L1) Ensure 'Microsoft network server: Disconnect clients when logon hours expire' is set to 'Enabled'":
     'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\enableforcedlogoff':
@@ -1568,8 +1571,9 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SYSTEM\CurrentControlSet\Control\Print\RpcAuthnLevelPrivacyEnabled':
       ensure:    present
 
+# Updated in v5.0.0 with new registry location for 24H2
   "(L1) Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock'":
-    'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\RunAsPPL':
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\System\RunAsPPL':
       ensure:    present
 
   "(L1) Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution on public networks'":
@@ -1700,7 +1704,13 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\ADPasswordEncryptionEnabled':
       ensure:    present
 
-  "(L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters'":
+# Updated in v5.0.0 to allow passphrases
+# 4	Large letters + small letters + numbers + special characters	All character sets from 3, plus ,.-+;!# &@{}[]$/()%	Default value; recommended
+# 5	Large letters + small letters + numbers + special characters (improved readability)	Uses specific character sets designed for better readability, e.g., omits I, L, O, 1, etc.	Windows 11 24H2, Windows Server 2025, and later releases only
+# 6	Passphrase (words)	Generates a string of words rather than a traditional password	Windows 11 24H2, Windows Server 2025, and later releases only
+# 7	Passphrase (words) + mixed case	Passphrase with mixed-case words	Windows 11 24H2, Windows Server 2025, and later releases only
+# 8	Passphrase (words) + mixed case + numbers
+  "(L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters or Passphrase'":
     'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\PasswordComplexity':
       ensure:    present
       data:      4
@@ -1874,3 +1884,12 @@ cis_security_hardening_windows::cis_level_1:
   "(L1) Ensure 'Require Encryption' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\RequireEncryption':
       ensure:    present
+
+
+## ----------- updates from CIS v5.0.0 ----------- ##
+# Moved from L2 in v5.0.0
+  "(L1) Ensure 'Join Microsoft MAPS' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet\SpynetReporting':
+      ensure:    present
+      data:      2
+

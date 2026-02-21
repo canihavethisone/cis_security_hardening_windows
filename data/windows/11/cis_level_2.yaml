@@ -390,10 +390,11 @@ cis_security_hardening_windows::cis_level_2:
     'HKLM\SOFTWARE\Policies\Microsoft\WindowsStore\RemoveWindowsStore':
       ensure:    present
 
-  "(L2) Ensure 'Join Microsoft MAPS' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet\SpynetReporting':
-      ensure:    present
-      data:      0
+## Moved to L1 in v5.0.0 and changed to enabled
+#  "(L2) Ensure 'Join Microsoft MAPS' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet\SpynetReporting':
+#      ensure:    present
+#      data:      0
 
   "(L2) Ensure 'Configure Watson events' is set to 'Disabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Reporting\DisableGenericRePorts':
@@ -591,5 +592,13 @@ cis_security_hardening_windows::cis_level_2:
 
   "(L2) Ensure 'Allow mapping folders into Windows Sandbox' is set to 'Disabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\Sandbox\AllowWriteToMappedFolders':
+      ensure:    present
+      data:      0
+
+
+## ----------- updates from CIS v5.0.0 ----------- ##
+# Moved from L1 in v5.0.0
+  "(L2) Ensure 'Interactive logon: Do not require CTRL+ALT+DEL' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\DisableCAD':
       ensure:    present
       data:      0

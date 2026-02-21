@@ -345,9 +345,10 @@ cis_security_hardening_windows::cis_bitlocker:
 #        ensure:    present
 #        data:      4
 
-  "(BL) Ensure 'Disable new DMA devices when this computer is locked' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\FVE\DisableExternalDMAUnderLock':
-      ensure:    present
+## Removed in v5.0.0
+#  "(BL) Ensure 'Disable new DMA devices when this computer is locked' is set to 'Enabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\FVE\DisableExternalDMAUnderLock':
+#      ensure:    present
 
   "(BL) Bitlocker Misc (to verify if required)":
     'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVEnforcePassphrase':
