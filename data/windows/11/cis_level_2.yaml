@@ -43,29 +43,33 @@ cis_security_hardening_windows::cis_level_2:
       ensure:    present
       data:      4
 
+# This was removed in v4.0.0 however reappeared in v5.0.0 with 'Disabled or Not Installed'
 ## Removed in v4.0.0
-#  "(L2) Ensure 'Peer Name Resolution Protocol (PNRPsvc)' is set to 'Disabled'":
-#    'HKLM\SYSTEM\CurrentControlSet\Services\PNRPsvc\Start':
-#      ensure:    present
-#      data:      4
+  "(L2) Ensure 'Peer Name Resolution Protocol (PNRPsvc)' is set to 'Disabled' or 'Not Installed'":
+    'HKLM\SYSTEM\CurrentControlSet\Services\PNRPsvc\Start':
+      ensure:    present
+      data:      4
 
+# This was removed in v4.0.0 however reappeared in v5.0.0 with 'Disabled or Not Installed'
 ## Removed in v4.0.0
-#  "(L2) Ensure 'Peer Networking Grouping (p2psvc)' is set to 'Disabled'":
-#    'HKLM\SYSTEM\CurrentControlSet\Services\p2psvc\Start':
-#      ensure:    present
-#      data:      4
+  "(L2) Ensure 'Peer Networking Grouping (p2psvc)' is set to 'Disabled' or 'Not Installed'":
+    'HKLM\SYSTEM\CurrentControlSet\Services\p2psvc\Start':
+      ensure:    present
+      data:      4
 
+# This was removed in v4.0.0 however reappeared in v5.0.0 with 'Disabled or Not Installed'
 ## Removed in v4.0.0
-#  "(L2) Ensure 'Peer Networking Identity Manager (p2pimsvc)' is set to 'Disabled'":
-#    'HKLM\SYSTEM\CurrentControlSet\Services\p2pimsvc\Start':
-#      ensure:    present
-#      data:      4
+  "(L2) Ensure 'Peer Networking Identity Manager (p2pimsvc)' is set to 'Disabled' or 'Not Installed'":
+    'HKLM\SYSTEM\CurrentControlSet\Services\p2pimsvc\Start':
+      ensure:    present
+      data:      4
 
+# This was removed in v4.0.0 however reappeared in v5.0.0 with 'Disabled or Not Installed'
 ## Removed in v4.0.0
-#  "(L2) Ensure 'PNRP Machine Name Publication Service (PNRPAutoReg)' is set to 'Disabled'":
-#    'HKLM\SYSTEM\CurrentControlSet\Services\PNRPAutoReg\Start':
-#      ensure:    present
-#      data:      4
+  "(L2) Ensure 'PNRP Machine Name Publication Service (PNRPAutoReg)' is set to 'Disabled' 'or 'Not installed'":
+    'HKLM\SYSTEM\CurrentControlSet\Services\PNRPAutoReg\Start':
+      ensure:    present
+      data:      4
 
   "(L2) Ensure 'Problem Reports and Solutions Control Panel Support (wercplsupport)' is set to 'Disabled'":
     'HKLM\SYSTEM\CurrentControlSet\Services\wercplsupport\Start':
@@ -530,10 +534,11 @@ cis_security_hardening_windows::cis_level_2:
 
 
 ## ----------- updates from CIS v4.0.0 ----------- ##
-  "(L2) Ensure 'WinHTTP Web Proxy Auto-Discovery Service (WinHttpAutoProxySvc)' is set to 'Disabled'":
-    'HKLM\SYSTEM\CurrentControlSet\Services\WinHttpAutoProxySvc\Start':
-      ensure:    present
-      data:      4
+## Removed in v5.0.0
+#  "(L2) Ensure 'WinHTTP Web Proxy Auto-Discovery Service (WinHttpAutoProxySvc)' is set to 'Disabled'":
+#    'HKLM\SYSTEM\CurrentControlSet\Services\WinHttpAutoProxySvc\Start':
+#      ensure:    present
+#      data:      4
 
 ## Moved from L1 in v4.0.0
   "(L2) Ensure 'Enable App Installer' is set to 'Disabled'":
@@ -602,3 +607,39 @@ cis_security_hardening_windows::cis_level_2:
     'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\DisableCAD':
       ensure:    present
       data:      0
+
+# Moved from L1 in v5.0.0
+  "(L2) Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive\DisableFileSyncNGSC':
+      ensure:    present
+
+  "(L2) Ensure 'Require IPPS for IPP printers' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\IPP\RequireIpps':
+      ensure:    present
+
+  "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate authority' is set to 'Enabled: Checked'": 
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\IPP\SecurityFlagsBlockUnknownCA':
+      ensure:    present
+
+  "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow non-server certificates' is set to 'Enabled: Checked'": 
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\IPP\SecurityFlagsBlockCertWrongUsage':
+      ensure:    present
+
+  "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate common name' is set to 'Enabled: Checked'": 
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\IPP\SecurityFlagsBlockCertCNInvalid':
+      ensure:    present
+
+  "(L2) Ensure 'Allow widgets' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Dsh\AllowNewsAndInterests':
+      ensure:    present
+      data:      0
+
+# Moved from L1 in v5.0.0
+  "(L2) Ensure 'Limit Diagnostic Log Collection' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection\LimitDiagnosticLogCollection':
+      ensure:    present
+
+# Moved from L1 in v5.0.0
+  "(L2) Ensure 'Limit Dump Collection' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection\LimitDumpCollection':
+      ensure:    present

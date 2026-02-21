@@ -33,7 +33,7 @@ describe 'cis_security_hardening_windows' do
           end
 
           # Write out catalogue
-          # it { File.write("cis_security_hardening_windows_failure_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write("cis_security_hardening_windows_failure_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource.to_data_hash)) }
 
           # fail to compile with deps
           # it { pp catalogue.resources }
@@ -50,7 +50,7 @@ describe 'cis_security_hardening_windows' do
           end
 
           # Write out catalogue
-          # it { File.write('cis_security_hardening_windows_defaults_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write('cis_security_hardening_windows_defaults_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource.to_data_hash)) }
 
           # compile with deps & create class
           # it { pp catalogue.resources }
@@ -108,7 +108,7 @@ describe 'cis_security_hardening_windows' do
               'purge_unmanaged_users' => true, }
           end
           # Write out catalogue
-          # it { File.write('cis_security_hardening_windows_misc_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write('cis_security_hardening_windows_misc_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource.to_data_hash)) }
 
           # compile with deps & create class
           # it { pp catalogue.resources }
@@ -173,7 +173,7 @@ describe 'cis_security_hardening_windows' do
           end
 
           # Write out catalogue
-          # it { File.write("cis_security_hardening_windows_cis_level2_domain_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write("cis_security_hardening_windows_cis_level2_domain_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource.to_data_hash)) }
 
           # compile with deps & create class
           # it { pp catalogue.resources }
@@ -331,7 +331,7 @@ describe 'cis_security_hardening_windows' do
           end
 
           # Write out catalogue
-          # it { File.write("cis_security_hardening_windows_standalone_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write("cis_security_hardening_windows_standalone_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource.to_data_hash)) }
 
           # compile with deps & create class
           # it { pp catalogue.resources }
@@ -368,7 +368,7 @@ describe 'cis_security_hardening_windows' do
           end
 
           # Write out catalogue
-          # it { File.write("cis_security_hardening_windows_level1_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write("cis_security_hardening_windows_level1_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource.to_data_hash)) }
 
           ## Registry
           # Initialize an empty hash to store combined YAML data
@@ -442,7 +442,7 @@ describe 'cis_security_hardening_windows' do
           end
 
           # Write out catalogue
-          # it { File.write("cis_security_hardening_windows_standalone_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write("cis_security_hardening_windows_standalone_catalog_dump_#{os}.json", JSON.pretty_generate(catalogue.to_resource.to_data_hash)) }
 
           # compile with deps & create class
           # it { pp catalogue.resources }
@@ -486,7 +486,7 @@ describe 'cis_security_hardening_windows' do
           end
 
           # Write out catalogue
-          # it { File.write('cis_security_hardening_windows_remote_desktop_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write('cis_security_hardening_windows_remote_desktop_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource.to_data_hash)) }
 
           # compile with deps & create class
           # it { pp catalogue.resources }
@@ -570,7 +570,7 @@ describe 'cis_security_hardening_windows' do
           end
 
           # Write out catalogue
-          # it { File.write('cis_security_hardening_windows_remote_desktop_no_trusted_rdp_subnets_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource)) }
+          # it { File.write('cis_security_hardening_windows_remote_desktop_no_trusted_rdp_subnets_catalog_dump.json', JSON.pretty_generate(catalogue.to_resource.to_data_hash)) }
 
           # compile with deps & create class
           # it { pp catalogue.resources }

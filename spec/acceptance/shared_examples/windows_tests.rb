@@ -61,19 +61,33 @@ shared_examples 'windows tests' do |agent:|
     title = previous_title || 'as per previous' if title.nil? || title.empty? || title == previous_title
 
     hash.each do |regkey, properties|
-      # Helper method to process registry data
+      # Merge with default properties
       processed_properties = default_properties.merge(properties)
+    
+      # If the value is an array, join as CSV string without adding extra quotes
       if processed_properties['data'].is_a?(Array)
-        processed_properties['data'] = processed_properties['data'].map { |element| "'#{element}'" }.join(',')
+        processed_properties['data'] = processed_properties['data'].join(',')
+      else
+        processed_properties['data'] = processed_properties['data'].to_s
       end
-      processed_properties['data'] = processed_properties['data'].to_s
-
+    
+      # Extract the key path and value name from the full registry path
       extracted_key, extracted_value = regkey.match(%r{^(.*)\\([^\\]*)$})&.captures
-
-      # Ensure the registry keys are also specified, as these are created if they don't exist
+    
+      # Describe the registry key for Puppet acceptance tests
       describe "Registry key: #{title}" do
         describe windows_registry_key(extracted_key) do
-          it { is_expected.to have_property_value(extracted_value, ":type_#{processed_properties['type']}", processed_properties['data']) }
+          it "exists and has the expected property value" do
+            # Fail if the key itself does not exist
+            expect { subject }.not_to raise_error
+    
+            # Check the registry property value with the correct type and processed data
+            is_expected.to have_property_value(
+              extracted_value,
+              ":type_#{processed_properties['type']}",
+              processed_properties['data']
+            )
+          end
         end
       end
     end

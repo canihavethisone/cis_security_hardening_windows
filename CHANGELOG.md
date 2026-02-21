@@ -8,8 +8,8 @@ All notable changes to this project will be documented in this file.
 - Drop Puppet / Openvox 7 support
 
 **Features**
+- Update Windows 11 Standalone benchmark to CIS v5.0.0
 - Update parameter lookups
--
 
 
 ## Release 2.2.0
