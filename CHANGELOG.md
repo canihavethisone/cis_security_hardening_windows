@@ -5,10 +5,10 @@ All notable changes to this project will be documented in this file.
 ## Release 3.0.0
 
 **Breaking Changes**
-- Drop Puppet / Openvox 7 support
+- Drop Puppet 7 / Openvox 7 support
 
 **Features**
-- Update Windows 11 Standalone benchmark to CIS v5.0.0
+- Update Windows 11 Enterprise benchmark to CIS v5.0.0
 - Update parameter lookups
 
 
