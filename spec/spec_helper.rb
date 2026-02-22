@@ -61,6 +61,8 @@ RSpec.configure do |c|
     allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('Guests').and_return('S-1-5-32-546')
     allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('Local account').and_return('S-1-5-113')
     allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('WDAGUtilityAccount').and_return('S-1-5-21')
+    allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('RESTRICTED SERVICES\\PrintSpoolerService').and_return('S-1-5-99-216390572-1995538116-3857911515-2404958512-2623887229')
+
     # keep original call behavior
     allow(Puppet::Util).to receive(:which).and_call_original
   end

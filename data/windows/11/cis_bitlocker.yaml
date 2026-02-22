@@ -3,10 +3,11 @@ cis_security_hardening_windows::cis_bitlocker:
 
 ## ----------- CIS hardening Windows 10.1709 v1.4.0 ----------- ##
 
-  "(BL) Ensure 'Interactive logon: Machine account lockout threshold' is set to '10 or fewer invalid logon attempts, but not 0'":
-    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\MaxDevicePasswordFailedAttempts':
-      ensure:    present
-      data:      4
+## Removed in v5.0.0
+#  "(BL) Ensure 'Interactive logon: Machine account lockout threshold' is set to '10 or fewer invalid logon attempts, but not 0'":
+#    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\MaxDevicePasswordFailedAttempts':
+#      ensure:    present
+#      data:      4
 
 ## Removed in v4.0.0
 #  "(BL) Ensure 'Prevent installation of devices that match any of these device IDs' is set to 'Enabled'":
@@ -211,19 +212,22 @@ cis_security_hardening_windows::cis_bitlocker:
       type:      'expand'
       data:      '2.16.840.1.101.3.4.1.2;2.16.840.1.101.3.4.1.42'
 
-  "(BL) Ensure 'Configure use of passwords for operating system drives' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSPassphrase':
-      ensure:    present
-      data:      0
+## Removed in v 5.0.0
+#  "(BL) Ensure 'Configure use of passwords for operating system drives' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\FVE\OSPassphrase':
+#      ensure:    present
+#      data:      0
 
-  "(BL) Ensure 'Require additional authentication at startup' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\FVE\UseAdvancedStartup':
-      ensure:    present
+## Removed in v 5.0.0
+#  "(BL) Ensure 'Require additional authentication at startup' is set to 'Enabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\FVE\UseAdvancedStartup':
+#      ensure:    present
 
-  "(BL) Ensure 'Require additional authentication at startup: Allow BitLocker without a compatible TPM' is set to 'Enabled: False'":
-    'HKLM\SOFTWARE\Policies\Microsoft\FVE\EnableBDEWithNoTPM':
-      ensure:    present
-      data:      0
+## Removed in v 5.0.0
+#  "(BL) Ensure 'Require additional authentication at startup: Allow BitLocker without a compatible TPM' is set to 'Enabled: False'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\FVE\EnableBDEWithNoTPM':
+#      ensure:    present
+#      data:      0
 
 ## removed in v1.6.0 1809
 #  "(BL) Require additional authentication at startup: Configure TPM startup: is set to Enabled: Do not allow TPM":
@@ -345,9 +349,10 @@ cis_security_hardening_windows::cis_bitlocker:
 #        ensure:    present
 #        data:      4
 
-  "(BL) Ensure 'Disable new DMA devices when this computer is locked' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\FVE\DisableExternalDMAUnderLock':
-      ensure:    present
+## Removed in v5.0.0
+#  "(BL) Ensure 'Disable new DMA devices when this computer is locked' is set to 'Enabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\FVE\DisableExternalDMAUnderLock':
+#      ensure:    present
 
   "(BL) Bitlocker Misc (to verify if required)":
     'HKLM\SOFTWARE\Policies\Microsoft\FVE\FDVEnforcePassphrase':

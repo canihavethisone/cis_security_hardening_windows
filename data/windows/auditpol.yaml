@@ -106,10 +106,10 @@ cis_security_hardening_windows::cis_auditpol:
       success: 'disable'
       failure: 'enable'
 
-  "(L1) Ensure 'Audit Sensitive Privilege Use' is set to 'Success and Failure'":
+# Updated in v5.0.0 to Success only
+  "(L1) Ensure 'Audit Sensitive Privilege Use' is set to 'Success'":
     'Sensitive Privilege Use':
       success: 'enable'
-      failure: 'enable'
 
   "(L1) Ensure 'Audit IPsec Driver' is set to 'Success and Failure'":
     'IPsec Driver':

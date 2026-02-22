@@ -4,23 +4,23 @@
 # @example Declaring the class
 #   include cis_security_hardening_windows
 #
-# @param [Hash]                          users                    Any users to create
-# @param [Boolean]                       purge_unmanaged_users    If unmanaged users should be purged. Requires users hash to be defined
-# @param [Enum['domain', 'standalone']]  cis_profile_type         Apply domain or standalone CIS benchmark 
-# @param [Integer[1, 2]]                 cis_enforcement_level    CIS level to apply. Level 2 includes level 1
-# @param [Boolean]                       cis_include_bitlocker    If cis bitlocker rules should be included
-# @param [Boolean]                       cis_include_nextgen      If cis nextgen rules should be included
-# @param [Hash]                          cis_exclude_rules        Lookup of optional hash for cis_exclude_rules (to opt out of included rules)
-# @param [Boolean]                       cis_include_hkcu         If true, CIS defined local group policy objects are copied in for users as puppetlabs/registry cannot apply HKCU
-# @param [Hash]                          misc_registry            Lookup of misc registry items to apply.  Currently sets Puppet logging to event viewer and disables SMB1
-# @param [Boolean]                       enable_administrator     If the local adminsitrator account is enabled. Note that account must be renamed if enabled or not
-# @param [Boolean]                       enable_remote_desktop    If true the RDP service will be enabled and firewall rule created (false)
-# @param [Array]                         trusted_rdp_subnets      Trusted subnets for inbound rdp connections for firewall rules. Empty will be converted to 'any'
-# @param [Boolean]                       remote_local_accounts    If true and RDP is enabled, this allows local user accounts to connect remotely. Required if not domain joined (true)
-# @param [Boolean]                       performance_powerscheme  If true, set the powerscheme to high performance to prevent sleep.
-# @param [Boolean]                       clear_temp_files         If true clears user temp and system temp directories
-# @param [Boolean]                       auto_restart             If true, restarts the host at the end of the puppet run when registry local_security_policy changes occur (recommended)
-# @param [Boolean]                       catalog_no_cache         Do not cache the puppet catalog on disk, as passwords and other values are in plain text
+# @param [Hash]                         users                    Any users to create
+# @param [Boolean]                      purge_unmanaged_users    If unmanaged users should be purged. Requires users hash to be defined
+# @param [Enum['domain','standalone']]  cis_profile_type         Apply domain or standalone CIS benchmark 
+# @param [Integer[1,2]]                 cis_enforcement_level    CIS level to apply. Level 2 includes level 1
+# @param [Boolean]                      cis_include_bitlocker    If cis bitlocker rules should be included
+# @param [Boolean]                      cis_include_nextgen      If cis nextgen rules should be included
+# @param [Array]                        cis_exclude_rules        Lookup of optional hash for cis_exclude_rules (to opt out of included rules)
+# @param [Boolean]                      cis_include_hkcu         If true, CIS defined local group policy objects are copied in for users as puppetlabs/registry cannot apply HKCU
+# @param [Hash]                         misc_registry            Lookup of misc registry items to apply.  Currently sets Puppet logging to event viewer and disables SMB1
+# @param [Boolean]                      enable_administrator     If the local adminsitrator account is enabled. Note that account must be renamed if enabled or not
+# @param [Boolean]                      enable_remote_desktop    If true the RDP service will be enabled and firewall rule created (false)
+# @param [Array]                        trusted_rdp_subnets      Trusted subnets for inbound rdp connections for firewall rules. Empty will be converted to 'any'
+# @param [Boolean]                      remote_local_accounts    If true and RDP is enabled, this allows local user accounts to connect remotely. Required if not domain joined (true)
+# @param [Boolean]                      performance_powerscheme  If true, set the powerscheme to high performance to prevent sleep.
+# @param [Boolean]                      clear_temp_files         If true clears user temp and system temp directories
+# @param [Boolean]                      auto_restart             If true, restarts the host at the end of the puppet run when registry local_security_policy changes occur (recommended)
+# @param [Boolean]                      catalog_no_cache         Do not cache the puppet catalog on disk, as passwords and other values are in plain text
 #
 class cis_security_hardening_windows (
   # Type                      'Name',                    Default 

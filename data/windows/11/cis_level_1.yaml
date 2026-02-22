@@ -24,7 +24,7 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Devices: Allowed to format and eject removable media' is set to 'Administrators and Interactive Users'":
 #    'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\AllocateDASD':
 #      ensure:    present
@@ -57,10 +57,11 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\RequireStrongKey':
       ensure:    present
 
-  "(L1) Ensure 'Interactive logon: Do not require CTRL+ALT+DEL' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\DisableCAD':
-      ensure:    present
-      data:      0
+## Moved to L2 in v5.0.0
+#  "(L1) Ensure 'Interactive logon: Do not require CTRL+ALT+DEL' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\DisableCAD':
+#      ensure:    present
+#      data:      0
 
 ## renamed from 'Interactive logon: Do not display last user name' in 1.5.0 v1803 
   "(L1) Ensure 'Interactive logon: Don't display last signed-in' is set to 'Enabled'":
@@ -100,9 +101,10 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\RequireSecuritySignature':
       ensure:    present
 
-  "(L1) Ensure 'Microsoft network client: Digitally sign communications (if server agrees)' is set to 'Enabled'":
-    'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\EnableSecuritySignature':
-      ensure:    present
+## Removed in v5.0.0
+#  "(L1) Ensure 'Microsoft network client: Digitally sign communications (if server agrees)' is set to 'Enabled'":
+#    'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\EnableSecuritySignature':
+#      ensure:    present
 
   "(L1) Ensure 'Microsoft network client: Send unencrypted password to third-party SMB servers' is set to 'Disabled'":
     'HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\EnablePlainTextPassword':
@@ -118,9 +120,10 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\RequireSecuritySignature':
       ensure:    present
 
-  "(L1) Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'":
-    'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\EnableSecuritySignature':
-      ensure:    present
+## Removed in v5.0.0
+#  "(L1) Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'":
+#    'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\EnableSecuritySignature':
+#      ensure:    present
 
   "(L1) Ensure 'Microsoft network server: Disconnect clients when logon hours expire' is set to 'Enabled'":
     'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\enableforcedlogoff':
@@ -206,9 +209,10 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      '2147483640'
 
-  "(L1) Ensure 'Network security: Do not store LAN Manager hash value on next password change' is set to 'Enabled'":
-    'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\NoLMHash':
-      ensure:    present
+## Removed in v5.0.0
+#  "(L1) Ensure 'Network security: Do not store LAN Manager hash value on next password change' is set to 'Enabled'":
+#    'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\NoLMHash':
+#      ensure:    present
 
   "(L1) Ensure 'Network security: LAN Manager authentication level' is set to Send NTLMv2 response only. Refuse LM & NTLM'":
     'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\LmCompatibilityLevel':
@@ -241,7 +245,7 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\FilterAdministratorToken':
       ensure:    present
 
-## removed in v1.6.0 1809
+## Removed in v1.6.0 1809
 #  "(L1) User Account Control: Allow UIAccess applications to prompt for elevation without using the secure desktop is set to Disabled":
 #    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableUIADesktopToggle':
 #      ensure:    present
@@ -277,7 +281,7 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableVirtualization':
       ensure:    present
 
-## removed in v1.5.0 1803
+## Removed in v1.5.0 1803
 #  "(L1) Bluetooth Handsfree Service (BthHFSrv) is set to Disabled":
 #    'HKLM\SYSTEM\CurrentControlSet\Services\BthHFSrv\Start':
 #      ensure:    present
@@ -288,13 +292,13 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      4
 
-# Removed in 1.5.0 v1803
+## Removed in 1.5.0 v1803
 #  "(L1) HomeGroup Listener (HomeGroupListener) is set to Disabled":
 #    'HKLM\SYSTEM\CurrentControlSet\Services\HomeGroupListener\Start':
 #      ensure:    present
 #      data:      4
 
-# Removed in 1.5.0 v1803
+## Removed in 1.5.0 v1803
 #  "(L1) HomeGroup Provider (HomeGroupProvider) is set to Disabled":
 #    'HKLM\SYSTEM\CurrentControlSet\Services\HomeGroupProvider\Start':
 #      ensure:    present
@@ -310,7 +314,7 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      4
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Internet Connection Sharing (ICS) (SharedAccess)' is set to 'Disabled'":
 #    'HKLM\SYSTEM\CurrentControlSet\Services\SharedAccess\Start':
 #      ensure:    present
@@ -366,7 +370,7 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      4
 
-## removed in v1.9.0 2004
+## Removed in v1.9.0 2004
 #  "(L1) Windows Store Install Service (InstallService) is set to Disabled":
 #    'HKLM\SYSTEM\CurrentControlSet\Services\InstallService\Start':
 #      ensure:    present
@@ -382,7 +386,7 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      4
 
-## removed in v1.6.0 1809
+## Removed in v1.6.0 1809
 #  "(L1) Xbox Game Monitoring (xbgm) is set to Disabled":
 #      'HKLM\SYSTEM\CurrentControlSet\Services\xbgm\Start':
 #        ensure:    present
@@ -411,7 +415,7 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\DefaultInboundAction':
       ensure:    present
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Windows Firewall: Domain: Outbound connections' is set to 'Allow (default)'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\DefaultOutboundAction':
 #      ensure:    present
@@ -421,7 +425,8 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\DisableNotifications':
       ensure:    present
 
-  "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SYSTEMROOT%\\System32\\logfiles\\firewall\\domainfw.log'":
+## Renamed in v5.0.0 to 'is configured'
+  "(L1) Ensure 'Windows Firewall: Domain: Logging: Name' is configured'":
     'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging\LogFilePath':
       ensure:    present
       type:      'string'
@@ -448,7 +453,7 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\DefaultInboundAction':
       ensure:    present
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Windows Firewall: Private: Outbound connections' is set to 'Allow (default)'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\DefaultOutboundAction':
 #      ensure:    present
@@ -458,7 +463,8 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\DisableNotifications':
       ensure:    present
 
-  "(L1) Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SYSTEMROOT%\\System32\\logfiles\\firewall\\privatefw.log'":
+# Renamed in v5.0.0 to 'is configured'
+  "(L1) Ensure 'Windows Firewall: Private: Logging: Name' is configured'":
     'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\PrivateProfile\Logging\LogFilePath':
       ensure:    present
       type:      'string'
@@ -485,7 +491,7 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\DefaultInboundAction':
       ensure:    present
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Windows Firewall: Public: Outbound connections' is set to 'Allow (default)'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\DefaultOutboundAction':
 #      ensure:    present
@@ -505,7 +511,8 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-  "(L1) Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SYSTEMROOT%\\System32\\logfiles\\firewall\\publicfw.log'":
+## Renamed in v5.0.0 to 'is configured'
+  "(L1) Ensure 'Windows Firewall: Public: Logging: Name' is configured'":
     'HKLM\SOFTWARE\Policies\Microsoft\WindowsFirewall\PublicProfile\Logging\LogFilePath':
       ensure:    present
       type:      'string'
@@ -538,29 +545,29 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Do not allow password expiration time longer than required by policy' is set to 'Enabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft Services\AdmPwd\PwdExpirationProtectionEnabled':
 #      ensure:    present
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Enable Local Admin Password Management' is set to 'Enabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft Services\AdmPwd\AdmPwdEnabled':
 #      ensure:    present
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters'":
 #    'HKLM\SOFTWARE\Policies\Microsoft Services\AdmPwd\PasswordComplexity':
 #      ensure:    present
 #      data:      4
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more'":
 #    'HKLM\SOFTWARE\Policies\Microsoft Services\AdmPwd\PasswordLength':
 #      ensure:    present
 #      data:      15
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer'":
 #    'HKLM\SOFTWARE\Policies\Microsoft Services\AdmPwd\PasswordAgeDays':
 #      ensure:    present
@@ -593,7 +600,7 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      2
 
-## removed in v1.6.0 1809
+## Removed in v1.6.0 1809
 #  "(L1) Turn on Windows Defender protection against Potentially Unwanted Applications is set to Enabled":
 #    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine\MpEnablePus':
 #      ensure:    present
@@ -636,12 +643,13 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\SafeDllSearchMode':
       ensure:    present
 
-# Renamed in v3.0.0
-  "(L1) Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires' is set to 'Enabled: 5 or fewer seconds'":
-    'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\ScreenSaverGracePeriod':
-      ensure:    present
-      type:      'string'
-      data:      '0'
+## Removed in v5.0.0
+## Renamed in v3.0.0
+#  "(L1) Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires' is set to 'Enabled: 5 or fewer seconds'":
+#    'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\ScreenSaverGracePeriod':
+#      ensure:    present
+#      type:      'string'
+#      data:      '0'
 
   "(L1) Ensure 'MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning is set' to 'Enabled: 90% or less'":
     'HKLM\SYSTEM\CurrentControlSet\Services\Eventlog\Security\WarningLevel':
@@ -712,15 +720,17 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      3
 
-  "(L1) Ensure 'Configure registry policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoBackgroundPolicy':
-      ensure:    present
-      data:      0
+## Removed in v5.0.0
+#  "(L1) Ensure 'Configure registry policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoBackgroundPolicy':
+#      ensure:    present
+#      data:      0
 
-  "(L1) Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoGPOListChanges':
-      ensure:    present
-      data:      0
+## Removed in v5.0.0
+#  "(L1) Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoGPOListChanges':
+#      ensure:    present
+#      data:      0
 
   "(L1) Ensure 'Continue experiences on this device' is set to 'Disabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\System\EnableCdp':
@@ -851,7 +861,7 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-## removed in 1.5.0 v1803
+## Removed in 1.5.0 v1803
 #  "(L1) Disable pre-release features or settings is set to Disabled":
 #    'HKLM\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds\EnableConfigFlighting':
 #      ensure:    present
@@ -940,37 +950,37 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftAccount\DisableUserAuth':
       ensure:    present
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Allow Address bar drop-down list suggestions' is set to 'Disabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\ServiceUI\ShowOneBox':
 #      ensure:    present
 #      data:      0
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Allow Adobe Flash' is set to 'Disabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Addons\FlashPlayerEnabled':
 #      ensure:    present
 #      data:      0
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Allow InPrivate Browsing' is set to 'Disabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main\AllowInPrivate':
 #      ensure:    present
 #      data:      0
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Configure cookies' is set to 'Enabled: Block only 3rd-party cookies or higher'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main\Cookies':
 #      ensure:    present
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Configure Password Manager' is set to 'Disabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main\FormSuggest Passwords':
 #      ensure:    present
 #      type:      'string'
 #      data:      'no'
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  This setting has inverted logic !
 #  "(L1) Ensure 'Configure Pop-up Blocker' is set to 'Enabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main\AllowPopups':
@@ -978,33 +988,33 @@ cis_security_hardening_windows::cis_level_1:
 #      type:      'string'
 #      data:      'yes'
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Configure search suggestions in Address bar' is set to 'Disabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\SearchScopes\ShowSearchSuggestionsGlobal':
 #      ensure:    present
 #      data:      0
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Configure the Adobe Flash Click-to-Run setting' is set to 'Enabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Security\FlashClickToRunMode':
 #      ensure:    present
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Prevent access to the about:flags page in Microsoft Edge is set to 'Enabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main\PreventAccessToAboutFlagsInMicrosoftEdge':
 #      ensure:    present
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Prevent bypassing Windows Defender SmartScreen prompts for files' is set to 'Enabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter\PreventOverrideAppRepUnknown':
 #      ensure:    present
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Prevent certificate error overrides' is set to 'Enabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Internet Settings\PreventCertErrorOverrides':
 #      ensure:    present
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Prevent using Localhost IP address for WebRTC' is set to 'Enabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main\HideLocalHostIP':
 #      ensure:    present
@@ -1040,9 +1050,10 @@ cis_security_hardening_windows::cis_level_1:
 #      ensure:    present
 #      data:      0
 
-  "(L1) Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive\DisableFileSyncNGSC':
-      ensure:    present
+## Moved to L2 in v5.0.0
+#  "(L1) Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive\DisableFileSyncNGSC':
+#      ensure:    present
 
   "(L1) Ensure 'Do not allow passwords to be saved' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\DisablePasswordSaving':
@@ -1069,7 +1080,7 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\DeleteTempDirsOnExit':
       ensure:    present
 
-## removed in v1.9.0 2004
+## Removed in v1.9.0 2004
 #  "(L1) Do not use temporary folders per session is set to Disabled":
 #    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\PerSessionTempDir':
 #      ensure:    present
@@ -1120,12 +1131,12 @@ cis_security_hardening_windows::cis_level_1:
       type:      'string'
       data:      'Block'
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter\EnabledV9':
 #      ensure:    present
 
-# Removed in v3.0.0
+## Removed in v3.0.0
 #  "(L1) Ensure 'Prevent bypassing Windows Defender SmartScreen prompts for sites' is set to 'Enabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\PhishingFilter\PreventOverride':
 #      ensure:    present
@@ -1140,10 +1151,11 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-  "(L1) Ensure 'Allow user control over installs' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\EnableUserControl':
-      ensure:    present
-      data:      0
+## Removed in v5.0.0
+#  "(L1) Ensure 'Allow user control over installs' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\EnableUserControl':
+#      ensure:    present
+#      data:      0
 
   "(L1) Ensure 'Always install with elevated privileges is set to 'Disabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated':
@@ -1225,13 +1237,15 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\ManagePreviewBuildsPolicyValue':
       ensure:    present
 
-  "(L1) Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: 180 or more'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\DeferFeatureUpdates':
-      ensure:    present
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\DeferFeatureUpdatesPeriodInDays':
-      ensure:    present
-      data:      '180'
-## removed in 1903 v1.7.0 (Semi-Annual Channel for 1809 and below)
+## Removed in v5.0.0
+#  "(L1) Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: 180 or more'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\DeferFeatureUpdates':
+#      ensure:    present
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\DeferFeatureUpdatesPeriodInDays':
+#      ensure:    present
+#      data:      '180'
+
+## Removed in 1903 v1.7.0 (Semi-Annual Channel for 1809 and below)
 #    'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\BranchReadinessLevel':
 #      ensure:    present
 #      data:      '32'
@@ -1365,7 +1379,7 @@ cis_security_hardening_windows::cis_level_1:
 
 ## ----------- updates from CIS 1809 v1.6.0 ----------- ##
 
-## removed in v1.11.0 21H1
+## Removed in v1.11.0 21H1
 #  "(L1) Ensure 'Allow Sideloading of extension' is set to 'Disabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Extensions\AllowSideloadingOfExtensions':
 #      ensure:    present
@@ -1375,7 +1389,7 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\PUAProtection':
       ensure:    present
 
-## removed in v1.9.0 2004
+## Removed in v1.9.0 2004
 #  "(L1) Ensure 'Allow users to trust files that open in Windows Defender Application Guard' is set to 'Enabled: 0 (Do not allow users to manually trust files)' OR '2 (Allow users to manually trust after an antivirus check)'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\AppHVSI\FileTrustCriteria':
 #      ensure:    present
@@ -1481,7 +1495,8 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-  "(L1) Ensure 'Prevent device metadata retrieval from the Internet' is set to 'Enabled'":
+# Renamed in v5.0.0 from "'Prevent device metadata retrieval from the Internet'"
+  "(L1) Ensure 'Prevent automatic download of applications associated with device metadata' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\Device Metadata\PreventDeviceMetadataFromNetwork':
       ensure:    present
 
@@ -1505,29 +1520,31 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection\EnableOneSettingsAuditing':
       ensure:    present
 
-## CIS PDF is missing \Windows in listed regkey path
-  "(L1) Ensure 'Limit Diagnostic Log Collection' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection\LimitDiagnosticLogCollection':
-      ensure:    present
+## Moved to L2 in v5.0.0
+#  "(L1) Ensure 'Limit Diagnostic Log Collection' is set to 'Enabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection\LimitDiagnosticLogCollection':
+#      ensure:    present
 
-## CIS PDF is missing \Windows in listed regkey path
-  "(L1) Ensure 'Limit Dump Collection' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection\LimitDumpCollection':
-      ensure:    present
+## Moved to L2 in v5.0.0
+#  "(L1) Ensure 'Limit Dump Collection' is set to 'Enabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection\LimitDumpCollection':
+#      ensure:    present
 
   "(L1) Ensure 'Turn on script scanning' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection\DisableScriptScanning':
       ensure:    present
       data:      0
 
-  "(L1) Ensure 'Allow widgets' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Dsh\AllowNewsAndInterests':
-      ensure:    present
-      data:      0
+## Moved to L2 in v5.0.0
+#  "(L1) Ensure 'Allow widgets' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Dsh\AllowNewsAndInterests':
+#      ensure:    present
+#      data:      0
 
-  "(L1) Ensure 'Disable OneSettings Downloads' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection\DisableOneSettingsDownloads':
-      ensure:    present
+## Removed in v5.0.0
+#  "(L1) Ensure 'Disable OneSettings Downloads' is set to 'Enabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection\DisableOneSettingsDownloads':
+#      ensure:    present
 
   "(L1) Ensure 'Allow clipboard sharing with Windows Sandbox' is set to 'Disabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\Sandbox\AllowClipboardRedirection':
@@ -1568,8 +1585,9 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SYSTEM\CurrentControlSet\Control\Print\RpcAuthnLevelPrivacyEnabled':
       ensure:    present
 
+# Updated in v5.0.0 with new registry location for 24H2
   "(L1) Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock'":
-    'HKLM\SYSTEM\CurrentControlSet\Control\Lsa\RunAsPPL':
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\System\RunAsPPL':
       ensure:    present
 
   "(L1) Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution on public networks'":
@@ -1700,7 +1718,13 @@ cis_security_hardening_windows::cis_level_1:
     'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\ADPasswordEncryptionEnabled':
       ensure:    present
 
-  "(L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters'":
+# Updated in v5.0.0 to allow passphrases
+# 4	Large letters + small letters + numbers + special characters	All character sets from 3, plus ,.-+;!# &@{}[]$/()%	Default value; recommended
+# 5	Large letters + small letters + numbers + special characters (improved readability)	Uses specific character sets designed for better readability, e.g., omits I, L, O, 1, etc.	Windows 11 24H2, Windows Server 2025, and later releases only
+# 6	Passphrase (words)	Generates a string of words rather than a traditional password	Windows 11 24H2, Windows Server 2025, and later releases only
+# 7	Passphrase (words) + mixed case	Passphrase with mixed-case words	Windows 11 24H2, Windows Server 2025, and later releases only
+# 8	Passphrase (words) + mixed case + numbers
+  "(L1) Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters or Passphrase'":
     'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\PasswordComplexity':
       ensure:    present
       data:      4
@@ -1753,10 +1777,11 @@ cis_security_hardening_windows::cis_level_1:
 
 
 ## ----------- updates from CIS v4.0.0 ----------- ##
-  "(L1) Ensure 'Turn on Basic feed authentication over HTTP' is set to 'Disabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\AllowBasicAuthInClear':
-      ensure:    present
-      data:      0
+## Remvoed in v5.0.0
+#  "(L1) Ensure 'Turn on Basic feed authentication over HTTP' is set to 'Disabled'":
+#    'HKLM\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\AllowBasicAuthInClear':
+#      ensure:    present
+#      data:      0
 
   "(L1) Ensure 'Network security: LDAP client encryption requirements' is set to 'Negotiate sealing' or higher":
     'HKLM\SYSTEM\CurrentControlSet\Services\LDAP\LDAPClientConfidentiality':
@@ -1874,3 +1899,29 @@ cis_security_hardening_windows::cis_level_1:
   "(L1) Ensure 'Require Encryption' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\RequireEncryption':
       ensure:    present
+
+
+## ----------- updates from CIS v5.0.0 ----------- ##
+# Moved from L2 in v5.0.0
+  "(L1) Ensure 'Join Microsoft MAPS' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet\SpynetReporting':
+      ensure:    present
+      data:      2
+
+  "(L1) Ensure 'Enable / disable CLFS logfile authentication' is set to 'Enabled'":
+    'HKLM\SYSTEM\CurrentControlSet\Policies\ClfsAuthenticationChecking':
+      ensure:    present
+
+  "(L1) Ensure 'Allow Recall to be enabled' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsAI\AllowRecallEnablement':
+      ensure:    present
+      data:      0
+
+  "(L1) Ensure 'Disable HTTP proxy features: Disable WPAD' is set to 'Enabled: Checked'":
+    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp\DisableWpad':
+      ensure:    present
+
+  "(L1) Ensure 'Disable HTTP proxy features: Disable proxy authentication' is set to 'Enabled: Disable authentication over loopback interfaces' or higher":
+    'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\DisableProxyAuthenticationSchemes':
+      ensure:    present
+      data:      287
