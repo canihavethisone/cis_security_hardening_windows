@@ -26,8 +26,9 @@
 ## Overview
 
 This module applies CIS benchmark hardening with a default 100% validation pass and 100% test coverage to:
-- **Windows 10**: Configurable, defaulted to domain-joined Level 1 & 2 + NG + BL (currently v4.0.0)
-- **Windows 11**: Configurable, defaulted to domain-joined Level 1 & 2 + BL (currently v4.0.0)
+- **Windows 11**: Configurable, defaulted to Enterprise Level 1 & 2 + BL (currently v5.0.0)
+- **Windows 10**: Configurable, defaulted to Enterprise Level 1 & 2 + NG + BL (currently v4.0.0)
+
 
 
 [It also configures additional system resources as described below](#building-on-cis-controls)
