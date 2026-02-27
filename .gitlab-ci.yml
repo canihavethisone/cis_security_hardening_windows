@@ -18,8 +18,8 @@ unit_testing:
     - bundle install --jobs $(nproc) "${FLAGS[@]}"
     - bundle exec rake spec
   stage: unit_testing
-  except:
-      - main
+  # except:
+  #   - main
 
 acceptance_testing:
   script:
