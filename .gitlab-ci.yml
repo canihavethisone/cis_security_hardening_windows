@@ -16,7 +16,7 @@ unit_testing:
     # - bundle config set deployment true
     - bundle config set --local path 'vendor'
     - bundle install --jobs $(nproc) "${FLAGS[@]}"
-    - bundle exec rake spec
+    - time bundle exec rake spec
   stage: unit_testing
   # except:
   #   - main
@@ -27,7 +27,7 @@ acceptance_testing:
     - bundle config set --local path 'vendor'
     - bundle install --jobs $(nproc) "${FLAGS[@]}"
     # - bundle exec rake -j 100 acceptance:all_p
-    - bundle exec rake -j 100 acceptance:windows_p
+    - time bundle exec rake -j 100 acceptance:windows_p
   stage: acceptance_testing
   #except:
   #  - main
