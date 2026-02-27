@@ -1,5 +1,5 @@
 stages:
-#  - unit_testing
+  - unit_testing
   - acceptance_testing
 
 before_script:
@@ -23,7 +23,7 @@ unit_testing:
 
 acceptance_testing:
   script:
-    - bundle config set deployment true
+    # - bundle config set deployment true
     - bundle config set --local path 'vendor'
     - bundle install --jobs $(nproc) "${FLAGS[@]}"
     - bundle exec rake -j 100 acceptance:all_p
