@@ -11,24 +11,28 @@ before_script:
   # Will fail if the version given in metadata.json does not match the latest CHANGELOG entry
   # - head -n5 CHANGELOG.md | grep $(jq -r '.version' < metadata.json)
 
+cache:
+  key: "$CI_PROJECT_ID"
+  paths:
+    - vendor/
+
 unit_testing:
+  stage: unit_testing
   script:
     # - bundle config set deployment true
     - bundle config set --local path 'vendor'
     - bundle install --jobs $(nproc) "${FLAGS[@]}"
     - time bundle exec rake spec
-  stage: unit_testing
   # except:
   #   - main
 
 acceptance_testing:
+  stage: acceptance_testing
   script:
     # - bundle config set deployment true
     - bundle config set --local path 'vendor'
     - bundle install --jobs $(nproc) "${FLAGS[@]}"
     # - bundle exec rake -j 100 acceptance:all_p
     - time bundle exec rake -j 100 acceptance:windows_p
-  stage: acceptance_testing
   #except:
   #  - main
-

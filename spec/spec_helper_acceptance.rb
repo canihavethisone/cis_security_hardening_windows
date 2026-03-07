@@ -137,8 +137,6 @@ end
 ## Stop firewall
 def stop_firewall_on(host)
   case host['platform']
-  when %r{debian}
-    on host, 'iptables -F', acceptable_exit_codes: [0, 1]
   when %r{fedora|el-|centos}
     on(host, 'puppet resource service firewalld ensure=stopped', acceptable_exit_codes: [0, 1])
   when %r{debian}
@@ -159,10 +157,10 @@ def install_puppetserver(host)
 end
 
 ## Setup Puppet agent on windows
-def setup_puppet_on(host)
+def setup_puppet_on(agents)
   agents.each do |agent|
     agent_ip, agent_fqdn = get_ip_and_fqdn(agent)
-    print_stage("Configuring agent at #{agent_ip} #{agent_fqdn}")
+    print_stage("Configuring agent at #{agent_ip} #{agent_fqdn} Platform: #{(agent['platform'] || 'unknown')}")
     case agent['platform']
     when %r{windows}i
       # Set network profile to private
@@ -198,7 +196,7 @@ end
 
 ## Setup Puppetserver
 def setup_puppetserver_on(host)
-  print_stage("Configuring master at #{MASTER_IP} #{MASTER_FQDN} #{host}")
+  print_stage("Configuring master at #{MASTER_IP} #{MASTER_FQDN} #{host} Platform: #{(host['platform'] || 'unknown')}")
   # Set class under test to console display. Requires restart of tty1 serivce to display without logon or reboot
   agent_names = agents.map { |a| "#{a['roles'].first.gsub('agent_', '').ljust(20)}#{a.node_name.ljust(30)}#{a.ip.ljust(40)}" }.join("\n")
   master_info = "#{master['roles'].first.ljust(20)}#{MASTER_FQDN.ljust(30)}#{MASTER_IP.ljust(40)}"
