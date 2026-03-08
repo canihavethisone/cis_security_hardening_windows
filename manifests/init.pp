@@ -87,7 +87,6 @@ class cis_security_hardening_windows (
   }
 
   # Set power scheme to high performance to prevent sleep
-  # Using array form for command and onlyif to avoid quoting/space issues in PowerShell
   if $performance_powerscheme {
     exec { 'power_scheme_high':
       command   => 'powercfg.exe /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c',
@@ -154,7 +153,6 @@ class cis_security_hardening_windows (
 
   if $clear_temp_files {
     # Clear user temp directory
-    # Using array form for command and onlyif to avoid quoting/space issues in PowerShell
     exec { 'clear_user_temp':
       command  => 'Remove-Item $env:temp\* -recurse -force -ErrorAction SilentlyContinue',
       onlyif   => 'if (Test-Path $env:temp\* -exclude aria*.*) { exit 0 } else { exit 1 }',
@@ -162,7 +160,6 @@ class cis_security_hardening_windows (
     }
 
     # Clear windows(system) temp directory
-    # Using array form for command and onlyif to avoid quoting/space issues in PowerShell
     exec { 'clear_windows_temp':
       command  => 'Get-ChildItem ([Environment]::GetEnvironmentVariable("TEMP","Machine")) -recurse -exclude secedit.inf,vmware* | remove-item -recurse -force -ErrorAction SilentlyContinue',
       onlyif   => 'if (Get-ChildItem ([Environment]::GetEnvironmentVariable("TEMP","Machine")) -exclude secedit.inf,vmware*) { exit 0 } else { exit 1 }',
