@@ -6,7 +6,7 @@
 #
 # @param [Hash]                         users                    Any users to create
 # @param [Boolean]                      purge_unmanaged_users    If unmanaged users should be purged. Requires users hash to be defined
-# @param [Enum['domain','standalone']]  cis_profile_type         Apply domain or standalone CIS benchmark 
+# @param [Enum['domain','standalone']]  cis_profile_type         Apply domain or standalone CIS benchmark
 # @param [Integer[1,2]]                 cis_enforcement_level    CIS level to apply. Level 2 includes level 1
 # @param [Boolean]                      cis_include_bitlocker    If cis bitlocker rules should be included
 # @param [Boolean]                      cis_include_nextgen      If cis nextgen rules should be included
@@ -23,7 +23,7 @@
 # @param [Boolean]                      catalog_no_cache         Do not cache the puppet catalog on disk, as passwords and other values are in plain text
 #
 class cis_security_hardening_windows (
-  # Type                      'Name',                    Default 
+  # Type                      'Name',                    Default
   # ------------------------------------------------------------
   Hash                        $users                   = {},
   Boolean                     $purge_unmanaged_users   = false,
@@ -87,6 +87,7 @@ class cis_security_hardening_windows (
   }
 
   # Set power scheme to high performance to prevent sleep
+  # Using array form for command and onlyif to avoid quoting/space issues in PowerShell
   if $performance_powerscheme {
     exec { 'power_scheme_high':
       command   => 'powercfg.exe /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c',
@@ -129,9 +130,9 @@ class cis_security_hardening_windows (
   }
 
   resources { 'user': purge => $purge_unmanaged_users, unless_system_user => $purge_unmanaged_users }
-  $users_real.each |String $key, $value| {
-    user { $key:
-      *          => $value,
+  $users_real.each |String $username, Hash $user_params| {
+    user { $username:
+      *          => $user_params,
       membership => 'inclusive',
     }
   }
@@ -153,6 +154,7 @@ class cis_security_hardening_windows (
 
   if $clear_temp_files {
     # Clear user temp directory
+    # Using array form for command and onlyif to avoid quoting/space issues in PowerShell
     exec { 'clear_user_temp':
       command  => 'Remove-Item $env:temp\* -recurse -force -ErrorAction SilentlyContinue',
       onlyif   => 'if (Test-Path $env:temp\* -exclude aria*.*) { exit 0 } else { exit 1 }',
@@ -160,6 +162,7 @@ class cis_security_hardening_windows (
     }
 
     # Clear windows(system) temp directory
+    # Using array form for command and onlyif to avoid quoting/space issues in PowerShell
     exec { 'clear_windows_temp':
       command  => 'Get-ChildItem ([Environment]::GetEnvironmentVariable("TEMP","Machine")) -recurse -exclude secedit.inf,vmware* | remove-item -recurse -force -ErrorAction SilentlyContinue',
       onlyif   => 'if (Get-ChildItem ([Environment]::GetEnvironmentVariable("TEMP","Machine")) -exclude secedit.inf,vmware*) { exit 0 } else { exit 1 }',

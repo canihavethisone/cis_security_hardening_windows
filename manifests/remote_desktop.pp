@@ -4,13 +4,15 @@
 # @example Declaring the class
 #   include cis_security_hardening_windows
 #
-# @param [Array]   trusted_rdp_subnets   Trusted subnets for inbound rdp connections for firewall rules. Undef will be converted to 'any'
-# @param [Boolean] remote_local_accounts If local accounts are permitted to connect remotely. Required if not domain joined
+# @api private
 #
 class cis_security_hardening_windows::remote_desktop (
   $trusted_rdp_subnets,
   $remote_local_accounts,
 ) {
+  # Ensure this class is only called from within the module
+  assert_private()
+
   # Configure firewall. If $trusted_rdp_subnets is empty, 'any' will be used
   windows_firewall_rule { 'Remote Desktop - User Mode (TCP-In)' :
     ensure                => 'present',
