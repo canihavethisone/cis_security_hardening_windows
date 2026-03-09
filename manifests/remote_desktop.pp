@@ -1,10 +1,12 @@
+# @api private
 #
 # Windows remote_desktop class.  It is called from the cis_security_hardening_windows class when $allow_remote_desktop is true.
 #
 # @example Declaring the class
 #   include cis_security_hardening_windows
 #
-# @api private
+# @param trusted_rdp_subnets
+# @param remote_local_accounts
 #
 class cis_security_hardening_windows::remote_desktop (
   $trusted_rdp_subnets,

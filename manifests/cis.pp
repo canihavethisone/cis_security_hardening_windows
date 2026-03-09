@@ -1,9 +1,16 @@
+# @api private
+#
 ## Windows cis class.  It is called from the cis_security_hardening_windows class.  Params are derived from in-module hiera and can be excluded.
 #
 # @example Declaring the class
 #   include cis_security_hardening_windows
 #
-# @api private
+# @param cis_profile_type
+# @param cis_enforcement_level
+# @param cis_include_bitlocker
+# @param cis_include_nextgen
+# @param cis_exclude_rules
+# @param cis_include_hkcu
 #
 class cis_security_hardening_windows::cis (
   $cis_profile_type,

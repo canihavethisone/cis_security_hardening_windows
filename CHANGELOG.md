@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 3.0.1
+
+**Features**
+- Mark internal classes as private
+- Update REFERENCE.md
+- Update README.md
+
+
 ## Release 3.0.0
 
 **Breaking Changes**
