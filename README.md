@@ -54,7 +54,7 @@ Other Windows 10 / 11 parameters include:
 - cis_profile_type
 - cis_enforcement_level
 - cis_include_bitlocker
-- cis_include_nextgen
+- cis_include_nextgen (Windows 10 only)
 - cis_include_hkcu
 - cis_exclude_rules
 - catalog_no_cache
@@ -96,7 +96,7 @@ See example minimum hiera data [here](spec/fixtures/data/minimum.yaml)
 - All recommended domain-joined Level 1 & 2 + NG + BL CIS controls are enforced by default using module hiera (standalone selectable)
 - HKCU registry entries are also optionally applied by copying a preconfigured `Registry.pol` file to `C:/Windows/System32/GroupPolicy/`
 - Comments in module hiera identify the objective of each setting however CIS reference numbers are not shown as they are subject to change
-- Profile Type, Enforcement Level (1 or 2 (1+2)), BitLocker (BL), NextGen (NG) and HKCU policy inclusion are parameterised:
+- Profile Type, Enforcement Level (1 or 2 (1+2)), BitLocker (BL), NextGen (NG - Windows 10 only) and HKCU policy inclusion are parameterised:
   ```yaml
   cis_security_hardening_windows::cis_profile_type:      'domain'
   cis_security_hardening_windows::cis_enforcement_level: 2
