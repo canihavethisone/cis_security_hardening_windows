@@ -54,7 +54,7 @@ RSpec.configure do |c|
     # stub local_security_policy
     allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('Administrators').and_return('S-1-5-32-544')
     allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('Remote Desktop Users').and_return('S-1-5-32-555')
-    allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('LocalService').and_return('S-1-5-19')
+    allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('Local Service').and_return('S-1-5-19')
     allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('Network Service').and_return('S-1-5-20')
     allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('Users').and_return('S-1-5-32-545')
     allow(Puppet::Util::Windows::SID).to receive(:name_to_sid).with('Service').and_return('S-1-5-6')

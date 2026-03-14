@@ -80,7 +80,7 @@ cis_security_hardening_windows::cis_secpol_level_1:
 
   "(L1) Ensure 'Adjust memory quotas for a process' is set to 'Administrators, LOCAL Service, NETWORK Service'":
     'Adjust memory quotas for a process':
-      policy_value: 'Administrators,LocalService,Network Service'
+      policy_value: 'Administrators,Local Service,Network Service'
 #    policy_value: '*S-1-5-32-544,*S-1-5-19,*S-1-5-20'
 
   "(L1) Ensure 'Allow log on locally' is set to 'Administrators, Users'":
@@ -100,18 +100,18 @@ cis_security_hardening_windows::cis_secpol_level_1:
 
 ## Need to confirm if this is required anymore ?
 #    'Bypass traverse checking':
-#      policy_value: 'Administrators,AUTHENTICATED_USERS,LocalService,Network Service,*S-1-5-90-0'
+#      policy_value: 'Administrators,AUTHENTICATED_USERS,Local Service,Network Service,*S-1-5-90-0'
 #      policy_value: '*S-1-5-32-544,*S-1-5-11,*S-1-5-19,*S-1-5-20,*S-1-5-90-0'
 
   "(L1) Ensure 'Change the system time' is set to 'Administrators, LOCAL Service'":
     'Change the system time':
-      policy_value: 'Administrators,LocalService'
+      policy_value: 'Administrators,Local Service'
 #    policy_value: '*S-1-5-32-544,*S-1-5-19'
 
 # Removed in v5.0.0
 #  "(L1) Ensure 'Change the time zone' is set to 'Administrators, LOCAL Service, Users'":
 #    'Change the time zone':
-#      policy_value: 'Administrators,LocalService,Users'
+#      policy_value: 'Administrators,Local Service,Users'
 ##    policy_value: '*S-1-5-32-544,*S-1-5-19,*S-1-5-32-545'
 
   "(L1) Ensure 'Create a pagefile' is set to 'Administrators'":
@@ -126,7 +126,7 @@ cis_security_hardening_windows::cis_secpol_level_1:
 
   "(L1) Ensure 'Create global objects' is set to 'Administrators, LOCAL Service, NETWORK Service, Service'":
     'Create global objects':
-      policy_value: 'Administrators,LocalService,Network Service,Service'
+      policy_value: 'Administrators,Local Service,Network Service,Service'
 #      policy_value: '*S-1-5-32-544,*S-1-5-19,*S-1-5-20,*S-1-5-6'
 
   "(L1) Ensure 'Create permanent shared objects' is set to 'No One'":
@@ -187,13 +187,14 @@ cis_security_hardening_windows::cis_secpol_level_1:
 # Updated in v5.0.0 to include 'RESTRICTED SERVICES\PrintSpoolerService'
   "(L1) Ensure 'Generate security audits' is set to 'LOCAL Service, NETWORK Service, RESTRICTED SERVICES\\PrintSpoolerService'":
     'Generate security audits':
-      policy_value: 'LocalService,Network Service,*S-1-5-99-216390572-1995538116-3857911515-2404958512-2623887229'
+#      policy_value: 'Local Service,Network Service,RESTRICTED SERVICES\PrintSpoolerService'
+      policy_value: 'Local Service,Network Service,*S-1-5-99-216390572-1995538116-3857911515-2404958512-2623887229'
 #      policy_value: '*S-1-5-19,*S-1-5-20,*S-1-5-99-216390572-1995538116-3857911515-2404958512-2623887229'
 
 # Updated in v5.0.0 to include 'RESTRICTED SERVICES\PrintSpoolerService'
   "(L1) Ensure 'Impersonate a client after authentication' is set to 'Administrators, LOCAL Service, NETWORK Service, Service, RESTRICTED SERVICES\\PrintSpoolerService'":
     'Impersonate a client after authentication':
-      policy_value: 'Administrators,LocalService,Network Service,Service,*S-1-5-99-216390572-1995538116-3857911515-2404958512-2623887229'
+      policy_value: 'Administrators,Local Service,Network Service,Service,*S-1-5-99-216390572-1995538116-3857911515-2404958512-2623887229'
 #       policy_value: '*S-1-5-32-544,*S-1-5-19,*S-1-5-20,*S-1-5-6,*S-1-5-99-216390572-1995538116-3857911515-2404958512-2623887229'
 
   "(L1) Ensure 'Increase scheduling priority' is set to 'Administrators, Window Manager\\Window Manager Group'":
@@ -203,7 +204,7 @@ cis_security_hardening_windows::cis_secpol_level_1:
 
 ## Need to confirm if this is required anymore ?
 #  'Increase a process working set':
-#    policy_value: 'Administrators,LocalService'
+#    policy_value: 'Administrators,Local Service'
 #    policy_value: '*S-1-5-32-544,*S-1-5-19'
 
   "(L1) Ensure 'Load and unload device drivers' is set to 'Administrators'":
@@ -248,7 +249,7 @@ cis_security_hardening_windows::cis_secpol_level_1:
 
   "(L1) Ensure 'Replace a process level token' is set to 'LOCAL Service, NETWORK Service'":
     'Replace a process level token':
-      policy_value: 'LocalService,Network Service'
+      policy_value: 'Local Service,Network Service'
 #    policy_value: '*S-1-5-19,*S-1-5-20'
 
   "(L1) Ensure 'Restore files and directories' is set to 'Administrators'":
