@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 **Bugfixes**
 - Add 2 missing Windows 11 regkeys
 - Change references to 'LocalService' to 'Local Service'
+- Remove trailing spaces in some rule names
 
 **Features**
 - Mark internal classes as private
