@@ -194,6 +194,7 @@ cis_security_hardening_windows::cis_include_rules:
   - "(L1) Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
   - "(L1) Ensure 'Enables or disables Windows Game Recording and Broadcasting' is set to 'Disabled'"
   - "(L1) Ensure 'Allow Windows Ink Workspace' is set to 'Enabled: On, but disallow access above lock' OR 'Disabled but not Enabled: On'"
+  - "(L1) Ensure 'Allow user control over installs' is set to 'Disabled'"
   - "(L1) Ensure 'Always install with elevated privileges is set to 'Disabled'"
   - "(L1) Ensure 'Prevent Internet Explorer security prompt for Windows Installer scripts' is set to 'Disabled'"
   - "(L1) Ensure 'Sign-in and lock last interactive user automatically after a restart' is set to 'Disabled'"
@@ -431,9 +432,10 @@ cis_security_hardening_windows::cis_include_rules:
   - "(L2) Ensure 'Interactive logon: Do not require CTRL+ALT+DEL' is set to 'Disabled'"
   - "(L2) Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'"
   - "(L2) Ensure 'Require IPPS for IPP printers' is set to 'Enabled'"
-  - "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate authority' is set to 'Enabled: Checked'": 
-  - "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow non-server certificates' is set to 'Enabled: Checked'": 
-  - "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate common name' is set to 'Enabled: Checked'": 
+  - "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate authority' is set to 'Enabled: Checked'"
+  - "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow non-server certificates' is set to 'Enabled: Checked'"
+  - "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate common name' is set to 'Enabled: Checked'"
+  - "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate date' is set to 'Enabled: Checked'"
   - "(L2) Ensure 'Allow widgets' is set to 'Disabled'"
   - "(L2) Ensure 'Limit Diagnostic Log Collection' is set to 'Enabled'"
   - "(L2) Ensure 'Limit Dump Collection' is set to 'Enabled'"

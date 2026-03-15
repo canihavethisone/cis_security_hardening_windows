@@ -1,22 +1,24 @@
+# @api private
+#
 ## Windows cis class.  It is called from the cis_security_hardening_windows class.  Params are derived from in-module hiera and can be excluded.
 #
 # @example Declaring the class
 #   include cis_security_hardening_windows
 #
-# @param [Enum['domain', 'standalone']]  cis_profile_type       Apply domain or standalone CIS benchmark 
-# @param [Integer[1, 2]]                 cis_enforcement_level  CIS level to apply. Level 2 includes level 1
-# @param [Boolean]                       cis_include_bitlocker  If cis bitlocker rules should be included
-# @param [Boolean]                       cis_include_nextgen    If cis nextgen rules should be included
-# @param [Hash]                          cis_exclude_rules      Lookup of optional array for cis_exclude_rules (to opt out of included rules)
-# @param [Boolean]                       cis_include_hkcu       If true, lgpo is used to import group policy objects for HKCU as puppetlabs/registry cannot apply them
+# @param cis_profile_type
+# @param cis_enforcement_level
+# @param cis_include_bitlocker
+# @param cis_include_nextgen
+# @param cis_exclude_rules
+# @param cis_include_hkcu
 #
 class cis_security_hardening_windows::cis (
   $cis_profile_type,
   $cis_enforcement_level,
   $cis_include_bitlocker,
   $cis_include_nextgen,
-  $cis_include_hkcu,
   $cis_exclude_rules,
+  $cis_include_hkcu,
 ) {
   # Assign values to CIS hashes from in-module hiera.  Legacy lookup is used here to support testing
   # Variable                     ( 'Name',                                                  Type,  Merge, Default )

@@ -617,16 +617,20 @@ cis_security_hardening_windows::cis_level_2:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\IPP\RequireIpps':
       ensure:    present
 
-  "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate authority' is set to 'Enabled: Checked'": 
+  "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate authority' is set to 'Enabled: Checked'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\IPP\SecurityFlagsBlockUnknownCA':
       ensure:    present
 
-  "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow non-server certificates' is set to 'Enabled: Checked'": 
+  "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow non-server certificates' is set to 'Enabled: Checked'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\IPP\SecurityFlagsBlockCertWrongUsage':
       ensure:    present
 
-  "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate common name' is set to 'Enabled: Checked'": 
+  "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate common name' is set to 'Enabled: Checked'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\IPP\SecurityFlagsBlockCertCNInvalid':
+      ensure:    present
+
+  "(L2) Ensure 'Set TLS/SSL security policy for IPP printers: Disallow invalid certificate date' is set to 'Enabled: Checked'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\IPP\SecurityFlagsBlockCertDateInvalid':
       ensure:    present
 
   "(L2) Ensure 'Allow widgets' is set to 'Disabled'":

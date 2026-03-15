@@ -6,7 +6,7 @@
 #
 # @param [Hash]                         users                    Any users to create
 # @param [Boolean]                      purge_unmanaged_users    If unmanaged users should be purged. Requires users hash to be defined
-# @param [Enum['domain','standalone']]  cis_profile_type         Apply domain or standalone CIS benchmark 
+# @param [Enum['domain','standalone']]  cis_profile_type         Apply domain or standalone CIS benchmark
 # @param [Integer[1,2]]                 cis_enforcement_level    CIS level to apply. Level 2 includes level 1
 # @param [Boolean]                      cis_include_bitlocker    If cis bitlocker rules should be included
 # @param [Boolean]                      cis_include_nextgen      If cis nextgen rules should be included
@@ -23,7 +23,7 @@
 # @param [Boolean]                      catalog_no_cache         Do not cache the puppet catalog on disk, as passwords and other values are in plain text
 #
 class cis_security_hardening_windows (
-  # Type                      'Name',                    Default 
+  # Type                      'Name',                    Default
   # ------------------------------------------------------------
   Hash                        $users                   = {},
   Boolean                     $purge_unmanaged_users   = false,
@@ -129,9 +129,9 @@ class cis_security_hardening_windows (
   }
 
   resources { 'user': purge => $purge_unmanaged_users, unless_system_user => $purge_unmanaged_users }
-  $users_real.each |String $key, $value| {
-    user { $key:
-      *          => $value,
+  $users_real.each |String $username, Hash $user_params| {
+    user { $username:
+      *          => $user_params,
       membership => 'inclusive',
     }
   }

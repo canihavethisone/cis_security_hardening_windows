@@ -1151,11 +1151,10 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
       data:      0
 
-## Removed in v5.0.0
-#  "(L1) Ensure 'Allow user control over installs' is set to 'Disabled'":
-#    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\EnableUserControl':
-#      ensure:    present
-#      data:      0
+  "(L1) Ensure 'Allow user control over installs' is set to 'Disabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\EnableUserControl':
+      ensure:    present
+      data:      0
 
   "(L1) Ensure 'Always install with elevated privileges is set to 'Disabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated':
@@ -1777,7 +1776,7 @@ cis_security_hardening_windows::cis_level_1:
 
 
 ## ----------- updates from CIS v4.0.0 ----------- ##
-## Remvoed in v5.0.0
+## Removed in v5.0.0
 #  "(L1) Ensure 'Turn on Basic feed authentication over HTTP' is set to 'Disabled'":
 #    'HKLM\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds\AllowBasicAuthInClear':
 #      ensure:    present
