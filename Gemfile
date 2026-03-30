@@ -3,7 +3,7 @@ source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
 # Unit / fast tests
 group :test do
-  gem 'beaker-openstack', '>= 2.0', '< 3.0', require: false
+  gem 'beaker-openstack', '>= 2.1.0', '< 3.0', require: false
   gem 'hiera-eyaml', '>= 4.0', '< 5.0', require: false
   gem 'in-parallel', '>= 1.0', '< 2.0', require: false
   gem 'puppet_metadata', '>= 5.0', '< 7.0', require: false

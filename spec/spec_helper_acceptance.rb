@@ -40,7 +40,8 @@ TEST_FILES = File.expand_path(File.join(File.dirname(__FILE__), 'acceptance', 'f
 DEPENDENCY_LIST = 'fixtures'.freeze
 
 # Dirs to rsync to master for testing
-FILES_TO_COPY = "data/ manifests/ files/ lib/ ./hiera.yaml ./metadata.json"
+#FILES_TO_COPY = "data/ manifests/ files/ lib/ ./hiera.yaml ./metadata.json"
+FILES_TO_COPY = %w[data manifests files lib hiera.yaml metadata.json]
 
 # Safer: prefer hostname -I and filter loopback/APIPA so multiple addresses don't break parsing
 MASTER_IP = on(master, "hostname -I | tr ' ' '\\n' | grep -vE '^(127|169)\\.' | head -n1").stdout.strip # master.get_ip
@@ -241,8 +242,20 @@ def install_modules_on(host)
 
   # Copy only required files to the master for testing
   info_msg("Copying required module files to master at #{MASTER_IP} #{MASTER_FQDN}")
-  system("rsync -avR #{FILES_TO_COPY} root@#{MASTER_IP}:/etc/puppetlabs/code/environments/production/modules/cis_security_hardening_windows") || (raise "rsync failed")
-               
+  # system("rsync -avR #{FILES_TO_COPY} root@#{MASTER_IP}:/etc/puppetlabs/code/environments/production/modules/cis_security_hardening_windows") || (raise "rsync failed")
+
+  target = '/etc/puppetlabs/code/environments/production/modules/cis_security_hardening_windows'
+  on(master, "mkdir -p #{target}")
+  FILES_TO_COPY.each do |path|
+    full_path = File.join(PROJECT_ROOT, path)
+    if File.directory?(full_path)
+      # copy contents, not directory itself
+      scp_to(master, full_path, "#{target}", recursive: true)
+    else
+      scp_to(master, full_path, target)
+    end
+  end
+
   on(master, "echo -e 'modulepath = /etc/puppetlabs/code/environments/#{ENVIRONMENT}/modules' > /etc/puppetlabs/code/environments/#{ENVIRONMENT}/environment.conf")
   on(master, 'puppet module list --tree')
 end

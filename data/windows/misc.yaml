@@ -6,10 +6,11 @@ cis_security_hardening_windows::misc_registry:
 # Puppet use dedicated Event Log entry
   'HKLM\SYSTEM\CurrentControlSet\Services\EventLog\Puppet\Puppet\EventMessageFile':
     ensure: present
-    data:   '%SystemRoot%\System32\EventCreate.exe'
     type:   'expand'
+    data:   '%SystemRoot%\System32\EventCreate.exe'
   'HKLM\SYSTEM\CurrentControlSet\Services\EventLog\Puppet\Puppet\TypesSupported':
     ensure: present
+    type:   'dword'
     data:   '7'
 
 ## ----------- from STIG ----------- ##

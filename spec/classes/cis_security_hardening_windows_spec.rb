@@ -253,7 +253,14 @@ describe 'cis_security_hardening_windows' do
           it do
             is_expected.to contain_registry_value('HKLM\\SYSTEM\\CurrentControlSet\\Services\\EventLog\\Puppet\\Puppet\\EventMessageFile').with(
               'type' => 'expand',
-              'data' => 'C:\Program Files\Puppet Labs\Puppet\puppet\bin\puppetres.dll',
+              'data' => '%SystemRoot%\System32\EventCreate.exe',
+            )
+          end
+
+          it do
+            is_expected.to contain_registry_value('HKLM\SYSTEM\CurrentControlSet\Services\EventLog\Puppet\Puppet\TypesSupported').with(
+              'type' => 'dword',
+              'data' => '7',
             )
           end
 
