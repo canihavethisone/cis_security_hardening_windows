@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 3.0.2
+
+**Bugfixes**
+- Fix Puppet event log entries in misc registry keys
+
+
 ## Release 3.0.1
 
 **Bugfixes**
