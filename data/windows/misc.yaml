@@ -6,9 +6,11 @@ cis_security_hardening_windows::misc_registry:
 # Puppet use dedicated Event Log entry
   'HKLM\SYSTEM\CurrentControlSet\Services\EventLog\Puppet\Puppet\EventMessageFile':
     ensure: present
-    data:   'C:\Program Files\Puppet Labs\Puppet\puppet\bin\puppetres.dll'
+    data:   '%SystemRoot%\System32\EventCreate.exe'
     type:   'expand'
-
+  'HKLM\SYSTEM\CurrentControlSet\Services\EventLog\Puppet\Puppet\TypesSupported':
+    ensure: present
+    data:   '7'
 
 ## ----------- from STIG ----------- ##
 # The Server Message Block (SMB) v1 protocol must be disabled on the SMB client
