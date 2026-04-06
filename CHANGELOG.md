@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 **Bugfixes**
 - Fix Puppet event log entries in misc registry keys
+- Split out 'Virtualization Based Security' settings to match CIS rule titles
 
 
 ## Release 3.0.1

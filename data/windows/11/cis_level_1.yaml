@@ -1399,23 +1399,30 @@ cis_security_hardening_windows::cis_level_1:
       ensure:    present
 
 ## Moved from NG to L1 in v2.0.0 22H2
-  "(L1) Ensure 'Turn On Virtualization Based Security: Secure Launch Configuration' is set to 'Enabled'":
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\ConfigureSystemGuardLaunch':
-      ensure:    present
+  "(L1) Ensure 'Turn On Virtualization Based Security' is set to 'Enabled'":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\EnableVirtualizationBasedSecurity':
       ensure:    present
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\HVCIMATRequired':
-      ensure:    present
-#      data:      0
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\HypervisorEnforcedCodeIntegrity':
-      ensure:    present
-#      data:      3
-    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\LsaCfgFlags':
-      ensure:    present
-#      data:      3
+
+  "(L1) Ensure 'Turn On Virtualization Based Security: Select Platform Security Level' is set to 'Secure Boot' or higher":
     'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\RequirePlatformSecurityFeatures':
       ensure:    present
       data:      3
+
+  "(L1) Ensure 'Turn On Virtualization Based Security: Virtualization Based Protection of Code Integrity' is set to 'Enabled with UEFI lock'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\HypervisorEnforcedCodeIntegrity':
+      ensure:    present
+
+  "(L1) Ensure 'Turn On Virtualization Based Security: Require UEFI Memory Attributes Table' is set to 'True (checked)'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\HVCIMATRequired':
+      ensure:    present
+
+  "(L1) Ensure 'Turn On Virtualization Based Security: Credential Guard Configuration' is set to 'Enabled with UEFI lock'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\LsaCfgFlags':
+      ensure:    present
+
+  "(L1) Ensure 'Turn On Virtualization Based Security: Secure Launch Configuration' is set to 'Enabled'":
+    'HKLM\SOFTWARE\Policies\Microsoft\Windows\DeviceGuard\ConfigureSystemGuardLaunch':
+      ensure:    present
 
 ## Moved from NG to L1 in v2.0.0 22H2
   "(L1) Ensure 'Allow camera and microphone access in Windows Defender Application Guard'":
