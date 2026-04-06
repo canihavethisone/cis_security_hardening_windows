@@ -386,6 +386,7 @@ cis_security_hardening_windows::cis_level_2:
     'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform\NoGenTicket':
       ensure:    present
 
+## WARNING: This appears to prevent Windows Defender UI from being launched
   "(L2) Ensure 'Disable all apps from Windows Store is set to Disabled":
     'HKLM\SOFTWARE\Policies\Microsoft\WindowsStore\DisableStoreApps':
       ensure:    present
