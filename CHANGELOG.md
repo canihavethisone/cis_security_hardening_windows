@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## Release 3.0.2
 
+**Features**
+- Users hash now adds 'sensitive' attribute to passwords to prevent passwords appearing in logs
+
 **Bugfixes**
 - Fix Puppet event log entries in misc registry keys
 - Split out 'Virtualization Based Security' settings to match CIS rule titles

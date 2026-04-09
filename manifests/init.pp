@@ -130,8 +130,14 @@ class cis_security_hardening_windows (
 
   resources { 'user': purge => $purge_unmanaged_users, unless_system_user => $purge_unmanaged_users }
   $users_real.each |String $username, Hash $user_params| {
+    # The new sensitive 'password' value overwrites the old one to avoid logging, all other keys remain untouched
+    $final_params = if $user_params['password'] {
+      $user_params + { 'password' => Sensitive($user_params['password']) }
+    } else {
+      $user_params
+    }
     user { $username:
-      *          => $user_params,
+      *          => $final_params,
       membership => 'inclusive',
     }
   }
