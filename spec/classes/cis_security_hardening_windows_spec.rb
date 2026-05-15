@@ -347,6 +347,60 @@ describe 'cis_security_hardening_windows' do
           it { is_expected.to contain_class('cis_security_hardening_windows::cis') }
           it { is_expected.not_to contain_class('cis_security_hardening_windows::remote_desktop') }
 
+          ## Registry
+          # Initialize an empty hash to store combined YAML data
+          combined_yaml_data = {}
+          # List of YAML files to load, dynamically using the Windows release version
+          yaml_files = Dir["./data/windows/#{facts[:os]['release']['major']}/*.yaml"]
+
+          # Iterate over each YAML file and merge its data into the combined hash
+          yaml_files.each do |file|
+            yaml_data = YAML.load_file(file)
+            combined_yaml_data.merge!(yaml_data)
+          end
+
+          # List of specific hash titles to access
+          hash_titles = [
+            'cis_security_hardening_windows::cis_standalone_overrides',
+          ]
+
+          # Access and merge specified hashes from the hierarchy
+          combined_data = hash_titles.map { |title| combined_yaml_data[title] || {} }.reduce(&:merge)
+
+          # Iterate over the hash
+          combined_data.each do |title, hash|
+            hash.each do |value, properties|
+              # Set default values if 'type' or 'data' is not present
+              properties['type'] ||= 'dword'
+              properties['data'] ||= 1
+
+              describe "Registry value: #{title}" do
+                it do
+                  # Compare the heira values to those in the catalog
+                  is_expected.to contain_registry_value(value).with(
+                    'type' => properties['type'],
+                    'data' => properties['data'],
+                  )
+                end
+              end
+
+              # Extract path of 'value' using regex and add it to an array
+              extracted_keys = []
+              extracted_key = value.gsub(%r{[\\\*]+[^\\\*]+$}, '')
+              extracted_keys << extracted_key if extracted_key
+
+              # Ensure that the registry keys are also specified, as these are created if they don't exit
+              describe "Registry key: #{title}" do
+                extracted_keys.each do |key|
+                  it do
+                    # Compare the heira values to those in the catalog
+                    is_expected.to contain_registry_key(key)
+                  end
+                end
+              end
+            end
+          end
+
           ## Sample of standalone rules expected to be absent
           absent_registry_values = [
             'HKLM\\SYSTEM\\CurrentControlSet\\Services\\Netlogon\\Parameters\\RequireSignOrSeal',

@@ -21,16 +21,17 @@ class cis_security_hardening_windows::cis (
   $cis_include_hkcu,
 ) {
   # Assign values to CIS hashes from in-module hiera.  Legacy lookup is used here to support testing
-  # Variable                     ( 'Name',                                                  Type,  Merge, Default )
-  # ---------------------------------------------------------------------------------------------------------------
-  $cis_level_1           = lookup( 'cis_security_hardening_windows::cis_level_1',           Hash, 'deep', {})
-  $cis_level_2           = lookup( 'cis_security_hardening_windows::cis_level_2',           Hash, 'deep', {})
-  $cis_bitlocker         = lookup( 'cis_security_hardening_windows::cis_bitlocker',         Hash, 'deep', {})
-  $cis_nextgen           = lookup( 'cis_security_hardening_windows::cis_nextgen',           Hash, 'deep', {})
-  $cis_standalone_optout = lookup( 'cis_security_hardening_windows::cis_standalone_optout', Array, undef, undef )
-  $cis_secpol_level_1    = lookup( 'cis_security_hardening_windows::cis_secpol_level_1',    Hash, 'deep', {})
-  $cis_secpol_level_2    = lookup( 'cis_security_hardening_windows::cis_secpol_level_2',    Hash, 'deep', {})
-  $cis_auditpol          = lookup( 'cis_security_hardening_windows::cis_auditpol',          Hash, 'deep', {})
+  # Variable                     ( 'Name',                                                        Type,  Merge, Default )
+  # ---------------------------------------------------------------------------------------------------------------------
+  $cis_level_1              = lookup( 'cis_security_hardening_windows::cis_level_1',              Hash, 'deep', {})
+  $cis_level_2              = lookup( 'cis_security_hardening_windows::cis_level_2',              Hash, 'deep', {})
+  $cis_bitlocker            = lookup( 'cis_security_hardening_windows::cis_bitlocker',            Hash, 'deep', {})
+  $cis_nextgen              = lookup( 'cis_security_hardening_windows::cis_nextgen',              Hash, 'deep', {})
+  $cis_standalone_optout    = lookup( 'cis_security_hardening_windows::cis_standalone_optout',    Array, undef, undef )
+  $cis_standalone_overrides = lookup( 'cis_security_hardening_windows::cis_standalone_overrides', Hash,  undef, undef )
+  $cis_secpol_level_1       = lookup( 'cis_security_hardening_windows::cis_secpol_level_1',       Hash, 'deep', {})
+  $cis_secpol_level_2       = lookup( 'cis_security_hardening_windows::cis_secpol_level_2',       Hash, 'deep', {})
+  $cis_auditpol             = lookup( 'cis_security_hardening_windows::cis_auditpol',             Hash, 'deep', {})
 
   # Create auditpol entries
   # Remove the rule title from the hashes so the auditpol resource can apply them
@@ -80,7 +81,7 @@ class cis_security_hardening_windows::cis (
   }
 
   # Assemble total rules
-  $total_rules = $base_rules + $bitlocker_rules + $nextgen_rules
+  $total_rules = $base_rules + $bitlocker_rules + $nextgen_rules + ($cis_profile_type == 'standalone' ? { true => $cis_standalone_overrides, default => {} })
 
   # Determine if exclude rules should be combined with standalone optouts
   $cis_exclude_rules_real = $cis_profile_type ? {
