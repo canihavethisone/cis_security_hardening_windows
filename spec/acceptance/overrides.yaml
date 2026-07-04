@@ -1,6 +1,8 @@
 ---
 ## - This file provides minimum testing data for this module
 
+# cis_security_hardening_windows::cis_profile_type: 'standalone'
+
 # Banners must be specified
 cis_security_hardening_windows::logon_banner:              'notice and consent banner'
 cis_security_hardening_windows::logon_message:             'all activities performed on this system will be monitored.'
@@ -30,3 +32,4 @@ cis_security_hardening_windows::enable_remote_desktop:  true
 cis_security_hardening_windows::cis_secpol:
   'Deny access to this computer from the network':
     policy_value: 'Guests'
+
