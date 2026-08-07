@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 3.0.3
+
+**Features**
+- Allow stdlib 10.x
+
+**Development**
+- Replace PDF testing with Voxpupuli Jig
+
+
 ## Release 3.0.2
 
 **Features**
