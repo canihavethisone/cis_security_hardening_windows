@@ -18,7 +18,7 @@
     },
     {
       "name": "puppetlabs-inifile",
-      "version_requirement": ">= 6.3.1 < 7.0.0"
+      "version_requirement": ">= 6.4.1 < 7.0.0"
     },
     {
       "name": "puppetlabs-powershell",
@@ -34,7 +34,7 @@
     },
     {
       "name": "puppetlabs-stdlib",
-      "version_requirement": ">= 9.7.0 < 10.0.0"
+      "version_requirement": ">= 9.7.0 < 11.0.0"
     },
     {
       "name": "webalex-windows_firewall",
@@ -59,8 +59,5 @@
       "name": "openvox",
       "version_requirement": ">= 8.0.0 < 9.0.0"
     }
-  ],
-  "pdk-version": "3.4.0",
-  "template-url": "pdk-default#3.4.0",
-  "template-ref": "tags/3.4.0"
+  ]
 }
